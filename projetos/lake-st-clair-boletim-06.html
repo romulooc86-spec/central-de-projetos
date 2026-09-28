@@ -74,29 +74,55 @@ b { font-weight:600; }
 /* plano de descarga sem a linha de referência do documento */
 #planoMeta { display:none !important; }
 /* ===== Relatório horizontal (imagem PNG) ===== */
-.pz-wrap { position:fixed; top:0; left:-10000px; width:1800px; background:#fff; }
-.doc.paisagem { max-width:none; width:1800px; }
-.doc.paisagem .cab { flex-direction:row !important; align-items:center !important; padding:22px 32px 18px !important; }
-.doc.paisagem .cab-dir { text-align:right !important; align-items:flex-end !important; }
-.doc.paisagem .logo { width:190px !important; max-width:none; }
-.doc.paisagem .pz-corpo { display:grid; grid-template-columns:repeat(3,1fr); align-items:stretch; }
-.doc.paisagem .pz-bloco { min-width:0; }
-.doc.paisagem .pz-topo { grid-column:1 / -1; }
-.doc.paisagem .pz-heroi h1 { font-size:2.6rem !important; }
-.doc.paisagem .pz-heroi .destaque { flex-wrap:nowrap !important; }
-.doc.paisagem .pz-heroi .destaque-item b.num { font-size:2.2rem !important; }
-.doc.paisagem .pz-heroi .plano, .doc.paisagem .pz-heroi .plano-leg { max-width:1100px; margin-left:auto; margin-right:auto; }
-.doc.paisagem .pz-heroi .avanco { padding-left:0 !important; padding-right:0 !important; margin-top:16px; }
-.doc.paisagem .pz-p { border-top:1px solid var(--trl-border); }
-.doc.paisagem .pz-p + .pz-p { border-left:1px solid var(--trl-border); }
-.doc.paisagem .rolagem { overflow:visible; }
-.doc.paisagem .navio, .doc.paisagem .heroi, .doc.paisagem .secao, .doc.paisagem .avanco, .doc.paisagem .obs, .doc.paisagem .rodape { padding-left:28px !important; padding-right:28px !important; }
-.doc.paisagem .faixa { padding:10px 28px !important; gap:6px 24px !important; }
-.doc.paisagem .col-opc { display:table-cell !important; }
-.doc.paisagem .seq { grid-template-columns:repeat(var(--n,3),1fr) !important; }
-.doc.paisagem .etapa { border-bottom:none !important; box-shadow:none !important; }
-.doc.paisagem .secao-cab { flex-direction:row !important; align-items:baseline !important; }
-.doc.paisagem table.t tr.atual td:first-child { box-shadow:none !important; border-left:3px solid var(--trl-accent); }
+/* painel executivo 16:9 · 1920×1080 · só existe durante a geração da imagem */
+.pz-wrap { position:fixed; top:0; left:-10000px; width:1920px; height:1080px; background:#fff; }
+.pe { width:1920px; height:1080px; box-sizing:border-box; padding:36px 56px 26px; display:flex; flex-direction:column; gap:16px; background:#fff; color:var(--trl-texto); font-family:var(--trl-font-corpo); }
+.pe-cab { display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid var(--trl-accent); padding-bottom:16px; }
+.pe-logo { width:230px; height:auto; color:var(--trl-preto); display:block; }
+.pe-cab-dir { text-align:right; }
+.pe-tipo { font-size:14px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--trl-fg-muted); }
+.pe-data { font-family:var(--trl-font-titulo); font-weight:700; font-size:40px; line-height:1.1; margin-top:4px; }
+.pe-data span { font-family:var(--trl-font-corpo); font-weight:500; font-size:22px; color:var(--trl-fg-muted); }
+.pe-navio-id { display:flex; align-items:baseline; gap:24px; }
+.pe-navio-id h1 { font-family:var(--trl-font-titulo); font-weight:700; font-size:44px; line-height:1; letter-spacing:.01em; white-space:nowrap; }
+.pe-meta { font-size:17px; color:var(--trl-fg-muted); }
+.pe-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.pe-kpi { background:var(--trl-cinza-100); border-radius:8px; padding:14px 20px 16px; display:flex; flex-direction:column; gap:2px; }
+.pe-kpi .rot { font-size:13px; }
+.pe-kpi b { font-family:var(--trl-font-titulo); font-weight:700; font-size:40px; line-height:1.1; font-variant-numeric:tabular-nums; }
+.pe-kpi span { font-size:14.5px; color:var(--trl-fg-muted); }
+.pe-kpi.saldo { background:var(--trl-vermelho-15); }
+.pe-kpi.saldo b { color:var(--trl-accent); }
+.pe-kpi span.ok { color:var(--trl-status-ok); font-weight:600; }
+.pe-kpi span.risco { color:var(--trl-accent); font-weight:600; }
+.pe-navio { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+.pe-navio > svg { height:250px; width:auto; max-width:100%; }
+.pe-navio .plano-leg { font-size:13px; justify-content:center; }
+.pe-cards { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:16px; height:300px; }
+.pe-card { border:1px solid var(--trl-border); border-radius:8px; padding:16px 20px; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+.pe-card h2 { font-family:var(--trl-font-titulo); font-weight:700; font-size:18px; letter-spacing:.06em; text-transform:uppercase; }
+.pe-graf svg { display:block; width:100%; height:auto; }
+.pe-etapa { display:flex; flex-direction:column; gap:4px; padding:6px 0 8px; border-bottom:1px solid var(--trl-cinza-100); }
+.pe-etapa:last-child { border-bottom:none; }
+.pe-et-cab { display:flex; justify-content:space-between; align-items:center; font-size:15px; }
+.pe-etapa.atual .pe-et-cab b { color:var(--trl-accent); }
+.pe-st { font-size:12px; font-weight:600; padding:2px 10px; border-radius:99px; background:var(--trl-cinza-100); color:var(--trl-fg-muted); }
+.pe-st.ok { background:#E3F1E4; color:var(--trl-status-ok); }
+.pe-st.and { background:var(--trl-vermelho-15); color:var(--trl-accent); }
+.pe-bar { height:8px; background:var(--trl-cinza-100); border-radius:4px; overflow:hidden; }
+.pe-bar i { display:block; height:100%; background:var(--trl-texto); border-radius:4px; }
+.pe-etapa.atual .pe-bar i { background:var(--trl-accent); }
+.pe-et-v { font-size:13px; color:var(--trl-fg-muted); font-variant-numeric:tabular-nums; }
+.pe-turno { font-size:15px; }
+.pe-turno b { font-family:var(--trl-font-titulo); font-size:22px; }
+.pe-sub { font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-muted); margin-top:4px; }
+.pe-mot { display:grid; grid-template-columns:200px 1fr 64px; align-items:center; gap:10px; font-size:14px; }
+.pe-mot-n { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pe-mot-b { height:10px; background:var(--trl-cinza-100); border-radius:5px; overflow:hidden; }
+.pe-mot-b i { display:block; height:100%; background:var(--trl-accent); border-radius:5px; }
+.pe-mot b { text-align:right; font-variant-numeric:tabular-nums; }
+.pe-vazio { font-size:14px; color:var(--trl-fg-subtle); }
+.pe-rodape { display:flex; justify-content:space-between; font-size:13px; color:var(--trl-fg-subtle); border-top:1px solid var(--trl-border); padding-top:10px; }
 .cartao-zap { position:fixed; top:0; left:-10000px; width:820px; background:var(--trl-branco); font-family:var(--trl-font-corpo); color:var(--trl-texto); padding:40px 44px 34px; }
 .cartao-zap .cz-cab { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; border-bottom:4px solid var(--trl-accent); padding-bottom:18px; }
 .cartao-zap .cz-logo { width:150px; height:auto; flex:0 0 auto; color:var(--trl-preto); }
@@ -1608,42 +1634,98 @@ renderFixos(); render();
     if (logoOrig && logoDest) logoDest.appendChild(logoOrig.cloneNode(true));
     return cart;
   }
-  /* Relatório em uma página horizontal: cópia fiel do painel (mesmas informações)
-     topo (faixa inteira): o navio · embaixo, 3 colunas: produção | plano + detalhe do porão | paralisações */
+  /* Relatório em uma página horizontal — painel executivo 16:9 (1920×1080) feito para a imagem:
+     indicadores, navio, produção dos últimos turnos, plano de descarga e paralisações */
   function construirRelatorioPaisagem(){
-    const doc = document.querySelector('.doc').cloneNode(true);
-    doc.classList.add('paisagem');
-    doc.querySelectorAll('.barra-fonte, #editor, .rodape .acoes, .seletor button, .dica-sel, #semTurnos[hidden]').forEach(e => e.remove());
-    doc.querySelectorAll('.secao-cab .nota').forEach(e => { if (/clique|toque/i.test(e.textContent)) e.remove(); });
-    /* o logo usa <use>, que a captura não desenha: copia o desenho para dentro do svg */
-    doc.querySelectorAll('svg use').forEach(u => {
-      const id = (u.getAttribute('href') || u.getAttribute('xlink:href') || '').replace('#', '');
-      const src = id && document.getElementById(id);
-      if (src){ const g = src.cloneNode(true); g.removeAttribute('id'); u.replaceWith(g); }
+    const t = turnos[turnos.length - 1];
+    const saldo = manifesto - t.acum;
+    const prod = turnos.filter(x => x.ton > 0).slice(-3);
+    const ritmo = prod.length ? prod.reduce((a, x) => a + x.ton, 0) / prod.length : 0;
+    const rest = dOk(DADOS.previsaoTermino) ? Math.max(0, (D(DADOS.previsaoTermino) - t.fim) / HT) : 0;
+    const nec = rest > 0 ? saldo / rest : Infinity, noPrazo = prod.length && ritmo >= nec;
+    const pr = {}; turnos.forEach(x => Object.entries(x.prod).forEach(([k, [, b]]) => pr[k] = (pr[k] || 0) + b));
+    const sq = calcSequencia(pr), at = sq.find(e => e.estado !== 'ok');
+    const minTurno = Math.max(1, (t.fim - t.ini) / 60000);
+    const parT = paradas.filter(x => x.fim > t.ini && x.ini < t.fim).map(x => ({ motivo:x.motivo, m:(Math.min(x.fim, t.fim) - Math.max(x.ini, t.ini)) / 60000 }));
+    const parMin = parT.reduce((a, x) => a + x.m, 0);
+    const acum = {};
+    paradas.filter(x => x.ini < t.fim).forEach(x => { const m = (Math.min(x.fim, t.fim) - x.ini) / 60000; if (m > 0) acum[x.motivo] = (acum[x.motivo] || 0) + m; });
+    const totAcum = Object.values(acum).reduce((a, b) => a + b, 0);
+    const topMot = Object.entries(acum).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxMot = topMot.length ? topMot[0][1] : 1;
+    const CORES = { verm:'#DA202C', texto:'#2F2F2F', sub:'#8A8C91', grade:'#EAEAEA', claro:'#B0B0B0' };
+
+    /* produção dos últimos 8 turnos, com a linha da prancha padrão */
+    const ult = turnos.slice(-8), W = 540, Hc = 220, base = 176, topo = 22, passo = (W - 20) / ult.length;
+    const bw = Math.min(44, passo - 16), prancha = t.meta || 0;
+    const vmax = Math.max(prancha, ...ult.map(x => x.ton), 1) * 1.15, yv = v => base - (base - topo) * v / vmax;
+    let graf = `<svg viewBox="0 0 ${W} ${Hc}" width="${W}" height="${Hc}" xmlns="http://www.w3.org/2000/svg" font-family="Poppins, Helvetica, Arial, sans-serif">`;
+    graf += `<line x1="10" x2="${W - 6}" y1="${base}" y2="${base}" stroke="${CORES.claro}" stroke-width="1"/>`;
+    ult.forEach((x, i) => {
+      const cx = 14 + passo * i + passo / 2, y = yv(x.ton), atual = x === t;
+      graf += `<rect x="${cx - bw / 2}" y="${y}" width="${bw}" height="${Math.max(0, base - y)}" rx="3" fill="${atual ? CORES.verm : CORES.texto}"/>
+        <text x="${cx}" y="${y - 6}" font-size="12" font-weight="600" text-anchor="middle" fill="${atual ? CORES.verm : CORES.texto}">${t0(x.ton)}</text>
+        <text x="${cx}" y="${base + 17}" font-size="11.5" text-anchor="middle" fill="${CORES.texto}">${dm(x.ini)}</text>
+        <text x="${cx}" y="${base + 32}" font-size="11" text-anchor="middle" fill="${CORES.sub}">${pad(x.ini.getHours())}h</text>`;
     });
-    const conteudo = doc.querySelector('#conteudo'), heroi = doc.querySelector('.heroi');
-    const secs = [...conteudo.children];
-    const tem = sel => s => s.matches(sel) || !!s.querySelector(sel);
-    const avanco = secs.filter(s => s.classList.contains('avanco'));
-    const plano = secs.filter(tem('#secPlano'));
-    const prod = secs.filter(tem('#tabProd'));
-    const turno = secs.filter(tem('#ltBarra'));
-    const acum = secs.filter(tem('#tabAcum'));
-    const usados = new Set([...avanco, ...plano, ...prod, ...turno, ...acum]);
-    const resto = secs.filter(s => !usados.has(s));
-    const div = cls => { const d = document.createElement('div'); d.className = cls; return d; };
-    /* topo: identificação e totais em cima, o navio logo abaixo, e o avanço da operação */
-    heroi.classList.add('pz-heroi'); heroi.append(...avanco);
-    /* o detalhe do porão selecionado fica logo abaixo do plano de descarga */
-    const det = doc.querySelector('#detalhe');
-    const planoCol = [...plano];
-    if (det){ const s = document.createElement('section'); s.className = 'secao'; s.append(det); planoCol.push(s); }
-    const bloco = (cls, nos) => { const b = div('pz-bloco ' + cls); b.append(...nos); return b; };
-    const corpo = div('pz-corpo');
-    corpo.append(bloco('pz-topo', [heroi]),
-                 bloco('pz-p pz-p1', prod), bloco('pz-p', planoCol), bloco('pz-p', [...turno, ...acum, ...resto]));
-    conteudo.replaceWith(corpo);
-    const wrap = div('pz-wrap'); wrap.append(doc);
+    if (prancha){
+      const yp = yv(prancha);
+      graf += `<line x1="10" x2="${W - 6}" y1="${yp}" y2="${yp}" stroke="${CORES.verm}" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="${W - 6}" y="${yp - 5}" font-size="11" text-anchor="end" fill="${CORES.verm}">prancha ${t0(prancha)} t</text>`;
+    }
+    graf += `</svg>`;
+
+    /* plano de descarga: até 4 etapas, começando perto da etapa atual */
+    const iAt = at ? sq.indexOf(at) : sq.length;
+    const ini = Math.max(0, Math.min(iAt - 1, sq.length - 4));
+    const etapas = sq.slice(ini, ini + 4).map(e => {
+      const p = e.ton > 0 ? Math.min(100, e.feito / e.ton * 100) : 0;
+      const st = e.estado === 'ok' ? ['ok', 'Concluída'] : e === at ? ['and', e.feito > 0 ? 'Em andamento' : 'Próxima'] : ['ag', e.feito > 0 ? 'Adiantada' : 'Aguardando'];
+      return `<div class="pe-etapa ${e === at ? 'atual' : ''}">
+        <div class="pe-et-cab"><b>Etapa ${e.n} · Porão ${e.porao}</b><span class="pe-st ${st[0]}">${st[1]}</span></div>
+        <div class="pe-bar"><i style="width:${p}%"></i></div>
+        <div class="pe-et-v">${t2(e.feito)} de ${t2(e.ton)} t · ${t0(p)}%${e.estado !== 'ok' ? ` · faltam ${t2(e.ton - e.feito)} t` : ''}</div>
+      </div>`;
+    }).join('');
+
+    const motivos = topMot.map(([mot, m]) => `<div class="pe-mot"><span class="pe-mot-n">${esc(mot)}</span>
+        <span class="pe-mot-b"><i style="width:${m / maxMot * 100}%"></i></span><b>${hm(m)}</b></div>`).join('');
+
+    const quando = dOk(DADOS.previsaoTermino) ? `${dm(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—';
+    const pe = document.createElement('div');
+    pe.className = 'pe';
+    pe.innerHTML = `
+      <header class="pe-cab">
+        <svg class="pe-logo" viewBox="0 0 1692 494.765" role="img" aria-label="Triunfo Logística"></svg>
+        <div class="pe-cab-dir">
+          <div class="pe-tipo">Relatório de operação · Boletim ${pad(turnos.length)}</div>
+          <div class="pe-data">${dm(t.ini)} ${t.ini.getFullYear()} <span>· Turno ${t.faixa}</span></div>
+        </div>
+      </header>
+      <div class="pe-navio-id"><h1>${esc(DADOS.navio)}</h1><div class="pe-meta">${$('heroMeta') ? $('heroMeta').innerHTML : ''}</div></div>
+      <div class="pe-kpis">
+        <div class="pe-kpi">${rot(descarga() ? 'Total descarregado' : 'Total carregado')}<b>${t2(t.acum)} t</b><span>${p1(t.acum / manifesto * 100)} do manifesto de ${t2(manifesto)} t</span></div>
+        <div class="pe-kpi saldo">${rot(descarga() ? 'Saldo a bordo' : 'Saldo a embarcar')}<b>${t2(saldo)} t</b><span>${p1(saldo / manifesto * 100)} restante</span></div>
+        <div class="pe-kpi">${rot('Produção do turno')}<b>${t2(t.ton)} t</b><span>${t.meta ? `${t0(t.ton / t.meta * 100)}% da prancha de ${t0(t.meta)} t` : ''} · ${t.viagens} viagens</span></div>
+        <div class="pe-kpi">${rot('Término previsto')}<b>${quando}</b><span class="${!prod.length ? '' : noPrazo ? 'ok' : 'risco'}">${!prod.length ? 'aguardando produção' : noPrazo ? '● no prazo' : '● em risco'} · ritmo ${ritmo ? `${t0(ritmo)} t/turno` : '—'}</span></div>
+      </div>
+      <div class="pe-navio"></div>
+      <div class="pe-cards">
+        <section class="pe-card"><h2>Produção por turno</h2><div class="pe-graf">${graf}</div></section>
+        <section class="pe-card"><h2>${descarga() ? 'Plano de descarga' : 'Plano de carga'}</h2>${etapas || '<p class="pe-vazio">Sem plano cadastrado.</p>'}</section>
+        <section class="pe-card"><h2>Paralisações</h2>
+          <div class="pe-turno"><b>${hm(Math.max(0, minTurno - parMin))}</b> operando de ${hm(minTurno)} no turno (${t0((minTurno - parMin) / minTurno * 100)}%)${parT.length ? ` · parado ${hm(parMin)}` : ' · sem paralisações'}</div>
+          <div class="pe-sub">Acumuladas desde o início · ${hm(totAcum)}</div>
+          ${motivos || '<p class="pe-vazio">Nenhuma paralisação registrada.</p>'}
+        </section>
+      </div>
+      <footer class="pe-rodape"><span>Triunfo Logística${DADOS.documento ? ` · ${esc(DADOS.documento)}` : ''}</span><span>Gerado em ${dm(new Date())} ${hh(new Date())}</span></footer>`;
+    const logoOrig = document.getElementById('trl-logo-h');
+    if (logoOrig) pe.querySelector('.pe-logo').appendChild(logoOrig.cloneNode(true));
+    const svgNavio = document.querySelector('#plano svg'), leg = $('planoLeg');
+    if (svgNavio) pe.querySelector('.pe-navio').appendChild(svgNavio.cloneNode(true));
+    if (leg){ const l = leg.cloneNode(true); l.removeAttribute('id'); pe.querySelector('.pe-navio').appendChild(l); }
+    const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(pe);
     return wrap;
   }
 
@@ -1696,7 +1778,7 @@ renderFixos(); render();
       </div>
       <div class="bloco-exp">
         <h4>Imagem do relatório (PNG)</h4>
-        <p>O painel inteiro em uma página horizontal, com as mesmas informações do boletim. No WhatsApp, envie como <b>documento</b> para não perder a nitidez.</p>
+        <p>Painel executivo em 16:9 (1920×1080): indicadores, navio, produção dos últimos turnos, plano e paralisações. No WhatsApp, envie como <b>documento</b> para não perder a nitidez.</p>
         <div class="acoes"><button class="btn" type="button" id="xImagem">Gerar imagem do relatório</button></div>
       </div>`;
     $('xMestre').onclick = () => { const n = exportar(false); msg(`Painel “${n}” baixado. Substitua o anterior na pasta do navio.`); };
