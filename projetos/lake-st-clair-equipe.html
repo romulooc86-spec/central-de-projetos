@@ -364,7 +364,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
     </div>
   </header>
 
-  <div class="barra-fonte erro" id="barraFonte"><span><b>Não consegui ler a planilha</b> (Failed to fetch). Mostrando os últimos dados salvos (26/09/2026 23:45).</span><span class="bf-acoes">
+  <div class="barra-fonte ok" id="barraFonte"><span><b>● Dados ao vivo</b> da planilha da equipe · lidos às 23:45</span><span class="bf-acoes">
       <button type="button" class="btn-bf" id="bfAtualizar">↻ Atualizar</button>
       <button type="button" class="btn-bf prim" id="bfEnviar">Gerar boletim e resumo</button>
       <button type="button" class="btn-bf" id="bfConfig">Configurar navio</button></span></div>
@@ -377,9 +377,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <div class="meta" id="heroMeta"><b>Cloreto de potássio</b> · Descarga · 7.756,00 t · viagem 2605 · Thunder Bay, Canadá → Rio de Janeiro, Brasil</div>
       </div>
     </div>
-    <section class="destaque" id="destaque" aria-label="Total descarregado e saldo">
-    <div class="destaque-item"><span class="rot">Total descarregado</span><b class="num">2.748,72 t</b><span class="sub">35,4% do manifesto</span></div>
-    <div class="destaque-item destaque-saldo"><span class="rot">Saldo a bordo</span><b class="num">5.007,28 t</b><span class="sub">64,6% restante</span></div></section>
+    <section class="destaque" id="destaque" aria-label="Total descarregado e saldo"></section>
     <div class="plano" id="plano"><svg viewBox="0 0 796 266" role="group" aria-label="Perfil do navio com a carga por porão">
     <defs>
       <clipPath id="cascoClip"><path d="M13.456,90 L110.38000000000001,90 L110.38000000000001,104 L713.2,104 L713.2,88 L769.936,86
@@ -400,23 +398,16 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <line x1="748.66" x2="764.42" y1="64" y2="64" stroke="#2F2F2F" stroke-width="1.2"></line><g class="col" data-p="1" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 1: sem carga"><rect class="realce" x="594.7511999999999" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="594.7511999999999" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="608.74448" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="606.74448" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="597.7511999999999" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="652.7176" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="652.7176" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 1</text><text x="652.7176" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="2" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 2: 2.897 t a bordo de 2.897 t"><rect class="realce" x="478.8184" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="478.8184" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="492.81168" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="490.81168" y="88" width="91.94624" height="6" rx="2" fill="#2F2F2F" stroke="#2F2F2F" stroke-width="1"></rect><rect x="481.8184" y="109" width="109.9328" height="76" rx="2" fill="#EAEAEA" stroke="#B0B0B0" stroke-width="1"></rect><path d="M481.8184,185 L481.8184,112.5 Q536.7848,102 591.7512,112.5 L591.7512,185 Z" fill="#2F2F2F"></path><line x1="478.8184" x2="594.7512" y1="185" y2="185" stroke="#DA202C" stroke-width="1.8" stroke-dasharray="4 3"></line><text x="536.7848" y="126" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">100%</text><text x="536.7848" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 2</text><text x="536.7848" y="229" font-size="11" font-weight="600" text-anchor="middle" fill="#2F2F2F">2.897 t</text>
-            <text x="536.7848" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 2.897</text></g><g class="col" data-p="3" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 3: sem carga"><rect class="realce" x="362.88559999999995" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
+            <text x="536.7848" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 2.897</text><rect x="485.8184" y="113" width="93.84" height="18" rx="3" fill="#DA202C"></rect>
+            <text x="491.8184" y="126" font-size="10.5" font-weight="600" fill="#fff">etapa 2 de 3</text></g><g class="col" data-p="3" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 3: sem carga"><rect class="realce" x="362.88559999999995" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="362.88559999999995" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="376.87888" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="374.87888" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="365.88559999999995" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="420.852" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="420.852" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 3</text><text x="420.852" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="4" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 4: sem carga"><rect class="realce" x="246.95279999999997" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="246.95279999999997" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="260.94608" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="258.94608" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="249.95279999999997" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="304.9192" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="304.9192" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 4</text><text x="304.9192" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="5" tabindex="0" role="button" aria-pressed="true" aria-label="Porão 5: 2.110 t a bordo de 4.859 t"><rect class="realce" x="131.01999999999998" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="1" style="transition:opacity .15s"></rect>
     <rect x="131.01999999999998" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="145.01327999999998" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="193.383712" y="87" width="43.97312" height="5" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect>
-            <line x1="188.98639999999997" x2="188.98639999999997" y1="40" y2="78" stroke="#DA202C" stroke-width="1.5"></line>
+            <line x1="188.98639999999997" x2="188.98639999999997" y1="36" y2="78" stroke="#DA202C" stroke-width="1.5"></line>
             <path d="M179.98639999999997,78 h18 l-4,11 h-10 z" fill="#DA202C"></path>
             <path d="M179.98639999999997,78 l-3,9 M197.98639999999997,78 l3,9" stroke="#DA202C" stroke-width="1.5"></path><rect x="134.01999999999998" y="109" width="109.9328" height="76" rx="2" fill="#EAEAEA" stroke="#B0B0B0" stroke-width="1"></rect><path d="M134.01999999999998,185 L134.01999999999998,155.4929450504219 Q188.98639999999997,144.9929450504219 243.95279999999997,155.4929450504219 L243.95279999999997,185 Z" fill="#2F2F2F"></path><text x="188.98639999999997" y="168.9929450504219" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">43%</text><rect x="133.01999999999998" y="108" width="111.9328" height="78" rx="2.5" fill="none" stroke="#DA202C" stroke-width="2.5"></rect><text x="188.98639999999997" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#DA202C" style="font-family:var(--trl-font-titulo)">PORÃO 5</text><text x="188.98639999999997" y="229" font-size="11" font-weight="600" text-anchor="middle" fill="#2F2F2F">2.110 t</text>
-            <text x="188.98639999999997" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 4.859</text><line x1="156.00655999999998" x2="221.96623999999997" y1="250" y2="250" stroke="#2F2F2F" stroke-width="2"></line></g><path d="M587.7511999999999,104 L592.2511999999999,70 L597.2511999999999,70 L601.7511999999999,104 Z" fill="#2F2F2F"></path>
-          <rect x="586.7511999999999" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="594.7511999999999" x2="618.7511999999999" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
-            <line x1="594.7511999999999" x2="583.7511999999999" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M471.8184,104 L476.3184,70 L481.3184,70 L485.8184,104 Z" fill="#2F2F2F"></path>
-          <rect x="470.8184" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="478.8184" x2="502.8184" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
-            <line x1="478.8184" x2="467.8184" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M355.88559999999995,104 L360.38559999999995,70 L365.38559999999995,70 L369.88559999999995,104 Z" fill="#2F2F2F"></path>
-          <rect x="354.88559999999995" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="362.88559999999995" x2="386.88559999999995" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
-            <line x1="362.88559999999995" x2="351.88559999999995" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M239.95279999999997,104 L244.45279999999997,70 L249.45279999999997,70 L253.95279999999997,104 Z" fill="#2F2F2F"></path>
-          <rect x="238.95279999999997" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="246.95279999999997" x2="188.98639999999997" y1="65" y2="40" stroke="#2F2F2F" stroke-width="2"></line>
-            <line x1="246.95279999999997" x2="257.95279999999997" y1="65" y2="57" stroke="#2F2F2F" stroke-width="1.4"></line><text x="792" y="264" font-size="9" text-anchor="end" fill="#8A8C91" letter-spacing=".08em">PROA ▸</text>
-        <text x="4" y="264" font-size="9" fill="#8A8C91" letter-spacing=".08em">◂ POPA</text></svg></div>
+            <text x="188.98639999999997" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 4.859</text><line x1="156.00655999999998" x2="221.96623999999997" y1="250" y2="250" stroke="#2F2F2F" stroke-width="2"></line></g><text x="792" y="264" font-size="9" text-anchor="end" fill="#8A8C91" letter-spacing=".08em">PROA · BOW ▸</text>
+        <text x="4" y="264" font-size="9" fill="#8A8C91" letter-spacing=".08em">◂ POPA · STERN</text></svg></div>
     <div class="plano-leg" id="planoLeg">
     <span style="--c:var(--trl-chart-2)">Carga a bordo</span>
     <span style="--c:var(--trl-cinza-100);--b:var(--trl-cinza-300)">Descarregado</span>
@@ -430,36 +421,36 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
   <div id="conteudo">
     <div class="avanco">
       <div class="avanco-barra" id="avancoBarra"><i style="width: 35.4399%;"></i></div>
-      <div class="avanco-leg"><span id="avancoTxt">Avanço da operação · 35,4%</span><span id="avancoTot">7.756,00 t</span></div>
+      <div class="avanco-leg"><span id="avancoTxt">Avanço da operação · Progress 35,4%</span><span id="avancoTot">7.756,00 t</span></div>
     </div>
 
     <section class="secao" id="secPlano">
       <div class="secao-cab"><h2 id="tituloPlano">Plano de descarga</h2><span class="nota" id="notaPorao">Posição em 26/09/2026 19:00</span></div>
       <div class="plano-meta" id="planoMeta" style="margin-top:8px">Referência: <b>Discharging Plan Ver 1.0 · 16/09/2026</b></div>
       <div class="seq" id="seq" style="--n: 3;"><button type="button" class="etapa " data-p="5" aria-label="Etapa 1: porão 5, 2.400 t">
-      <div class="e-cab"><span class="e-n">Etapa 1</span><span class="e-st ok">Concluída</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 1 · Step 1</span><span class="e-st ok">Concluída · Done</span></div>
       <div class="e-v">Porão 5 · 2.400,00 t</div>
       <div class="e-d">Descarregar porão 5 até 50%</div>
       <div class="e-bar"><i style="width:100%"></i></div>
       <div class="e-p"><b>2.400,00 t</b> (100%)</div>
-      <div class="e-c">Calado previsto ao fim: F 8,88 / A 9,19 m</div>
+      <div class="e-c">Calado previsto ao fim F 8,88 / A 9,19 m</div>
     </button><button type="button" class="etapa atual" data-p="2" aria-label="Etapa 2: porão 2, 2.897 t">
-      <div class="e-cab"><span class="e-n">Etapa 2</span><span class="e-st and">Próxima</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 2 · Step 2</span><span class="e-st and">Próxima · Next</span></div>
       <div class="e-v">Porão 2 · 2.897,00 t</div>
       <div class="e-d">Descarregar porão 2 (100%)</div>
       <div class="e-bar"><i style="width:0%"></i></div>
       <div class="e-p"><b>0,00 t</b> (0%) · faltam 2.897,00 t</div>
-      <div class="e-c">Calado previsto ao fim: F 8,67 / A 9,00 m</div>
+      <div class="e-c">Calado previsto ao fim F 8,67 / A 9,00 m</div>
     </button><button type="button" class="etapa " data-p="5" aria-label="Etapa 3: porão 5, 2.459 t">
-      <div class="e-cab"><span class="e-n">Etapa 3</span><span class="e-st ag">Adiantada</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 3 · Step 3</span><span class="e-st ag">Adiantada · Ahead</span></div>
       <div class="e-v">Porão 5 · 2.459,00 t</div>
       <div class="e-d">Concluir porão 5 (100%)</div>
       <div class="e-bar"><i style="width:14.181374542496961%"></i></div>
       <div class="e-p"><b>348,72 t</b> (14%) · faltam 2.110,28 t</div>
-      <div class="e-c">Calado previsto ao fim: F 8,24 / A 8,39 m</div>
+      <div class="e-c">Calado previsto ao fim F 8,24 / A 8,39 m</div>
     </button></div>
       <div class="detalhe" id="detalhe"><div class="det-cab"><h3>Porão 5</h3><span class="dica-sel">Toque em outro porão no desenho para ver o detalhe</span></div>
-    <div style="font-size:12px;margin-top:2px;color:var(--trl-accent);font-weight:600">Em operação no turno</div><div class="det-num">
+    <div style="font-size:12px;margin-top:2px;color:var(--trl-accent);font-weight:600">Em operação no turno </div><div class="det-num">
       <div><span class="rot">Manifesto</span><div class="v num">4.859,00 t</div></div>
       <div><span class="rot">Descarregado</span><div class="v num">2.748,72 t</div></div>
       <div><span class="rot">A bordo</span><div class="v num">2.110,28 t</div></div>
@@ -519,7 +510,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
       <tr><td class="h">13:00</td><td class="h">13:25</td><td class="n">0h25</td><td class="col-opc">1º / 5</td>
         <td>Aguardando estivadores</td></tr><tr><td class="h">13:25</td><td class="h">13:40</td><td class="n">0h15</td><td class="col-opc">1º / 5</td>
         <td>DDS <span class="tag">(programada)</span></td></tr>
-      </tbody><tfoot><tr><td colspan="2">Total parado</td><td class="n">0h40</td><td class="col-opc"></td><td></td></tr></tfoot></table></div></div>
+      </tbody><tfoot><tr><td colspan="2">Total parado · Total stoppage</td><td class="n">0h40</td><td class="col-opc"></td><td></td></tr></tfoot></table></div></div>
     </section>
 
     <section class="secao">
@@ -530,27 +521,15 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <span style="--c:var(--trl-chart-3)">Cliente/Transporte</span>
         <span style="--c:var(--trl-chart-4)">Outros</span>
       </div>
-      <div class="rolagem"><table class="t" id="tabAcum"><thead><tr><th><span class="rot">Motivo</span></th><th><span class="rot">Responsável</span></th><th class="n col-opc"><span class="rot">Ocorr.</span></th><th class="n"><span class="rot">Tempo</span></th><th class="n"><span class="rot">%</span></th><th class="n"><span class="rot">% acum.</span></th></tr></thead><tbody>
-    <tr><td>Aguardando implemento (GRAB)</td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">6h00</td>
-      <td class="n"><span class="celbar">46%<s><u class="abaixo" style="width:46.15384615384615%"></u></s></span></td>
-      <td class="n">46%</td></tr><tr><td>Aguardando autos</td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">3</td><td class="n">2h55</td>
-      <td class="n"><span class="celbar">22%<s><u class="abaixo" style="width:22.435897435897438%"></u></s></span></td>
-      <td class="n">69%</td></tr><tr><td>Problema no guincho</td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">1h20</td>
-      <td class="n"><span class="celbar">10%<s><u class="abaixo" style="width:10.256410256410255%"></u></s></span></td>
-      <td class="n">79%</td></tr><tr><td>DDS <span class="tag">(programada)</span></td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">5</td><td class="n">1h10</td>
-      <td class="n"><span class="celbar">9%<s><u class="" style="width:8.974358974358974%"></u></s></span></td>
-      <td class="n">88%</td></tr><tr><td>Aguardando estivadores</td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">3</td><td class="n">1h00</td>
-      <td class="n"><span class="celbar">8%<s><u class="abaixo" style="width:7.6923076923076925%"></u></s></span></td>
-      <td class="n">96%</td></tr><tr><td>Embarque de escavadeira</td>
-      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">0h35</td>
-      <td class="n"><span class="celbar">4%<s><u class="abaixo" style="width:4.487179487179487%"></u></s></span></td>
-      <td class="n">100%</td></tr>
-    </tbody><tfoot><tr><td>Total</td><td></td><td class="n col-opc">14</td><td class="n">13h00</td><td class="n">100%</td><td class="n"></td></tr></tfoot></table></div>
+      <div class="rolagem"><table class="t" id="tabAcum"><thead><tr><th><span class="rot">Motivo</span></th><th class="n col-opc"><span class="rot">Ocorr.</span></th><th class="n"><span class="rot">Tempo</span></th><th class="n"><span class="rot">%</span></th></tr></thead><tbody>
+    <tr><td>Aguardando implemento (GRAB)</td><td class="n col-opc">1</td><td class="n">6h00</td>
+      <td class="n"><span class="celbar">46%<s><u class="abaixo" style="width:46.15384615384615%"></u></s></span></td></tr><tr><td>Aguardando autos</td><td class="n col-opc">3</td><td class="n">2h55</td>
+      <td class="n"><span class="celbar">22%<s><u class="abaixo" style="width:22.435897435897438%"></u></s></span></td></tr><tr><td>Problema no guincho</td><td class="n col-opc">1</td><td class="n">1h20</td>
+      <td class="n"><span class="celbar">10%<s><u class="abaixo" style="width:10.256410256410255%"></u></s></span></td></tr><tr><td>DDS <span class="tag">(programada)</span></td><td class="n col-opc">5</td><td class="n">1h10</td>
+      <td class="n"><span class="celbar">9%<s><u class="" style="width:8.974358974358974%"></u></s></span></td></tr><tr><td>Aguardando estivadores</td><td class="n col-opc">3</td><td class="n">1h00</td>
+      <td class="n"><span class="celbar">8%<s><u class="abaixo" style="width:7.6923076923076925%"></u></s></span></td></tr><tr><td>Embarque de escavadeira</td><td class="n col-opc">1</td><td class="n">0h35</td>
+      <td class="n"><span class="celbar">4%<s><u class="abaixo" style="width:4.487179487179487%"></u></s></span></td></tr>
+    </tbody><tfoot><tr><td>Total</td><td class="n col-opc">14</td><td class="n">13h00</td><td class="n">100%</td></tr></tfoot></table></div>
     </section>
 
     <section class="obs" id="obsBloco" style="display: none;">
@@ -559,23 +538,66 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
     </section>
   </div>
 
-  <section class="faixa" id="faixa">
-    <span><span class="rot">Produção do turno</span><b class="num">782,34 t</b> <span class="ok">(112% da meta)</span></span>
-    <span><span class="rot">Acumulado</span><b class="num">2.748,72 t</b> <i>(35,4%)</i></span>
-    <span><span class="rot">Saldo a bordo</span><b class="num">5.007,28 t</b></span>
-    <span><span class="rot">Ritmo médio</span><b class="num">662 t/turno</b></span></section>
+  <section class="faixa" id="faixa"></section>
 
   <footer class="rodape">
     <span class="rodape-linhas"><span class="rodape-direitos" id="rodapeDireitos">© 2026 Triunfo Logística — Todos os direitos reservados.</span></span>
     <span class="acoes" style="margin:0">
-      
+      <button class="botao botao-equipe" type="button" id="btnEquipe">Área da equipe</button>
       <button class="botao" type="button" onclick="window.print()">Salvar PDF</button>
     </span>
   </footer>
 </div>
 
 <!-- ===== Área da equipe (removida do arquivo enviado ao cliente) ===== -->
+<div class="editor" id="editor" role="dialog" aria-modal="true" aria-labelledby="edTitulo">
+  <div class="ed-painel">
+    <div class="ed-cab">
+      <h2 id="edTitulo">Área da equipe<small id="edSub">Os números vêm da planilha da equipe. Aqui você gera o boletim do cliente e o resumo do WhatsApp.</small></h2>
+      <button class="ed-fechar" type="button" id="edFechar" aria-label="Fechar">✕</button>
+    </div>
+    <div class="ed-abas" role="tablist">
+      <button type="button" data-aba="enviar" class="ativo">Gerar e enviar</button>
+      <button type="button" data-aba="navio">Configurar navio</button>
+    </div>
+    <div class="ed-corpo" id="edCorpo">
+      <h3>Rotina a cada 6 horas</h3>
+      <ol class="passos">
+        <li>A equipe preenche a <b>planilha Google</b> do navio, como já faz hoje (produção por porão e paralisações).</li>
+        <li>Abra este painel: ele lê a planilha sozinho. Se ela mudou depois de abrir, clique em <b>↻ Atualizar</b>.</li>
+        <li>Confira o boletim e clique em <b>Gerar boletim do cliente</b>.</li>
+        <li>No WhatsApp: cole o <b>resumo em texto</b> e anexe o arquivo gerado.</li>
+      </ol>
+      <div id="edMsg" class="aviso-ed ok">Boletim “LAKE ST. CLAIR - Boletim 06 - 26-09 13h.html” baixado. Envie no WhatsApp como documento.</div>
+      <h3>Arquivos</h3>
+      <div class="bloco-exp">
+        <h4>Painel da equipe</h4>
+        <p>Só precisa salvar de novo quando mudar a configuração do navio (link da planilha, plano, textos em inglês). Os números sempre vêm da planilha.</p>
+        <div class="acoes"><button class="btn esc" type="button" id="xMestre">Salvar painel da equipe</button><span class="ed-ajuda" style="margin:0">Sem alterações pendentes.</span></div>
+      </div>
+      <div class="bloco-exp">
+        <h4>Boletim para o cliente</h4>
+        <p>Mesmo relatório, sem a Área da equipe. Último turno: <b>26/09 13:00–19:00</b>.</p>
+        <div class="acoes"><button class="btn prim" type="button" id="xCliente">Gerar boletim do cliente</button></div>
+      </div>
+      <div class="bloco-exp">
+        <h4>Resumo para o WhatsApp</h4>
+        <p>Texto pronto para colar na conversa antes do arquivo. O negrito já está no formato do WhatsApp.</p>
+        <textarea class="zap" id="xTexto" readonly="" style="">*LAKE ST. CLAIR · Boletim 06*
+_sáb 26/09 · turno 13:00–19:00_
 
+▪ Produção do turno / Shift output: *782,34 t* (20 viagens · 112% da meta)
+▪ Acumulado / Accumulated: *2.748,72 t* (35,4%)
+▪ Saldo a bordo / Balance on board: *5.007,28 t*
+▪ Término previsto / ETC: *29/09 19:00* · no prazo / on schedule
+▪ Porão em operação / Working hold: 5
+▪ Plano: etapa 2/3 · porão 2 · faltam 2.897,00 t (turno operou no porão 5)
+▪ Paralisações no turno / Delays: 0h40 (Aguardando estivadores 0h25; DDS 0h15)
+Boletim completo no arquivo anexo. · Triunfo Logística</textarea>
+        <div class="acoes"><button class="btn" type="button" id="xCopiar">Copiar resumo</button></div>
+      </div></div>
+  </div>
+</div>
 
 <div id="dica" role="status" style="opacity: 0;"></div>
 
@@ -825,7 +847,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
   "planilha": "https://docs.google.com/spreadsheets/d/12itSxDBxOiB9c-IsgN9lA0Xcyls0DgsLQ6cFeGugJ30/edit?gid=418554359#gid=418554359"
  },
  "config": {
-  "edicao": false,
+  "edicao": true,
   "inicioTurnos": [
    "01:00",
    "07:00",
@@ -833,8 +855,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
    "19:00"
   ]
  },
- "lidoEm": "2026-09-26T23:45",
- "responsaveis": {}
+ "lidoEm": "2026-09-26T23:45"
 }</script>
 <script>
 /* html2canvas 1.4.1 (MIT License) — vendorizado para gerar o PNG do WhatsApp offline */
@@ -1416,11 +1437,7 @@ function mostrarFonte(){
   const el = $('barraFonte'); if (!el) return;
   const ed = DADOS.config && DADOS.config.edicao !== false;
   if (!ed){
-    const sc = estadoFonte.status;
-    el.innerHTML = sc === 'lendo' ? 'Atualizando com a planilha da equipe…'
-      : sc === 'ok' ? `<b>● Dados ao vivo</b> da planilha da equipe · atualizados às ${hh(estadoFonte.quando)}`
-      : sc === 'erro' ? `Não foi possível atualizar agora. Mostrando os dados de ${DADOS.lidoEm ? dhsS(DADOS.lidoEm) : 'última leitura'}.`
-      : DADOS.lidoEm ? `Boletim emitido com os dados da planilha de ${dhsS(DADOS.lidoEm)}.` : '';
+    el.innerHTML = DADOS.lidoEm ? `Boletim emitido com os dados da planilha de ${dhsS(DADOS.lidoEm)}.` : '';
     el.className = 'barra-fonte cliente'; return;
   }
   const s = estadoFonte.status;
@@ -1756,7 +1773,6 @@ renderFixos(); render();
 mostrarFonte();
 carregarPlanilha();
 setInterval(() => { if (!document.hidden) carregarPlanilha(); }, 5 * 60 * 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) carregarPlanilha(); });
 </script>
 
 
