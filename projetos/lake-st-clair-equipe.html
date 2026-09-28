@@ -1666,6 +1666,8 @@ renderFixos(); render();
    No arquivo do cliente (config.edicao = false) nada disto aparece.
    ===================================================================== */
 (function(){
+  /* o relatório executivo 16:9 fica disponível também no boletim do cliente (menu → Exportar) */
+  window.construirRelatorioExecutivo = () => construirRelatorioPaisagem();
   if (!DADOS.config || DADOS.config.edicao === false){ const e = $('editor'); if (e) e.remove(); return; }
   $('btnEquipe').hidden = false;
   let aba = 'enviar', sujo = false;
@@ -2189,27 +2191,31 @@ renderFixos(); render();
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
       s.onload = () => window.jspdf ? ok(window.jspdf) : erro(new Error('jsPDF')); s.onerror = erro; document.head.appendChild(s); });
   }
+  /* PNG e PDF do menu usam o mesmo relatório executivo 16:9 do "Gerar boletim e resumo" */
+  async function capturarExecutivo(){
+    if (typeof window.construirRelatorioExecutivo !== 'function') throw new Error('sem relatório');
+    if (!turnos || !turnos.length) throw new Error('sem turnos');
+    const wrap = window.construirRelatorioExecutivo();
+    document.body.appendChild(wrap);
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      return await html2canvas(wrap.firstElementChild, { backgroundColor:'#ffffff', scale:2, useCORS:true, scrollX:0, scrollY:0 });
+    } finally { wrap.remove(); }
+  }
   async function exportarPNG(){
-    const c = await capturarTela();
+    const c = await capturarExecutivo();
     const blob = await new Promise(r => c.toBlob(r, 'image/png'));
     if (!blob) throw new Error('sem imagem');
     baixar(blob, nomeBase() + '.png');
-    return 'Imagem PNG baixada.';
+    return 'Imagem PNG baixada (relatório 16:9). No WhatsApp, envie como documento.';
   }
   async function exportarPDF(){
-    const [lib, c] = await Promise.all([carregarJsPDF(), capturarTela()]);
-    const pdf = new lib.jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-    const W = 210, H = 297, m = 8, largura = W - 2 * m;
-    const pxPorMm = c.width / largura, alturaPag = Math.floor((H - 2 * m) * pxPorMm);
-    for (let y = 0, pag = 0; y < c.height; y += alturaPag, pag++){
-      const h = Math.min(alturaPag, c.height - y);
-      const pedaco = document.createElement('canvas'); pedaco.width = c.width; pedaco.height = h;
-      const ctx = pedaco.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, h); ctx.drawImage(c, 0, y, c.width, h, 0, 0, c.width, h);
-      if (pag) pdf.addPage();
-      pdf.addImage(pedaco.toDataURL('image/jpeg', 0.92), 'JPEG', m, m, largura, h / pxPorMm);
-    }
+    const [lib, c] = await Promise.all([carregarJsPDF(), capturarExecutivo()]);
+    const W = 297, H = W * c.height / c.width;          /* página na proporção do relatório (16:9, largura A4) */
+    const pdf = new lib.jsPDF({ orientation:'landscape', unit:'mm', format:[W, H] });
+    pdf.addImage(c.toDataURL('image/png'), 'PNG', 0, 0, W, H);
     baixar(pdf.output('blob'), nomeBase() + '.pdf');
-    return 'PDF baixado.';
+    return 'PDF baixado (relatório 16:9).';
   }
 
   /* ---------- menu ---------- */
@@ -2250,9 +2256,9 @@ renderFixos(); render();
         </details></div>
       <div class="mp-sec"><span class="rot">Ir para</span>${secoes.filter(([, s]) => document.querySelector(s)).map(([t, s]) => `<button type="button" class="mp-item" data-ir="${s}">${t}</button>`).join('')}</div>
       <div class="mp-sec"><span class="rot">Exportar</span>
-        <button type="button" class="mp-item" id="mpPNG">Imagem PNG da tela</button>
-        <button type="button" class="mp-item" id="mpPDF">PDF da tela (A4)</button>
-        ${temEquipe ? '<button type="button" class="mp-item" id="mpExec">Imagem executiva 16:9 e boletim do cliente</button>' : ''}</div>
+        <button type="button" class="mp-item" id="mpPNG">Relatório em imagem PNG (16:9)</button>
+        <button type="button" class="mp-item" id="mpPDF">Relatório em PDF (16:9)</button>
+        ${temEquipe ? '<button type="button" class="mp-item" id="mpExec">Boletim do cliente e resumo do WhatsApp</button>' : ''}</div>
       <div class="mp-sec"><span class="rot">Dados</span>
         <button type="button" class="mp-item" id="mpAtualizar">Atualizar com a planilha agora</button>
         ${temEquipe ? '<button type="button" class="mp-item" id="mpConfig">Configurar navio</button>' : ''}</div>
