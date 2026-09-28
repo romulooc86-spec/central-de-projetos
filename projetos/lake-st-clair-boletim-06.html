@@ -51,8 +51,6 @@ b { font-weight:600; }
 /* ===== Identificação do navio ===== */
 .navio { padding:18px 32px 16px; border-bottom:1px solid var(--trl-border); }
 .navio h1 { font-family:var(--trl-font-titulo); font-weight:700; font-size:1.9rem; line-height:1; letter-spacing:.01em; }
-.particulares { display:grid; grid-template-columns:repeat(4,1fr); gap:12px 20px; margin-top:14px; }
-.particulares .v { font-weight:600; font-size:13px; margin-top:2px; }
 
 /* ===== Faixa de números ===== */
 .faixa { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 24px; padding:10px 32px; border-top:1px solid var(--trl-border); font-size:12px; color:var(--trl-fg-muted); }
@@ -98,9 +96,6 @@ b { font-weight:600; }
 .avanco-leg { display:flex; justify-content:space-between; font-size:11px; color:var(--trl-fg-subtle); margin-top:4px; }
 
 /* ===== Status ===== */
-.status { display:grid; grid-template-columns:110px 1fr; gap:16px; padding:16px 32px; border-bottom:1px solid var(--trl-border); background:var(--trl-bg); }
-.status p { font-size:13.5px; }
-.status p + p { margin-top:4px; }
 
 /* ===== Seções ===== */
 .secao { padding:22px 32px 6px; }
@@ -202,20 +197,10 @@ table.t td:first-child, table.t th:first-child { padding-left:8px; }
 .resp-badge { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; white-space:nowrap; }
 .resp-badge::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--c, var(--trl-cinza-300)); flex:0 0 auto; }
 .resp-badge.resp-nc { color:var(--trl-fg-subtle); }
-.pareto-nota { font-size:12px; color:var(--trl-fg-muted); margin:10px 0 2px; }
-.pareto-graf { margin-top:6px; }
-.pareto-graf svg { display:block; min-width:420px; }
 
 .obs { padding:16px 32px 22px; }
 .obs p { font-size:13.5px; margin-top:8px; }
 
-details.log { margin:0 32px; border-top:1px solid var(--trl-border); }
-details.log summary { cursor:pointer; list-style:none; padding:14px 0; display:flex; justify-content:space-between; font-family:var(--trl-font-titulo); font-weight:700; font-size:.95rem; letter-spacing:.06em; text-transform:uppercase; }
-details.log summary i { font-style:normal; font-weight:500; color:var(--trl-fg-subtle); font-size:.8rem; margin-left:6px; }
-details.log summary::-webkit-details-marker { display:none; }
-details.log summary::after { content:'+'; font-weight:400; color:var(--trl-fg-muted); }
-details.log[open] summary::after { content:'–'; }
-details.log .conteudo { padding-bottom:18px; }
 table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-muted); padding-top:14px; }
 
 .rodape { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:16px 32px 24px; margin-top:8px; border-top:1px solid var(--trl-border); font-size:10.5px; color:var(--trl-fg-subtle); }
@@ -224,14 +209,11 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 .botao { font-size:11.5px; font-weight:600; padding:6px 14px; border-radius:4px; border:1px solid var(--trl-border); background:var(--trl-bg); color:var(--trl-fg-muted); cursor:pointer; }
 
 @media (max-width:640px) {
-  .cab, .navio, .avanco, .status, .secao, .obs, .rodape { padding-left:16px; padding-right:16px; }
-  details.log { margin:0 16px; }
+  .cab, .navio, .avanco, .secao, .obs, .rodape { padding-left:16px; padding-right:16px; }
   .cab { flex-direction:column; gap:12px; }
   .cab-dir { text-align:left; }
   .navio h1 { font-size:1.6rem; }
-  .particulares { grid-template-columns:1fr 1fr; }
   .faixa { padding:10px 16px; gap:4px 16px; }
-  .status { grid-template-columns:1fr; gap:6px; }
   .col-opc { display:none; }
   .seq { grid-template-columns:1fr; }
   .etapa { border-right:none; border-bottom:1px solid var(--trl-border); }
@@ -245,7 +227,7 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
   table.t { font-size:12.5px; }
 }
 
-@page { size:A4 portrait; margin:10mm; }
+@page { size:A4 landscape; margin:9mm; }
 
 /* ===== Herói: navio + desenho do plano ===== */
 .heroi { padding:20px 32px 14px; border-bottom:1px solid var(--trl-border); }
@@ -255,12 +237,6 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 .heroi .meta b { color:var(--trl-fg); }
 .heroi .plano { margin-top:4px; }
 .heroi .plano-leg { margin-top:0; }
-details.dados-op summary { padding:16px 0 12px; }
-details.dados-op summary .nota { font-weight:400; text-transform:none; letter-spacing:normal; font-size:11px; color:var(--trl-fg-subtle); }
-details.dados-op summary .dados-resumo { display:block; font-weight:400; text-transform:none; letter-spacing:normal; font-size:12px; color:var(--trl-fg-muted); margin-top:2px; }
-details.dados-op[open] summary .dados-resumo { display:none; }
-details.dados-op .particulares { margin-top:12px; }
-details.dados-op .conteudo { padding-bottom:18px; }
 
 /* ===== Barra da fonte de dados ===== */
 .barra-fonte { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:7px 32px; font-size:12px; background:var(--trl-cinza-100); border-bottom:1px solid var(--trl-border); }
@@ -329,24 +305,35 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
 .passos li::before { content:counter(p); position:absolute; left:0; top:4px; width:19px; height:19px; border-radius:50%; background:var(--trl-chart-2); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center; }
 
 @media (max-width:640px) {
-  .heroi, .dados-op, .sem-turnos { padding-left:16px; padding-right:16px; }
+  .heroi, .sem-turnos { padding-left:16px; padding-right:16px; }
   .heroi h1 { font-size:1.6rem; }
   .form label.largo { grid-column:span 1; }
 }
 
 @media print {
-  body { background:var(--trl-branco); font-size:12px; }
+  body { background:var(--trl-branco); font-size:11px; }
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .doc { max-width:none; }
   .seletor button, .botao, .editor, .alterna, .barra-fonte { display:none !important; }
-  details.log .conteudo { display:block !important; }
-  details.log summary::after { content:''; }
-  .secao, .status, .faixa, tr { break-inside:avoid; }
+  .secao, .faixa, tr { break-inside:avoid; }
   .secao-cab { break-after:avoid; }
   .rolagem { overflow:visible; }
   .alterna, .det-cab .dica-sel { display:none !important; }
   .seq, .detalhe { break-inside:avoid; }
   table.t tbody tr.clicavel:hover td { background:none; }
+  /* compactação para caber em menos páginas na horizontal */
+  .cab { padding:6px 20px 5px; }
+  .heroi { padding:10px 20px 8px; }
+  .heroi h1 { font-size:1.5rem; }
+  .destaque-item { padding:10px 14px; }
+  .destaque-item b.num { font-size:1.5rem; }
+  .avanco { padding:0 20px 8px; }
+  .secao { padding:10px 20px 4px; }
+  .secao-cab h2 { font-size:.85rem; }
+  .plano-meta, .det-num, .det-grid { margin-top:4px !important; }
+  .faixa { padding:6px 20px; }
+  .rodape { padding:8px 20px 10px; margin-top:2px; }
+  table.t th, table.t td { padding-top:4px; padding-bottom:4px; }
 }
 </style>
 </head>
@@ -377,7 +364,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
     </div>
   </header>
 
-  <div class="barra-fonte ok" id="barraFonte"><span><b>● Dados ao vivo</b> da planilha da equipe · lidos às 23:45</span><span class="bf-acoes">
+  <div class="barra-fonte erro" id="barraFonte"><span><b>Não consegui ler a planilha</b> (Failed to fetch). Mostrando os últimos dados salvos (26/09/2026 23:45).</span><span class="bf-acoes">
       <button type="button" class="btn-bf" id="bfAtualizar">↻ Atualizar</button>
       <button type="button" class="btn-bf prim" id="bfEnviar">Gerar boletim e resumo</button>
       <button type="button" class="btn-bf" id="bfConfig">Configurar navio</button></span></div>
@@ -390,7 +377,9 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <div class="meta" id="heroMeta"><b>Cloreto de potássio</b> · Descarga · 7.756,00 t · viagem 2605 · Thunder Bay, Canadá → Rio de Janeiro, Brasil</div>
       </div>
     </div>
-    <section class="destaque" id="destaque" aria-label="Total descarregado e saldo"></section>
+    <section class="destaque" id="destaque" aria-label="Total descarregado e saldo">
+    <div class="destaque-item"><span class="rot">Total descarregado</span><b class="num">2.748,72 t</b><span class="sub">35,4% do manifesto</span></div>
+    <div class="destaque-item destaque-saldo"><span class="rot">Saldo a bordo</span><b class="num">5.007,28 t</b><span class="sub">64,6% restante</span></div></section>
     <div class="plano" id="plano"><svg viewBox="0 0 796 266" role="group" aria-label="Perfil do navio com a carga por porão">
     <defs>
       <clipPath id="cascoClip"><path d="M13.456,90 L110.38000000000001,90 L110.38000000000001,104 L713.2,104 L713.2,88 L769.936,86
@@ -411,16 +400,23 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <line x1="748.66" x2="764.42" y1="64" y2="64" stroke="#2F2F2F" stroke-width="1.2"></line><g class="col" data-p="1" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 1: sem carga"><rect class="realce" x="594.7511999999999" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="594.7511999999999" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="608.74448" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="606.74448" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="597.7511999999999" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="652.7176" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="652.7176" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 1</text><text x="652.7176" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="2" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 2: 2.897 t a bordo de 2.897 t"><rect class="realce" x="478.8184" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="478.8184" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="492.81168" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="490.81168" y="88" width="91.94624" height="6" rx="2" fill="#2F2F2F" stroke="#2F2F2F" stroke-width="1"></rect><rect x="481.8184" y="109" width="109.9328" height="76" rx="2" fill="#EAEAEA" stroke="#B0B0B0" stroke-width="1"></rect><path d="M481.8184,185 L481.8184,112.5 Q536.7848,102 591.7512,112.5 L591.7512,185 Z" fill="#2F2F2F"></path><line x1="478.8184" x2="594.7512" y1="185" y2="185" stroke="#DA202C" stroke-width="1.8" stroke-dasharray="4 3"></line><text x="536.7848" y="126" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">100%</text><text x="536.7848" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 2</text><text x="536.7848" y="229" font-size="11" font-weight="600" text-anchor="middle" fill="#2F2F2F">2.897 t</text>
-            <text x="536.7848" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 2.897</text><rect x="485.8184" y="113" width="93.84" height="18" rx="3" fill="#DA202C"></rect>
-            <text x="491.8184" y="126" font-size="10.5" font-weight="600" fill="#fff">etapa 2 de 3</text></g><g class="col" data-p="3" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 3: sem carga"><rect class="realce" x="362.88559999999995" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
+            <text x="536.7848" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 2.897</text></g><g class="col" data-p="3" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 3: sem carga"><rect class="realce" x="362.88559999999995" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="362.88559999999995" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="376.87888" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="374.87888" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="365.88559999999995" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="420.852" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="420.852" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 3</text><text x="420.852" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="4" tabindex="0" role="button" aria-pressed="false" aria-label="Porão 4: sem carga"><rect class="realce" x="246.95279999999997" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="0" style="transition:opacity .15s"></rect>
     <rect x="246.95279999999997" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="260.94608" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="258.94608" y="88" width="91.94624" height="6" rx="2" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect><rect x="249.95279999999997" y="109" width="109.9328" height="76" rx="2" fill="url(#hach)" stroke="#B0B0B0" stroke-width="1"></rect><text x="304.9192" y="151" font-size="10" text-anchor="middle" fill="#8A8C91">sem carga</text><text x="304.9192" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#2F2F2F" style="font-family:var(--trl-font-titulo)">PORÃO 4</text><text x="304.9192" y="229" font-size="11" text-anchor="middle" fill="#8A8C91">—</text></g><g class="col" data-p="5" tabindex="0" role="button" aria-pressed="true" aria-label="Porão 5: 2.110 t a bordo de 4.859 t"><rect class="realce" x="131.01999999999998" y="199" width="115.9328" height="56" rx="4" fill="#EAEAEA" opacity="1" style="transition:opacity .15s"></rect>
     <rect x="131.01999999999998" y="20" width="115.9328" height="246" fill="transparent"></rect><rect x="145.01327999999998" y="93" width="87.94624" height="11" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.2"></rect><rect x="193.383712" y="87" width="43.97312" height="5" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1"></rect>
-            <line x1="188.98639999999997" x2="188.98639999999997" y1="36" y2="78" stroke="#DA202C" stroke-width="1.5"></line>
+            <line x1="188.98639999999997" x2="188.98639999999997" y1="40" y2="78" stroke="#DA202C" stroke-width="1.5"></line>
             <path d="M179.98639999999997,78 h18 l-4,11 h-10 z" fill="#DA202C"></path>
             <path d="M179.98639999999997,78 l-3,9 M197.98639999999997,78 l3,9" stroke="#DA202C" stroke-width="1.5"></path><rect x="134.01999999999998" y="109" width="109.9328" height="76" rx="2" fill="#EAEAEA" stroke="#B0B0B0" stroke-width="1"></rect><path d="M134.01999999999998,185 L134.01999999999998,155.4929450504219 Q188.98639999999997,144.9929450504219 243.95279999999997,155.4929450504219 L243.95279999999997,185 Z" fill="#2F2F2F"></path><text x="188.98639999999997" y="168.9929450504219" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">43%</text><rect x="133.01999999999998" y="108" width="111.9328" height="78" rx="2.5" fill="none" stroke="#DA202C" stroke-width="2.5"></rect><text x="188.98639999999997" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="#DA202C" style="font-family:var(--trl-font-titulo)">PORÃO 5</text><text x="188.98639999999997" y="229" font-size="11" font-weight="600" text-anchor="middle" fill="#2F2F2F">2.110 t</text>
-            <text x="188.98639999999997" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 4.859</text><line x1="156.00655999999998" x2="221.96623999999997" y1="250" y2="250" stroke="#2F2F2F" stroke-width="2"></line></g><text x="792" y="264" font-size="9" text-anchor="end" fill="#8A8C91" letter-spacing=".08em">PROA · BOW ▸</text>
-        <text x="4" y="264" font-size="9" fill="#8A8C91" letter-spacing=".08em">◂ POPA · STERN</text></svg></div>
+            <text x="188.98639999999997" y="242" font-size="9.5" text-anchor="middle" fill="#8A8C91">de 4.859</text><line x1="156.00655999999998" x2="221.96623999999997" y1="250" y2="250" stroke="#2F2F2F" stroke-width="2"></line></g><path d="M587.7511999999999,104 L592.2511999999999,70 L597.2511999999999,70 L601.7511999999999,104 Z" fill="#2F2F2F"></path>
+          <rect x="586.7511999999999" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="594.7511999999999" x2="618.7511999999999" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
+            <line x1="594.7511999999999" x2="583.7511999999999" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M471.8184,104 L476.3184,70 L481.3184,70 L485.8184,104 Z" fill="#2F2F2F"></path>
+          <rect x="470.8184" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="478.8184" x2="502.8184" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
+            <line x1="478.8184" x2="467.8184" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M355.88559999999995,104 L360.38559999999995,70 L365.38559999999995,70 L369.88559999999995,104 Z" fill="#2F2F2F"></path>
+          <rect x="354.88559999999995" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="362.88559999999995" x2="386.88559999999995" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
+            <line x1="362.88559999999995" x2="351.88559999999995" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M239.95279999999997,104 L244.45279999999997,70 L249.45279999999997,70 L253.95279999999997,104 Z" fill="#2F2F2F"></path>
+          <rect x="238.95279999999997" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="246.95279999999997" x2="188.98639999999997" y1="65" y2="40" stroke="#2F2F2F" stroke-width="2"></line>
+            <line x1="246.95279999999997" x2="257.95279999999997" y1="65" y2="57" stroke="#2F2F2F" stroke-width="1.4"></line><text x="792" y="264" font-size="9" text-anchor="end" fill="#8A8C91" letter-spacing=".08em">PROA ▸</text>
+        <text x="4" y="264" font-size="9" fill="#8A8C91" letter-spacing=".08em">◂ POPA</text></svg></div>
     <div class="plano-leg" id="planoLeg">
     <span style="--c:var(--trl-chart-2)">Carga a bordo</span>
     <span style="--c:var(--trl-cinza-100);--b:var(--trl-cinza-300)">Descarregado</span>
@@ -434,41 +430,36 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
   <div id="conteudo">
     <div class="avanco">
       <div class="avanco-barra" id="avancoBarra"><i style="width: 35.4399%;"></i></div>
-      <div class="avanco-leg"><span id="avancoTxt">Avanço da operação · Progress 35,4%</span><span id="avancoTot">7.756,00 t</span></div>
+      <div class="avanco-leg"><span id="avancoTxt">Avanço da operação · 35,4%</span><span id="avancoTot">7.756,00 t</span></div>
     </div>
-
-    <section class="status">
-      <span class="rot">Status</span>
-      <div><p id="statusPT">Operação em andamento no porão 5 com 1 terno. Ritmo médio de 662 t/turno, acima das 417 t/turno necessárias para o término previsto. Plano de descarga na etapa 2 de 3 (porão 2): faltam 2.897,00 t para concluí-la. Atenção: o turno operou no porão 5, fora da ordem do plano.</p></div>
-    </section>
 
     <section class="secao" id="secPlano">
       <div class="secao-cab"><h2 id="tituloPlano">Plano de descarga</h2><span class="nota" id="notaPorao">Posição em 26/09/2026 19:00</span></div>
       <div class="plano-meta" id="planoMeta" style="margin-top:8px">Referência: <b>Discharging Plan Ver 1.0 · 16/09/2026</b></div>
       <div class="seq" id="seq" style="--n: 3;"><button type="button" class="etapa " data-p="5" aria-label="Etapa 1: porão 5, 2.400 t">
-      <div class="e-cab"><span class="e-n">Etapa 1 · Step 1</span><span class="e-st ok">Concluída · Done</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 1</span><span class="e-st ok">Concluída</span></div>
       <div class="e-v">Porão 5 · 2.400,00 t</div>
       <div class="e-d">Descarregar porão 5 até 50%</div>
       <div class="e-bar"><i style="width:100%"></i></div>
       <div class="e-p"><b>2.400,00 t</b> (100%)</div>
-      <div class="e-c">Calado previsto ao fim F 8,88 / A 9,19 m</div>
+      <div class="e-c">Calado previsto ao fim: F 8,88 / A 9,19 m</div>
     </button><button type="button" class="etapa atual" data-p="2" aria-label="Etapa 2: porão 2, 2.897 t">
-      <div class="e-cab"><span class="e-n">Etapa 2 · Step 2</span><span class="e-st and">Próxima · Next</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 2</span><span class="e-st and">Próxima</span></div>
       <div class="e-v">Porão 2 · 2.897,00 t</div>
       <div class="e-d">Descarregar porão 2 (100%)</div>
       <div class="e-bar"><i style="width:0%"></i></div>
       <div class="e-p"><b>0,00 t</b> (0%) · faltam 2.897,00 t</div>
-      <div class="e-c">Calado previsto ao fim F 8,67 / A 9,00 m</div>
+      <div class="e-c">Calado previsto ao fim: F 8,67 / A 9,00 m</div>
     </button><button type="button" class="etapa " data-p="5" aria-label="Etapa 3: porão 5, 2.459 t">
-      <div class="e-cab"><span class="e-n">Etapa 3 · Step 3</span><span class="e-st ag">Adiantada · Ahead</span></div>
+      <div class="e-cab"><span class="e-n">Etapa 3</span><span class="e-st ag">Adiantada</span></div>
       <div class="e-v">Porão 5 · 2.459,00 t</div>
       <div class="e-d">Concluir porão 5 (100%)</div>
       <div class="e-bar"><i style="width:14.181374542496961%"></i></div>
       <div class="e-p"><b>348,72 t</b> (14%) · faltam 2.110,28 t</div>
-      <div class="e-c">Calado previsto ao fim F 8,24 / A 8,39 m</div>
+      <div class="e-c">Calado previsto ao fim: F 8,24 / A 8,39 m</div>
     </button></div>
       <div class="detalhe" id="detalhe"><div class="det-cab"><h3>Porão 5</h3><span class="dica-sel">Toque em outro porão no desenho para ver o detalhe</span></div>
-    <div style="font-size:12px;margin-top:2px;color:var(--trl-accent);font-weight:600">Em operação no turno </div><div class="det-num">
+    <div style="font-size:12px;margin-top:2px;color:var(--trl-accent);font-weight:600">Em operação no turno</div><div class="det-num">
       <div><span class="rot">Manifesto</span><div class="v num">4.859,00 t</div></div>
       <div><span class="rot">Descarregado</span><div class="v num">2.748,72 t</div></div>
       <div><span class="rot">A bordo</span><div class="v num">2.110,28 t</div></div>
@@ -528,7 +519,7 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
       <tr><td class="h">13:00</td><td class="h">13:25</td><td class="n">0h25</td><td class="col-opc">1º / 5</td>
         <td>Aguardando estivadores</td></tr><tr><td class="h">13:25</td><td class="h">13:40</td><td class="n">0h15</td><td class="col-opc">1º / 5</td>
         <td>DDS <span class="tag">(programada)</span></td></tr>
-      </tbody><tfoot><tr><td colspan="2">Total parado · Total stoppage</td><td class="n">0h40</td><td class="col-opc"></td><td></td></tr></tfoot></table></div></div>
+      </tbody><tfoot><tr><td colspan="2">Total parado</td><td class="n">0h40</td><td class="col-opc"></td><td></td></tr></tfoot></table></div></div>
     </section>
 
     <section class="secao">
@@ -539,17 +530,27 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
         <span style="--c:var(--trl-chart-3)">Cliente/Transporte</span>
         <span style="--c:var(--trl-chart-4)">Outros</span>
       </div>
-      <p class="pareto-nota" id="paretoCallout"></p>
-      <div class="rolagem pareto-graf"><div id="paretoGrafico"></div></div>
-      <div class="rolagem"><table class="t" id="tabAcum"><thead><tr><th><span class="rot">Motivo</span></th><th class="n col-opc"><span class="rot">Ocorr.</span></th><th class="n"><span class="rot">Tempo</span></th><th class="n"><span class="rot">%</span></th></tr></thead><tbody>
-    <tr><td>Aguardando implemento (GRAB)</td><td class="n col-opc">1</td><td class="n">6h00</td>
-      <td class="n"><span class="celbar">46%<s><u class="abaixo" style="width:46.15384615384615%"></u></s></span></td></tr><tr><td>Aguardando autos</td><td class="n col-opc">3</td><td class="n">2h55</td>
-      <td class="n"><span class="celbar">22%<s><u class="abaixo" style="width:22.435897435897438%"></u></s></span></td></tr><tr><td>Problema no guincho</td><td class="n col-opc">1</td><td class="n">1h20</td>
-      <td class="n"><span class="celbar">10%<s><u class="abaixo" style="width:10.256410256410255%"></u></s></span></td></tr><tr><td>DDS <span class="tag">(programada)</span></td><td class="n col-opc">5</td><td class="n">1h10</td>
-      <td class="n"><span class="celbar">9%<s><u class="" style="width:8.974358974358974%"></u></s></span></td></tr><tr><td>Aguardando estivadores</td><td class="n col-opc">3</td><td class="n">1h00</td>
-      <td class="n"><span class="celbar">8%<s><u class="abaixo" style="width:7.6923076923076925%"></u></s></span></td></tr><tr><td>Embarque de escavadeira</td><td class="n col-opc">1</td><td class="n">0h35</td>
-      <td class="n"><span class="celbar">4%<s><u class="abaixo" style="width:4.487179487179487%"></u></s></span></td></tr>
-    </tbody><tfoot><tr><td>Total</td><td class="n col-opc">14</td><td class="n">13h00</td><td class="n">100%</td></tr></tfoot></table></div>
+      <div class="rolagem"><table class="t" id="tabAcum"><thead><tr><th><span class="rot">Motivo</span></th><th><span class="rot">Responsável</span></th><th class="n col-opc"><span class="rot">Ocorr.</span></th><th class="n"><span class="rot">Tempo</span></th><th class="n"><span class="rot">%</span></th><th class="n"><span class="rot">% acum.</span></th></tr></thead><tbody>
+    <tr><td>Aguardando implemento (GRAB)</td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">6h00</td>
+      <td class="n"><span class="celbar">46%<s><u class="abaixo" style="width:46.15384615384615%"></u></s></span></td>
+      <td class="n">46%</td></tr><tr><td>Aguardando autos</td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">3</td><td class="n">2h55</td>
+      <td class="n"><span class="celbar">22%<s><u class="abaixo" style="width:22.435897435897438%"></u></s></span></td>
+      <td class="n">69%</td></tr><tr><td>Problema no guincho</td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">1h20</td>
+      <td class="n"><span class="celbar">10%<s><u class="abaixo" style="width:10.256410256410255%"></u></s></span></td>
+      <td class="n">79%</td></tr><tr><td>DDS <span class="tag">(programada)</span></td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">5</td><td class="n">1h10</td>
+      <td class="n"><span class="celbar">9%<s><u class="" style="width:8.974358974358974%"></u></s></span></td>
+      <td class="n">88%</td></tr><tr><td>Aguardando estivadores</td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">3</td><td class="n">1h00</td>
+      <td class="n"><span class="celbar">8%<s><u class="abaixo" style="width:7.6923076923076925%"></u></s></span></td>
+      <td class="n">96%</td></tr><tr><td>Embarque de escavadeira</td>
+      <td><span class="resp-badge resp-nc">Não classificado</span></td><td class="n col-opc">1</td><td class="n">0h35</td>
+      <td class="n"><span class="celbar">4%<s><u class="abaixo" style="width:4.487179487179487%"></u></s></span></td>
+      <td class="n">100%</td></tr>
+    </tbody><tfoot><tr><td>Total</td><td></td><td class="n col-opc">14</td><td class="n">13h00</td><td class="n">100%</td><td class="n"></td></tr></tfoot></table></div>
     </section>
 
     <section class="obs" id="obsBloco" style="display: none;">
@@ -558,24 +559,16 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
     </section>
   </div>
 
-  <section class="faixa" id="faixa"></section>
-
-  <details class="log dados-op">
-    <summary><span>Dados da operação<span class="dados-resumo" id="dadosResumo"></span></span><span class="nota" id="docRef">PL_SHIP_003 · Revisão 00</span></summary>
-    <div class="conteudo">
-    <div class="particulares" id="particulares"><div><span class="rot">Carga</span><div class="v">Cloreto de potássio</div></div><div><span class="rot">Operação</span><div class="v">Descarga · Discharge</div></div><div><span class="rot">Manifesto</span><div class="v">7.756,00 t</div></div><div><span class="rot">Prancha padrão</span><div class="v">700 t/terno/turno</div></div><div><span class="rot">Atracação</span><div class="v">25/09/2026 04:40</div></div><div><span class="rot">Início da operação</span><div class="v">25/09/2026 15:05</div></div><div><span class="rot">Término previsto</span><div class="v">29/09/2026 19:00</div></div><div><span class="rot">Berço</span><div class="v">—</div></div><div><span class="rot">Viagem</span><div class="v">2605</div></div><div><span class="rot">Origem</span><div class="v">Thunder Bay, Canadá</div></div><div><span class="rot">Destino</span><div class="v">Rio de Janeiro, Brasil</div></div><div><span class="rot">Calado na chegada</span><div class="v">F 8,78 · A 9,89 m</div></div></div>
-    </div>
-  </details>
-
-  <details class="log">
-    <summary><span>Registro completo de paralisações</span></summary>
-    <div class="conteudo rolagem" id="log"><table class="t"><thead><tr><th><span class="rot">Horário</span></th><th class="n"><span class="rot">Duração</span></th><th class="col-opc"><span class="rot">Terno/Porão</span></th><th><span class="rot">Descrição</span></th></tr></thead>
-    <tbody><tr class="sep"><td colspan="4">sex 25/09</td></tr><tr><td class="h">07:00–13:00</td><td class="n">6h00</td><td class="col-opc">1º / 5</td><td>Aguardando implemento (GRAB)</td></tr><tr><td class="h">13:00–13:20</td><td class="n">0h20</td><td class="col-opc">1º / 5</td><td>Aguardando estivadores</td></tr><tr><td class="h">13:20–13:30</td><td class="n">0h10</td><td class="col-opc">1º / 5</td><td>DDS</td></tr><tr><td class="h">17:30–19:00</td><td class="n">1h30</td><td class="col-opc">1º / 5</td><td>Aguardando autos</td></tr><tr><td class="h">19:00–19:15</td><td class="n">0h15</td><td class="col-opc">1º / 5</td><td>Aguardando estivadores</td></tr><tr><td class="h">19:15–19:30</td><td class="n">0h15</td><td class="col-opc">1º / 5</td><td>DDS</td></tr><tr><td class="h">22:40–00:00</td><td class="n">1h20</td><td class="col-opc">1º / 5</td><td>Problema no guincho</td></tr><tr class="sep"><td colspan="4">sáb 26/09</td></tr><tr><td class="h">01:00–01:15</td><td class="n">0h15</td><td class="col-opc">1º / 5</td><td>DDS</td></tr><tr><td class="h">01:15–01:50</td><td class="n">0h35</td><td class="col-opc">1º / 5</td><td>Embarque de escavadeira</td></tr><tr><td class="h">06:20–07:00</td><td class="n">0h40</td><td class="col-opc">1º / 5</td><td>Aguardando autos</td></tr><tr><td class="h">07:20–07:35</td><td class="n">0h15</td><td class="col-opc">1º / 5</td><td>DDS</td></tr><tr><td class="h">12:15–13:00</td><td class="n">0h45</td><td class="col-opc">1º / 5</td><td>Aguardando autos</td></tr><tr><td class="h">13:00–13:25</td><td class="n">0h25</td><td class="col-opc">1º / 5</td><td>Aguardando estivadores</td></tr><tr><td class="h">13:25–13:40</td><td class="n">0h15</td><td class="col-opc">1º / 5</td><td>DDS</td></tr></tbody><tfoot><tr><td>Total</td><td class="n">13h00</td><td class="col-opc"></td><td>14 paralisações</td></tr></tfoot></table></div>
-  </details>
+  <section class="faixa" id="faixa">
+    <span><span class="rot">Produção do turno</span><b class="num">782,34 t</b> <span class="ok">(112% da meta)</span></span>
+    <span><span class="rot">Acumulado</span><b class="num">2.748,72 t</b> <i>(35,4%)</i></span>
+    <span><span class="rot">Saldo a bordo</span><b class="num">5.007,28 t</b></span>
+    <span><span class="rot">Ritmo médio</span><b class="num">662 t/turno</b></span></section>
 
   <footer class="rodape">
-    <span class="rodape-linhas"><span id="rodape">LAKE ST. CLAIR · Boletim 06 emitido em 26/09/2026 19:00</span><span class="rodape-direitos" id="rodapeDireitos">© 2026 Triunfo Logística — Todos os direitos reservados.</span></span>
+    <span class="rodape-linhas"><span class="rodape-direitos" id="rodapeDireitos">© 2026 Triunfo Logística — Todos os direitos reservados.</span></span>
     <span class="acoes" style="margin:0">
+      
       <button class="botao" type="button" onclick="window.print()">Salvar PDF</button>
     </span>
   </footer>
@@ -840,7 +833,8 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
    "19:00"
   ]
  },
- "lidoEm": "2026-09-26T23:45"
+ "lidoEm": "2026-09-26T23:45",
+ "responsaveis": {}
 }</script>
 <script>
 /* html2canvas 1.4.1 (MIT License) — vendorizado para gerar o PNG do WhatsApp offline */
@@ -922,42 +916,6 @@ function construirModelo(){
 }
 construirModelo();
 
-function svgPareto(linhas){
-  const n = linhas.length;
-  const W = Math.max(660, 165 + n * 84), padT = 22, padB = 96, padL = 165, padR = 34;
-  const H = 300, plotH = H - padT - padB, plotB = padT + plotH;
-  const colW = (W - padL - padR) / n, barW = Math.min(56, colW * .58);
-  const maxM = Math.max(1, ...linhas.map(r => r.v.m));
-  const escalaY = (padTop = padT) => v => padTop + plotH - Math.min(1, v / maxM) * plotH;
-  const yVal = escalaY();
-  const yPct = p => padT + plotH - Math.min(100, p) / 100 * plotH;
-  const cx = i => padL + colW * (i + .5);
-
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Gráfico de Pareto dos motivos de parada, com participação individual e percentual acumulado">`;
-  /* sem grade de fundo — o valor já está escrito em cada barra e no ponto do acumulado */
-  /* linha de corte 80% (referência do acumulado, não é grade) */
-  const y80 = yPct(80);
-  s += `<line x1="${padL}" x2="${W - padR}" y1="${y80}" y2="${y80}" stroke="var(--trl-fg-subtle)" stroke-width="1" stroke-dasharray="2 3"/>
-        <text x="${W - padR + 3}" y="${y80 + 4}" font-size="10" font-weight="700" fill="var(--trl-fg-muted)">80%</text>`;
-  /* barras verticais, uma por motivo, ordenadas por participação (maior à esquerda) ·
-     Pareto clássico: barras pretas (tempo parado), linha vermelha (% acumulado) */
-  linhas.forEach((r, i) => {
-    const x = cx(i) - barW / 2, y = yVal(r.v.m), h = plotB - y;
-    s += `<rect x="${x}" y="${y}" width="${barW}" height="${Math.max(1, h)}" rx="3" fill="var(--trl-texto)"/>
-          <text x="${cx(i)}" y="${y - 8}" font-size="11" font-weight="700" text-anchor="middle" fill="var(--trl-fg)">${hm(r.v.m)}</text>
-          <text x="${cx(i)}" y="${plotB + 16}" font-size="10.5" font-weight="700" text-anchor="end" fill="var(--trl-fg-muted)" transform="rotate(-38 ${cx(i)} ${plotB + 16})">${esc(r.rotulo)}</text>`;
-  });
-  /* linha do percentual acumulado, em vermelho (contraste com as barras pretas) */
-  const pts = linhas.map((r, i) => [cx(i), yPct(r.pctAc)]);
-  s += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="var(--trl-vermelho)" stroke-width="1.8"/>`;
-  pts.forEach((p, i) => {
-    s += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--trl-bg)" stroke="var(--trl-vermelho)" stroke-width="1.8"/>
-          <text x="${p[0]}" y="${p[1] - 10}" font-size="10.5" font-weight="700" text-anchor="middle" fill="var(--trl-vermelho)">${t0(linhas[i].pctAc)}%</text>`;
-  });
-  s += `</svg>`;
-  return s;
-}
-
 function render(){
   const vazio = !turnos.length;
   $('conteudo').hidden = vazio; $('semTurnos').hidden = !vazio;
@@ -1000,28 +958,6 @@ function render(){
   $('avancoBarra').querySelector('i').style.width = (t.acum / manifesto * 100) + '%';
   $('avancoTxt').textContent = `Avanço da operação · ${p1(t.acum / manifesto * 100)}`;
   $('avancoTot').textContent = `${t2(manifesto)} t`;
-
-  /* status (texto automático bilíngue, resumido em formato de linha só) */
-  const ativos = Object.entries(t.prod).filter(([, [, b]]) => b > 0).map(([k]) => k);
-  const poroesTagPT = ativos.length ? `Porão${ativos.length > 1 ? 's' : ''} ${ativos.join(' e ')}` : '—';
-  if (!prod.length){
-    $('statusPT').textContent = 'Sem produção registrada ainda.';
-  } else if (t.ton > 0){
-    $('statusPT').textContent = `${poroesTagPT} · ${t.ternos} terno${t.ternos > 1 ? 's' : ''} · ${t0(ritmo)} t/turno · ${noPrazo ? 'no ritmo do ETC' : 'abaixo do ritmo do ETC'}`;
-  } else {
-    $('statusPT').textContent = `Turno sem produção · ${t0(ritmo)} t/turno (média recente)`;
-  }
-  if (DADOS.plano && prod.length){
-    const pr = {}; ts.forEach(x => Object.entries(x.prod).forEach(([k, [, b]]) => pr[k] = (pr[k] || 0) + b));
-    const sq = calcSequencia(pr), at = sq.find(e => e.estado !== 'ok');
-    if (at){
-      $('statusPT').textContent += ` · Etapa ${at.n}/${sq.length} (porão ${at.porao}): faltam ${t2(at.ton - at.feito)} t`;
-      const fora = ativos.filter(k => +k !== at.porao);
-      if (fora.length && !ativos.includes(String(at.porao))){
-        $('statusPT').textContent += ` · fora da ordem do plano`;
-      }
-    }
-  }
 
   /* produção por turno */
   let linhas = '';
@@ -1080,19 +1016,6 @@ function render(){
     const pct = totAc ? v.m / totAc * 100 : 0, pctAc = totAc ? acumM / totAc * 100 : 0;
     return { motivo:k, rotulo:k.length > 24 ? k.slice(0, 23) + '…' : k, v, pct, pctAc, respKey:DADOS.responsaveis[k] || '' };
   });
-  const TOPN = 6;
-  const linhasGrafico = linhasPareto.slice(0, TOPN);
-  const restoPareto = linhasPareto.slice(TOPN);
-  if (restoPareto.length){
-    const m = restoPareto.reduce((a, x) => a + x.v.m, 0), n = restoPareto.reduce((a, x) => a + x.v.n, 0);
-    linhasGrafico.push({ motivo:'', rotulo:`Demais motivos (${restoPareto.length})`, v:{ n, m, p:{ tipo:'' } }, pct:totAc ? m / totAc * 100 : 0, pctAc:100, respKey:'' });
-  }
-  if (linhasPareto.length){
-    $('paretoGrafico').innerHTML = svgPareto(linhasGrafico);
-    const corte = linhasPareto.findIndex(r => r.pctAc >= 80);
-    $('paretoCallout').textContent = corte >= 0 ? `Os ${corte + 1} principais motivos concentram ${t0(linhasPareto[corte].pctAc)}% do tempo parado.` : '';
-  } else { $('paretoGrafico').innerHTML = ''; $('paretoCallout').textContent = ''; }
-
   $('tabAcum').innerHTML = lista.length ? `<thead><tr><th>${rot('Motivo', 'Reason')}</th><th>${rot('Responsável', 'Responsibility')}</th><th class="n col-opc">${rot('Ocorr.', 'Events')}</th><th class="n">${rot('Tempo', 'Time')}</th><th class="n">${rot('%', '%')}</th><th class="n">${rot('% acum.', 'Cum. %')}</th></tr></thead><tbody>
     ${linhasPareto.map(ln => `<tr><td>${esc(ln.motivo)}${ln.v.p.tipo === 'programada' ? ' <span class="tag">(programada)</span>' : ''}</td>
       <td>${badgeResp(ln.respKey)}</td><td class="n col-opc">${ln.v.n}</td><td class="n">${hm(ln.v.m)}</td>
@@ -1100,7 +1023,6 @@ function render(){
       <td class="n">${t0(ln.pctAc)}%</td></tr>`).join('')}
     </tbody><tfoot><tr><td>Total</td><td></td><td class="n col-opc">${ate.length}</td><td class="n">${hm(totAc)}</td><td class="n">100%</td><td class="n"></td></tr></tfoot>` : '';
 
-  $('rodape').textContent = `${DADOS.navio} · Boletim ${pad(sel + 1)} emitido em ${dhs(t.fim)}`;
   $('rodapeDireitos').textContent = `© ${new Date().getFullYear()} Triunfo Logística — Todos os direitos reservados.`;
 }
 
@@ -1339,31 +1261,13 @@ function renderFixos(){
   const P = DADOS.plano || {};
   $('heroMeta').innerHTML = [`<b>${esc(DADOS.carga[0] || '—')}</b>`, `${esc(DADOS.operacao[0])}`,
     `${t2(manifesto)} t`, P.viagem ? `viagem ${esc(P.viagem)}` : '', P.origem || P.destino ? `${esc(P.origem || '—')} → ${esc(P.destino || '—')}` : ''].filter(Boolean).join(' · ');
-  $('docRef').textContent = DADOS.documento;
-  const f = [['Carga', 'Cargo', `${DADOS.carga[0]}`], ['Operação', 'Operation', `${DADOS.operacao[0]}`],
-             ['Manifesto', 'Manifest', `${t2(manifesto)} t`], ['Prancha padrão', 'Standard rate', `${t0(DADOS.pranchaPadrao)} t/terno/turno`],
-             ['Atracação', 'Berthed', dhsS(DADOS.atracacao)], ['Início da operação', 'Commenced', dhsS(DADOS.inicio)],
-             ['Término previsto', 'ETC', dhsS(DADOS.previsaoTermino)], ['Berço', 'Berth', DADOS.berco || '—']];
-  if (DADOS.plano && DADOS.plano.caladoChegada) f.push(['Viagem', 'Voyage', DADOS.plano.viagem], ['Origem', 'Load port', DADOS.plano.origem], ['Destino', 'Discharge port', DADOS.plano.destino], ['Calado na chegada', 'Arrival draught', `F ${DADOS.plano.caladoChegada[0].toFixed(2).replace('.', ',')} · A ${DADOS.plano.caladoChegada[1].toFixed(2).replace('.', ',')} m`]);
-  $('particulares').innerHTML = f.map(([a, b, v]) => `<div>${rot(a, b)}<div class="v">${esc(v)}</div></div>`).join('');
-  $('dadosResumo').textContent = [DADOS.carga[0], `${t2(manifesto)} t`, `Berço ${DADOS.berco || '—'}`, dOk(DADOS.previsaoTermino) ? `ETC ${dhsS(DADOS.previsaoTermino)}` : ''].filter(Boolean).join(' · ');
   const temObs = DADOS.observacoes && DADOS.observacoes[0];
   $('obsBloco').style.display = temObs ? '' : 'none';
   if (temObs) $('obs').innerHTML = `${esc(DADOS.observacoes[0])}`;
-  let linhas = '', diaAnt = null, tot = 0;
-  paradas.forEach(p => {
-    const d = `${DIAS[p.ini.getDay()]} ${dc(p.ini)}`;
-    if (d !== diaAnt){ linhas += `<tr class="sep"><td colspan="4">${d}</td></tr>`; diaAnt = d; }
-    tot += p.min;
-    linhas += `<tr><td class="h">${hh(p.ini)}–${hh(p.fim)}</td><td class="n">${hm(p.min)}</td><td class="col-opc">${p.terno}º / ${p.porao}</td><td>${esc(p.motivo)}</td></tr>`;
-  });
-  $('log').innerHTML = `<table class="t"><thead><tr><th>${rot('Horário', 'Time')}</th><th class="n">${rot('Duração', 'Duration')}</th><th class="col-opc">${rot('Terno/Porão', 'Gang/Hold')}</th><th>${rot('Descrição', 'Description')}</th></tr></thead>
-    <tbody>${linhas}</tbody><tfoot><tr><td>Total</td><td class="n">${hm(tot)}</td><td class="col-opc"></td><td>${paradas.length} paralisações</td></tr></tfoot></table>`;
 }
 
 $('ant').onclick = () => { if (sel > 0) { sel--; render(); } };
 $('prox').onclick = () => { if (sel < turnos.length - 1) { sel++; render(); } };
-addEventListener('beforeprint', () => document.querySelectorAll('details.log').forEach(d => d.open = true));
 
 /* =====================================================================
    FONTE DE DADOS: PLANILHA GOOGLE DA EQUIPE
@@ -1627,10 +1531,9 @@ renderFixos(); render();
     const ativos = Object.entries(t.prod).filter(([, [, v]]) => v > 0).map(([k]) => k);
     const pr = {}; turnos.forEach(x => Object.entries(x.prod).forEach(([k, [, b]]) => pr[k] = (pr[k] || 0) + b));
     const sq = calcSequencia(pr), at = sq.find(e => e.estado !== 'ok');
-    const statusTxt = !prod.length ? 'Aguardando produção.' :
-      [`${ativos.length ? `Porão${ativos.length > 1 ? 's' : ''} ${ativos.join(' e ')} · ` : ''}${t0(ritmo)} t/turno`,
-       ok ? 'no ritmo do ETC' : 'abaixo do ritmo do ETC',
-       at ? `etapa ${at.n}/${sq.length} (porão ${at.porao}): faltam ${t2(at.ton - at.feito)} t` : ''].filter(Boolean).join(' · ');
+    const par = paradas.filter(x => x.fim > t.ini && x.ini < t.fim).map(x => ({ ...x, m:(Math.min(x.fim, t.fim) - Math.max(x.ini, t.ini)) / 60000 }));
+    const parMin = par.reduce((a, x) => a + x.m, 0);
+    const planoTxt = at ? `Etapa ${at.n}/${sq.length} · porão ${at.porao} · faltam ${t2(at.ton - at.feito)} t` : (sq.length ? 'Concluído' : '—');
 
     const cart = document.createElement('div');
     cart.className = 'cartao-zap';
@@ -1653,6 +1556,12 @@ renderFixos(); render();
         <div>${rot('Ritmo médio')}<b>${ritmo ? `${t0(ritmo)} t/turno` : '—'}</b></div>
         <div>${rot('Término previsto')}<b>${dOk(DADOS.previsaoTermino) ? `${dc(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—'}</b></div>
       </div>
+      <div class="cz-linha">
+        <div>${rot(descarga() ? 'Plano de descarga' : 'Plano de carga')}<b>${esc(planoTxt)}</b></div>
+        <div>${rot('Porão em operação')}<b>${ativos.length ? esc(ativos.join(', ')) : '—'}</b></div>
+        <div>${rot('Paralisações no turno')}<b>${par.length ? `${hm(parMin)} (${par.length})` : 'Nenhuma'}</b></div>
+      </div>
+      ${DADOS.observacoes && DADOS.observacoes[0] ? `<div class="cz-status">Obs.: ${esc(DADOS.observacoes[0])}</div>` : ''}
       <div class="cz-rodape"><span>Triunfo Logística${DADOS.documento ? ` · ${esc(DADOS.documento)}` : ''}</span><span>Gerado em ${dc(new Date())} ${hh(new Date())}</span></div>`;
     /* clona o símbolo do logo direto (o <use href="#…"> não é capturado pelo html2canvas) */
     const logoOrig = document.getElementById('trl-logo-h');
