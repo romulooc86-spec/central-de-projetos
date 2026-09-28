@@ -1688,7 +1688,7 @@ renderFixos(); render();
     if (prancha){
       const yp = yv(prancha);
       graf += `<line x1="10" x2="${W - 6}" y1="${yp}" y2="${yp}" stroke="${CORES.verm}" stroke-width="1.5" stroke-dasharray="5 4"/>
-        <text x="${W - 6}" y="${yp - 5}" font-size="11" text-anchor="end" fill="${CORES.verm}">prancha ${t0(prancha)} t</text>`;
+        <text x="12" y="${yp - 6}" font-size="11" text-anchor="start" fill="${CORES.verm}" stroke="#fff" stroke-width="3" paint-order="stroke">prancha ${t0(prancha)} t</text>`;
     }
     graf += `</svg>`;
 
