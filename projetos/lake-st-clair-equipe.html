@@ -87,6 +87,8 @@ b { font-weight:600; }
 .pe-navio-id { display:flex; align-items:baseline; gap:24px; }
 .pe-navio-id h1 { font-family:var(--trl-font-titulo); font-weight:700; font-size:44px; line-height:1; letter-spacing:.01em; white-space:nowrap; }
 .pe-meta { font-size:17px; color:var(--trl-fg-muted); }
+.pe-ficha { margin-left:auto; display:flex; gap:22px; font-size:15px; color:var(--trl-fg-muted); white-space:nowrap; }
+.pe-ficha em { font-style:normal; font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-subtle); margin-right:7px; }
 .pe-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
 .pe-kpi { background:var(--trl-cinza-100); border-radius:8px; padding:14px 20px 16px; display:flex; flex-direction:column; gap:2px; }
 .pe-kpi .rot { font-size:13px; }
@@ -355,6 +357,11 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 .mp-bt.prim { background:var(--trl-accent); border-color:var(--trl-accent); color:#fff; }
 .mp-msg { font-size:13px; color:var(--trl-fg-muted); padding-top:12px; min-height:1.4em; }
 @media (max-width:640px) { .menu-btn { top:14px; right:14px; } .cab-dir { padding-right:0; } }
+.ficha { display:flex; flex-wrap:wrap; gap:4px 18px; margin-top:8px; font-size:12px; color:var(--trl-fg-muted); font-variant-numeric:tabular-nums; }
+.ficha span { white-space:nowrap; }
+.ficha em { font-style:normal; font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-subtle); margin-right:6px; }
+a.mp-item { display:block; text-decoration:none; }
+.mp-nota { font-size:13px; color:var(--trl-fg-subtle); padding:4px 10px; }
 .menu-painel[hidden], .menu-fundo[hidden], #secLinha[hidden] { display:none !important; }
 @media print { .menu-btn, .menu-painel, .menu-fundo { display:none !important; } }
 
@@ -1062,7 +1069,7 @@ const NAVIO_EMBUTIDO = { id:'embutido', nome:String(DADOS.navio || 'NAVIO'), pla
 /* configuração do navio salva no navegador: o site é estático, então sem isto
    "Aplicar configuração" (berço, plano, responsáveis das paradas...) se perdia ao recarregar */
 const CHAVE_CFG = 'trl-boletim-cfg:' + String(DADOS.navio || '').trim().toUpperCase();
-const CAMPOS_CFG = ['tipo', 'operacao', 'berco', 'responsaveis', 'plano', 'fonte'];
+const CAMPOS_CFG = ['tipo', 'operacao', 'berco', 'nor', 'responsaveis', 'plano', 'fonte'];
 function salvarConfigLocal(){
   try {
     const c = {}; CAMPOS_CFG.forEach(k => c[k] = DADOS[k]);
@@ -1486,9 +1493,14 @@ addEventListener('resize', () => { if (estadoPlano) renderNavio(); });
 function renderFixos(){
   $('navio').textContent = DADOS.navio;
   const P = DADOS.plano || {};
-  $('heroMeta').innerHTML = [`<b>${esc(DADOS.carga[0] || '—')}</b>`, `${esc(DADOS.operacao[0])}`,
-    DADOS.berco ? `atracado em <b>${esc(DADOS.berco)}</b>` : '', dOk(DADOS.atracacao) ? `atracação ${dm(D(DADOS.atracacao))} ${hh(D(DADOS.atracacao))}` : '',
-    `${t2(manifesto)} t`, P.viagem ? `viagem ${esc(P.viagem)}` : '', P.origem || P.destino ? `${esc(P.origem || '—')} → ${esc(P.destino || '—')}` : ''].filter(Boolean).join(' · ');
+  $('heroMeta').innerHTML = [`<b>${esc(DADOS.carga[0] || '—')}</b>`, `${esc(DADOS.operacao[0])}`, `${t2(manifesto)} t`].filter(Boolean).join(' · ');
+  /* ficha discreta: berço, NOR, atracação e início da operação */
+  const quandoF = s => dOk(s) ? `${dm(D(s))}, ${hh(D(s))}` : '';
+  const ficha = [['Berço', esc(DADOS.berco || '')], ['NOR', quandoF(DADOS.nor)], ['Atracação', quandoF(DADOS.atracacao)], ['Início da operação', quandoF(DADOS.inicio)]].filter(([, v]) => v);
+  let fx = $('heroFicha');
+  if (!fx){ fx = document.createElement('div'); fx.id = 'heroFicha'; fx.className = 'ficha'; $('heroMeta').after(fx); }
+  fx.innerHTML = ficha.map(([r, v]) => `<span><em>${r}</em>${v}</span>`).join('');
+  fx.hidden = !ficha.length;
   const temObs = DADOS.observacoes && DADOS.observacoes[0];
   $('obsBloco').style.display = temObs ? '' : 'none';
   if (temObs) $('obs').innerHTML = `${esc(DADOS.observacoes[0])}`;
@@ -1872,7 +1884,7 @@ renderFixos(); render();
           <div class="pe-data">${dm(t.ini)} ${t.ini.getFullYear()} <span>· Turno ${t.faixa}</span></div>
         </div>
       </header>
-      <div class="pe-navio-id"><h1>${esc(DADOS.navio)}</h1><div class="pe-meta">${$('heroMeta') ? $('heroMeta').innerHTML : ''}</div></div>
+      <div class="pe-navio-id"><h1>${esc(DADOS.navio)}</h1><div class="pe-meta">${$('heroMeta') ? $('heroMeta').innerHTML : ''}</div><div class="pe-ficha">${$('heroFicha') && !$('heroFicha').hidden ? $('heroFicha').innerHTML : ''}</div></div>
       <div class="pe-kpis">
         <div class="pe-kpi">${rot(descarga() ? 'Total descarregado' : 'Total carregado')}<b>${t2(t.acum)} t</b><span>${p1(t.acum / manifesto * 100)} do manifesto de ${t2(manifesto)} t</span></div>
         <div class="pe-kpi saldo">${rot(descarga() ? 'Saldo a bordo' : 'Saldo a embarcar')}<b>${t2(saldo)} t</b><span>${p1(saldo / manifesto * 100)} restante</span></div>
@@ -2002,14 +2014,16 @@ renderFixos(); render();
         <p><b>${esc(DADOS.navio)}</b> · ${esc(DADOS.carga[0] || '—')} · ${t2(manifesto)} t · prancha ${t0(DADOS.pranchaPadrao)} t/terno/turno ·
           ${turnos.length} turno(s) · ${paradas.length} paralisação(ões) · porões com carga: ${hs.map(k => `P${k} ${t0(DADOS.manifesto[k])} t`).join(', ') || '—'}</p>
       </div>
-      <h3>2 · Operação</h3>
+      <h3 id="edSecNavio">2 · Dados do navio e atracação</h3>
       <div class="form">
         <label>Tipo<select id="nTipo"><option value="descarga" ${descarga() ? 'selected' : ''}>Descarga</option><option value="carga" ${!descarga() ? 'selected' : ''}>Carga (embarque)</option></select></label>
         <label class="largo">Local de atracação (terminal / berço)<input id="nBerco" value="${esc(DADOS.berco || '')}" placeholder="Ex.: Terminal Multirio · Berço 1"></label>
+        <label>NOR – aviso de prontidão (data e hora)<input type="datetime-local" id="nNor" value="${esc(DADOS.nor || '')}"></label>
+        <p class="ed-ajuda" style="grid-column:1/-1;margin:0">Atracação e início da operação vêm da planilha (linha “ATRACAÇÃO / INÍCIO”).</p>
         <label class="largo">Carga em inglês<input id="nCargaEN" value="${esc(DADOS.carga[1] || '')}" placeholder="Ex.: Potassium chloride (KCl)"></label>
         <label class="largo" style="grid-column:1/-1">Observação em inglês (a observação em português vem da planilha)<input id="nObsEN" value="${esc((DADOS.observacoes || [])[1] || '')}"></label>
       </div>
-      <h3>3 · Plano do navio (${descarga() ? 'Discharging' : 'Loading'} Plan)</h3>
+      <h3 id="edSecPlano">3 · Plano do navio (${descarga() ? 'Discharging' : 'Loading'} Plan)</h3>
       <p class="ed-ajuda">Copie do plano assinado pelo navio: a ordem das etapas, o porão e a tonelagem de cada uma.</p>
       <div class="form">
         <label class="largo">Referência do plano<input id="nRef" value="${esc(P.referencia || '')}" placeholder="Ex.: Discharging Plan Ver 1.0 · 16/09/2026"></label>
@@ -2022,7 +2036,7 @@ renderFixos(); render();
       <table class="lista" style="margin-top:12px"><thead><tr><th>Etapa</th><th>Porão</th><th>Toneladas</th><th>Descrição (PT)</th><th>Descrição (EN)</th><th>Calado F / A</th><th></th></tr></thead>
         <tbody id="nSeq">${(P.sequencia || []).map((e, i) => linhaEtapa(e, i)).join('')}</tbody></table>
       <div class="acoes"><button class="btn" type="button" id="nAddEtapa">+ Adicionar etapa</button><span class="ed-ajuda" style="margin:0" id="nSomaSeq"></span></div>
-      <h3>4 · Responsabilidade das paradas</h3>
+      <h3 id="edSecResp">4 · Responsabilidade das paradas</h3>
       <p class="ed-ajuda">Classifique cada motivo de parada já registrado na planilha. Isso colore o gráfico de Pareto das paralisações e a coluna “Responsável” na tabela.</p>
       <table class="lista" id="nResp"><thead><tr><th>Motivo</th><th style="width:190px">Responsável</th></tr></thead>
         <tbody>${motivosUnicos().map((m, i) => linhaResp(m, i)).join('') || '<tr><td colspan="2" class="ed-ajuda" style="padding:8px 0">Nenhuma paralisação lida da planilha ainda.</td></tr>'}</tbody></table>
@@ -2069,7 +2083,7 @@ renderFixos(); render();
         if (v) DADOS.responsaveis[r.dataset.m] = v; else delete DADOS.responsaveis[r.dataset.m];
       });
       const tipo = val('nTipo');
-      Object.assign(DADOS, { tipo, operacao: tipo === 'carga' ? ['Carga', 'Loading'] : ['Descarga', 'Discharge'], berco:val('nBerco') });
+      Object.assign(DADOS, { tipo, operacao: tipo === 'carga' ? ['Carga', 'Loading'] : ['Descarga', 'Discharge'], berco:val('nBerco'), nor:val('nNor') });
       DADOS.carga = [DADOS.carga[0] || '', val('nCargaEN')];
       DADOS.observacoes = [(DADOS.observacoes || [])[0] || '', val('nObsEN')];
       DADOS.fonte = { planilha:val('nLink') };
@@ -2232,6 +2246,8 @@ renderFixos(); render();
   painel.setAttribute('role', 'dialog'); painel.setAttribute('aria-label', 'Menu do relatório');
   document.body.append(fundo, painel);
   const temEquipe = typeof window.abrirEditor === 'function';
+  /* no boletim do site, o menu leva ao painel da equipe para editar (arquivos enviados a clientes não mostram o link) */
+  const LINK_EQUIPE = /^https?:$/.test(location.protocol) && /lake-st-clair-boletim-06\.html$/.test(location.pathname) ? location.pathname.replace(/lake-st-clair-boletim-06\.html$/, 'lake-st-clair-equipe.html') : '';
   let editandoId = null, apagandoId = null;
 
   const secoes = [['Resumo', '.heroi'], ['Plano de descarga', '#secPlano'], ['Produção por turno', '#tabProd'], ['Linha do tempo', '#secLinha'], ['Paralisações', '#ltBarra']];
@@ -2261,7 +2277,13 @@ renderFixos(); render();
         ${temEquipe ? '<button type="button" class="mp-item" id="mpExec">Boletim do cliente e resumo do WhatsApp</button>' : ''}</div>
       <div class="mp-sec"><span class="rot">Dados</span>
         <button type="button" class="mp-item" id="mpAtualizar">Atualizar com a planilha agora</button>
-        ${temEquipe ? '<button type="button" class="mp-item" id="mpConfig">Configurar navio</button>' : ''}</div>
+</div>
+      <div class="mp-sec"><span class="rot">Editar dados do navio</span>
+        ${temEquipe ? `<button type="button" class="mp-item" data-ed-sec="edSecNavio">Atracação, NOR e berço</button>
+        <button type="button" class="mp-item" data-ed-sec="edSecResp">Responsabilidade das paradas</button>
+        <button type="button" class="mp-item" data-ed-sec="edSecPlano">Plano de descarga</button>
+        <button type="button" class="mp-item" data-ed-sec="">Link da planilha e demais dados</button>`
+        : LINK_EQUIPE ? `<a class="mp-item" href="${LINK_EQUIPE}">Abrir o painel da equipe para editar</a>` : '<span class="mp-nota">A edição dos dados fica no painel da equipe.</span>'}</div>
       <p class="mp-msg" id="mpMsg" role="status">${msg ? esc(msg) : ''}</p>`;
     ligar();
   }
@@ -2303,7 +2325,11 @@ renderFixos(); render();
     $('mpPNG').onclick = () => exec(exportarPNG, 'Gerando a imagem…');
     $('mpPDF').onclick = () => exec(exportarPDF, 'Gerando o PDF…');
     const e1 = $('mpExec'); if (e1) e1.onclick = () => { fechar(); window.abrirEditor('enviar'); };
-    const e2 = $('mpConfig'); if (e2) e2.onclick = () => { fechar(); window.abrirEditor('navio'); };
+    painel.querySelectorAll('[data-ed-sec]').forEach(b => b.onclick = () => {
+      fechar(); window.abrirEditor('navio');
+      const id = b.dataset.edSec;
+      if (id) setTimeout(() => { const h = document.getElementById(id); if (h) h.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+    });
     $('mpAtualizar').onclick = async () => { aviso('Lendo a planilha…'); const ok = await carregarPlanilha(); aviso(ok ? 'Dados atualizados.' : 'Não foi possível ler a planilha agora.'); };
   }
   btn.onclick = () => painel.hidden ? abrir() : fechar();
