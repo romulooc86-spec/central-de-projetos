@@ -71,6 +71,16 @@ b { font-weight:600; }
 @media (max-width:640px) { .destaque { flex-wrap:wrap; } .destaque-item { min-width:calc(50% - 7px); } .destaque-item b.num { font-size:1.6rem; } }
 
 /* ===== Cartão da imagem do WhatsApp (fora da tela; capturado com html2canvas) ===== */
+/* ===== Relatório horizontal (imagem PNG) ===== */
+.pz-wrap { position:fixed; top:0; left:-10000px; width:1600px; background:#fff; }
+.doc.paisagem { max-width:none; width:1600px; }
+.doc.paisagem .cab { flex-direction:row; align-items:center; padding:22px 36px 18px; }
+.doc.paisagem .cab-dir { text-align:right; align-items:flex-end; }
+.doc.paisagem .pz-corpo { display:grid; grid-template-columns:1fr 1fr; align-items:start; }
+.doc.paisagem .pz-col { min-width:0; }
+.doc.paisagem .pz-col + .pz-col { border-left:1px solid var(--trl-border); }
+.doc.paisagem .rolagem { overflow:visible; }
+.doc.paisagem .heroi, .doc.paisagem .secao, .doc.paisagem .avanco, .doc.paisagem .obs { padding-left:32px; padding-right:32px; }
 .cartao-zap { position:fixed; top:0; left:-10000px; width:820px; background:var(--trl-branco); font-family:var(--trl-font-corpo); color:var(--trl-texto); padding:40px 44px 34px; }
 .cartao-zap .cz-cab { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; border-bottom:4px solid var(--trl-accent); padding-bottom:18px; }
 .cartao-zap .cz-logo { width:150px; height:auto; flex:0 0 auto; color:var(--trl-preto); }
@@ -140,7 +150,7 @@ table.t td:first-child, table.t th:first-child { padding-left:8px; }
 .plano-leg { display:flex; flex-wrap:wrap; gap:4px 16px; font-size:11px; color:var(--trl-fg-muted); margin:2px 0 0; }
 .plano-leg > span::before { content:''; display:inline-block; width:10px; height:10px; margin-right:6px; vertical-align:-1px; background:var(--c); border:1px solid var(--b, var(--c)); border-radius:1px; box-sizing:border-box; }
 .plano-leg > span.leg-op::before { background:transparent; border:2px solid var(--trl-accent); }
-.plano-leg > span.leg-meta::before { height:0; border:none; border-top:2px dashed var(--trl-accent); width:14px; vertical-align:3px; background:none; }
+.plano-leg > span.leg-meta::before { content:'▸◂'; width:auto; height:auto; border:none; background:none; color:var(--trl-accent); font-size:10px; letter-spacing:-1px; vertical-align:0; }
 .plano-leg > span.leg-vazio::before { background:repeating-linear-gradient(45deg, var(--trl-cinza-300) 0 1px, transparent 1px 4px); border:1px solid var(--trl-cinza-300); }
 
 /* Sequência do plano */
@@ -1147,10 +1157,10 @@ function renderNavio(){
       const planejadoAte = seq.filter(e => e.porao === num && e.n <= atual.n).reduce((a, e) => a + e.ton, 0);
       const fracMeta = descarga ? Math.max(0, m - planejadoAte) / m : Math.min(1, planejadoAte / m);
       const ym = hBot - hAlt * fracMeta;
-      /* meta da etapa: linha com contorno branco + rótulo, visível sobre a carga e sobre o fundo */
-      g += `<line x1="${x - 5}" x2="${x + lw + 5}" y1="${ym}" y2="${ym}" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-            <line x1="${x - 5}" x2="${x + lw + 5}" y1="${ym}" y2="${ym}" stroke="${VERM}" stroke-width="2.6" stroke-dasharray="6 3"/>
-            <text x="${x + 4}" y="${ym - 5}" font-size="9" font-weight="700" letter-spacing=".06em" fill="${VERM}" stroke="#fff" stroke-width="3" paint-order="stroke">META</text>`;
+      /* meta da etapa: marcadores ▸ ◂ fora do porão, na altura da meta (visíveis mesmo quando a meta é esvaziar) */
+      const ymc = Math.min(hBot - 1, Math.max(hTop + 1, ym));
+      g += `<path d="M${x - 8},${ymc - 5} L${x - 1.5},${ymc} L${x - 8},${ymc + 5} Z" fill="${VERM}" stroke="#fff" stroke-width="1"/>
+            <path d="M${x + lw + 8},${ymc - 5} L${x + lw + 1.5},${ymc} L${x + lw + 8},${ymc + 5} Z" fill="${VERM}" stroke="#fff" stroke-width="1"/>`;
     }
     if (!semCarga){
       const yl = hBot - hAlt * frac, dentro = frac > .3;
@@ -1582,15 +1592,34 @@ renderFixos(); render();
     if (logoOrig && logoDest) logoDest.appendChild(logoOrig.cloneNode(true));
     return cart;
   }
+  /* Relatório em uma página horizontal: cópia fiel do painel (mesmas informações), em duas colunas */
+  function construirRelatorioPaisagem(){
+    const doc = document.querySelector('.doc').cloneNode(true);
+    doc.classList.add('paisagem');
+    doc.querySelectorAll('.barra-fonte, #editor, .rodape .acoes, .seletor button, .dica-sel, #semTurnos[hidden]').forEach(e => e.remove());
+    doc.querySelectorAll('.secao-cab .nota').forEach(e => { if (/clique|toque/i.test(e.textContent)) e.remove(); });
+    const conteudo = doc.querySelector('#conteudo'), heroi = doc.querySelector('.heroi');
+    const secs = [...conteudo.children];
+    const naEsquerda = s => s.classList.contains('avanco') || s.id === 'secPlano';
+    const esq = document.createElement('div'); esq.className = 'pz-col';
+    const dir = document.createElement('div'); dir.className = 'pz-col';
+    esq.append(heroi, ...secs.filter(naEsquerda));
+    dir.append(...secs.filter(s => !naEsquerda(s)));
+    const corpo = document.createElement('div'); corpo.className = 'pz-corpo'; corpo.append(esq, dir);
+    conteudo.replaceWith(corpo);
+    const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(doc);
+    return wrap;
+  }
+
   async function gerarImagemZap(){
-    const cart = construirCartaoZap();
+    const cart = construirRelatorioPaisagem();
     document.body.appendChild(cart);
     try {
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      const canvas = await html2canvas(cart, { backgroundColor:'#ffffff', scale:2, useCORS:true });
+      const canvas = await html2canvas(cart.firstElementChild, { backgroundColor:'#ffffff', scale:2, useCORS:true, windowWidth:1700 });
       const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       if (!blob) throw new Error('sem blob');
-      const nome = `${DADOS.navio.replace(/[\\/:*?"<>|]/g, '').trim()} - Resumo WhatsApp.png`;
+      const nome = `${DADOS.navio.replace(/[\\/:*?"<>|]/g, '').trim()} - Relatório de operação.png`;
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = nome;
@@ -1630,9 +1659,9 @@ renderFixos(); render();
         <div class="acoes"><button class="btn" type="button" id="xCopiar">Copiar resumo</button></div>
       </div>
       <div class="bloco-exp">
-        <h4>Imagem para o WhatsApp</h4>
-        <p>Cartão em PNG com total descarregado, saldo e o essencial do turno — pronto para envio rápido no grupo do navio, sem precisar abrir o arquivo do boletim.</p>
-        <div class="acoes"><button class="btn" type="button" id="xImagem">Gerar imagem PNG</button></div>
+        <h4>Imagem do relatório (PNG)</h4>
+        <p>O painel inteiro em uma página horizontal, com as mesmas informações do boletim. No WhatsApp, envie como <b>documento</b> para não perder a nitidez.</p>
+        <div class="acoes"><button class="btn" type="button" id="xImagem">Gerar imagem do relatório</button></div>
       </div>`;
     $('xMestre').onclick = () => { const n = exportar(false); msg(`Painel “${n}” baixado. Substitua o anterior na pasta do navio.`); };
     $('xCliente').onclick = () => { const n = exportar(true); msg(`Boletim “${n}” baixado. Envie no WhatsApp como documento.`); };
