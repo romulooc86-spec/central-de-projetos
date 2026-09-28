@@ -1645,9 +1645,13 @@ renderFixos(); render();
     const usados = new Set([...avanco, ...plano, ...prod, ...turno, ...acum]);
     const resto = secs.filter(s => !usados.has(s));
     const bloco = (cls, nos) => { const b = document.createElement('div'); b.className = 'pz-bloco ' + cls; b.append(...nos); return b; };
+    /* o detalhe do porão selecionado vai para baixo das paralisações do turno (coluna mais curta) */
+    const det = doc.querySelector('#detalhe');
+    const detSec = document.createElement('section'); detSec.className = 'secao';
+    if (det) detSec.append(det);
     const corpo = document.createElement('div'); corpo.className = 'pz-corpo';
     corpo.append(bloco('pz-g', [heroi, ...avanco]), bloco('pz-g', prod),
-                 bloco('pz-p pz-p1', plano), bloco('pz-p', turno), bloco('pz-p', [...acum, ...resto]));
+                 bloco('pz-p pz-p1', plano), bloco('pz-p', det ? [...turno, detSec] : turno), bloco('pz-p', [...acum, ...resto]));
     conteudo.replaceWith(corpo);
     const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(doc);
     return wrap;
