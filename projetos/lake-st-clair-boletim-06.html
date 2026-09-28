@@ -38,15 +38,16 @@ b { font-weight:600; }
 .rot { display:block; font-size:10.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-muted); line-height:1.3; }
 
 /* ===== Cabeçalho ===== */
-.cab { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding:14px 32px 10px; border-bottom:3px solid var(--trl-accent); }
-.logo { width:104px; height:auto; color:var(--trl-preto); display:block; margin-top:1px; }
-.cab-dir { text-align:right; }
-.cab-dir .tipo { font-family:var(--trl-font-titulo); font-weight:700; font-size:1.05rem; letter-spacing:.04em; line-height:1.2; }
-.seletor { display:inline-flex; align-items:center; gap:4px; margin-top:4px; }
+.cab { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 32px 18px; border-bottom:3px solid var(--trl-accent); }
+.logo { width:172px; max-width:45vw; height:auto; color:var(--trl-preto); display:block; }
+.cab-dir { text-align:right; display:flex; flex-direction:column; align-items:flex-end; }
+.cab-dir .tipo { font-family:var(--trl-font-corpo); font-weight:600; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--trl-fg-muted); line-height:1.3; }
+.seletor { display:inline-flex; align-items:center; gap:6px; margin-top:8px; order:3; }
 .seletor .n-bol { font-weight:500; font-size:.72rem; color:var(--trl-fg-subtle); min-width:0; text-align:center; letter-spacing:.02em; }
 .seletor button { width:18px; height:18px; border:1px solid var(--trl-border); background:var(--trl-bg); border-radius:3px; cursor:pointer; color:var(--trl-fg-subtle); font-size:11px; line-height:1; }
 .seletor button:disabled { opacity:.3; cursor:default; }
-.cab-dir .quando { font-size:13.5px; font-weight:600; color:var(--trl-fg); margin-top:2px; }
+.cab-dir .quando { font-family:var(--trl-font-titulo); font-size:1.6rem; font-weight:700; color:var(--trl-fg); line-height:1.05; margin-top:4px; letter-spacing:.01em; }
+.cab-dir .quando small { display:block; font-family:var(--trl-font-corpo); font-size:12.5px; font-weight:500; color:var(--trl-fg-muted); letter-spacing:0; margin-top:4px; }
 
 /* ===== Identificação do navio ===== */
 .navio { padding:18px 32px 16px; border-bottom:1px solid var(--trl-border); }
@@ -210,8 +211,9 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 
 @media (max-width:640px) {
   .cab, .navio, .avanco, .secao, .obs, .rodape { padding-left:16px; padding-right:16px; }
-  .cab { flex-direction:column; gap:12px; }
-  .cab-dir { text-align:left; }
+  .cab { flex-direction:column; align-items:flex-start; gap:12px; }
+  .cab-dir { text-align:left; align-items:flex-start; }
+  .logo { width:140px; }
   .navio h1 { font-size:1.6rem; }
   .faixa { padding:10px 16px; gap:4px 16px; }
   .col-opc { display:none; }
@@ -415,8 +417,8 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
           <rect x="354.88559999999995" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="362.88559999999995" x2="386.88559999999995" y1="65" y2="49" stroke="#2F2F2F" stroke-width="2"></line>
             <line x1="362.88559999999995" x2="351.88559999999995" y1="65" y2="58" stroke="#2F2F2F" stroke-width="1.4"></line><path d="M239.95279999999997,104 L244.45279999999997,70 L249.45279999999997,70 L253.95279999999997,104 Z" fill="#2F2F2F"></path>
           <rect x="238.95279999999997" y="61" width="16" height="9" rx="1.5" fill="#FFFFFF" stroke="#2F2F2F" stroke-width="1.1"></rect><line x1="246.95279999999997" x2="188.98639999999997" y1="65" y2="40" stroke="#2F2F2F" stroke-width="2"></line>
-            <line x1="246.95279999999997" x2="257.95279999999997" y1="65" y2="57" stroke="#2F2F2F" stroke-width="1.4"></line><text x="792" y="264" font-size="9" text-anchor="end" fill="#8A8C91" letter-spacing=".08em">PROA ▸</text>
-        <text x="4" y="264" font-size="9" fill="#8A8C91" letter-spacing=".08em">◂ POPA</text></svg></div>
+            <line x1="246.95279999999997" x2="257.95279999999997" y1="65" y2="57" stroke="#2F2F2F" stroke-width="1.4"></line>
+        </svg></div>
     <div class="plano-leg" id="planoLeg">
     <span style="--c:var(--trl-chart-2)">Carga a bordo</span>
     <span style="--c:var(--trl-cinza-100);--b:var(--trl-cinza-300)">Descarregado</span>
@@ -880,6 +882,8 @@ const pad = n => String(n).padStart(2, '0');
 const D = s => new Date(s);
 const DIAS = ['dom','seg','ter','qua','qui','sex','sáb'];
 const dc = d => `${pad(d.getDate())}/${pad(d.getMonth()+1)}`;
+const MES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const dm = d => `${d.getDate()} ${MES_ABR[d.getMonth()]}`;
 const hh = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const dhs = d => `${dc(d)}/${d.getFullYear()} ${hh(d)}`;
 const hm = m => { m = Math.round(m); const h = Math.floor(m/60), r = m % 60; return `${h}h${pad(r)}`; };
@@ -939,8 +943,8 @@ function render(){
   const pctMeta = t.ton / t.meta * 100;
 
   /* cabeçalho */
-  $('nBol').textContent = `Nº ${pad(sel + 1)} / ${pad(turnos.length)}`;
-  $('quando').textContent = `${DIAS[t.ini.getDay()]} ${dc(t.ini)} · turno ${t.faixa}`;
+  $('nBol').textContent = `Boletim ${pad(sel + 1)} de ${pad(turnos.length)}`;
+  $('quando').innerHTML = `${dm(t.ini)} ${t.ini.getFullYear()}<small>Turno ${t.faixa}</small>`;
   $('ant').disabled = sel === 0; $('prox').disabled = sel === turnos.length - 1;
   document.title = `${DADOS.navio} · Boletim ${pad(sel + 1)} · ${dc(t.ini)} ${t.faixa} — Triunfo Logística`;
 
@@ -964,7 +968,7 @@ function render(){
   turnos.forEach((x, j) => {
     const pm = x.ton / x.meta * 100;
     linhas += `<tr class="clicavel ${j === sel ? 'atual' : ''}" data-i="${j}" tabindex="0" title="Abrir boletim deste turno">
-      <td class="h">${DIAS[x.ini.getDay()]} ${dc(x.ini)}<span class="sub">${x.faixa}</span></td>
+      <td class="h">${dm(x.ini)}<span class="sub">${x.faixa}</span></td>
       <td class="n col-opc">${x.ternos}</td><td class="n col-opc">${x.viagens}</td><td class="n">${t2(x.ton)}</td><td class="n">${t2(x.acum)}</td>
       <td class="n"><span class="celbar"><span class="${pm < 80 ? 'desvio' : ''}">${t0(pm)}%</span><s><u class="${pm < 80 ? 'abaixo' : ''}" style="width:${Math.min(100, pm)}%"></u></s></span></td></tr>`;
     if (j === sel) return;
@@ -1143,7 +1147,10 @@ function renderNavio(){
       const planejadoAte = seq.filter(e => e.porao === num && e.n <= atual.n).reduce((a, e) => a + e.ton, 0);
       const fracMeta = descarga ? Math.max(0, m - planejadoAte) / m : Math.min(1, planejadoAte / m);
       const ym = hBot - hAlt * fracMeta;
-      g += `<line x1="${x - 3}" x2="${x + lw + 3}" y1="${ym}" y2="${ym}" stroke="${VERM}" stroke-width="1.8" stroke-dasharray="4 3"/>`;
+      /* meta da etapa: linha com contorno branco + rótulo, visível sobre a carga e sobre o fundo */
+      g += `<line x1="${x - 5}" x2="${x + lw + 5}" y1="${ym}" y2="${ym}" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+            <line x1="${x - 5}" x2="${x + lw + 5}" y1="${ym}" y2="${ym}" stroke="${VERM}" stroke-width="2.6" stroke-dasharray="6 3"/>
+            <text x="${x + 4}" y="${ym - 5}" font-size="9" font-weight="700" letter-spacing=".06em" fill="${VERM}" stroke="#fff" stroke-width="3" paint-order="stroke">META</text>`;
     }
     if (!semCarga){
       const yl = hBot - hAlt * frac, dentro = frac > .3;
@@ -1190,8 +1197,7 @@ function renderNavio(){
             <line x1="${px}" x2="${px - 11}" y1="${pivY - 2}" y2="${pivY - 9}" stroke="${FG}" stroke-width="1.4"/>`;
     }
   }
-  g += `<text x="${b}" y="${H - 2}" font-size="9" text-anchor="end" fill="${SUB}" letter-spacing=".08em">PROA ▸</text>
-        <text x="${s}" y="${H - 2}" font-size="9" fill="${SUB}" letter-spacing=".08em">◂ POPA</text></svg>`;
+  g += `</svg>`;
   el.innerHTML = g;
   el.querySelectorAll('.col').forEach(c => {
     const ir = () => { poraoSel = +c.dataset.p; renderNavio(); renderDetalhe(); };
@@ -1251,7 +1257,7 @@ function renderDetalhe(){
       <td class="n">${t0(e.feito / e.ton * 100)}%</td><td>${e.estado === 'ok' ? 'concluída' : atual && e.n === atual.n ? 'em andamento' : 'aguardando'}</td></tr>`).join('');
   const turnosP = turnos.slice(0, sel + 1).filter(x => (x.prod[num] || [0, 0])[1] > 0);
   const maxT = Math.max(1, ...turnosP.map(x => x.prod[num][1]));
-  const rowsT = turnosP.map(x => { const v = x.prod[num][1]; return `<tr class="${x.i === t.i ? 'atual' : ''}"><td>${dc(x.ini)} ${pad(x.ini.getHours())}–${pad(x.fim.getHours())}h</td>
+  const rowsT = turnosP.map(x => { const v = x.prod[num][1]; return `<tr class="${x.i === t.i ? 'atual' : ''}"><td>${dm(x.ini)} ${pad(x.ini.getHours())}–${pad(x.fim.getHours())}h</td>
       <td style="width:45%"><span class="b" style="width:${v / maxT * 100}%"></span></td><td class="n">${t2(v)} t</td><td class="n">${x.prod[num][0]} v.</td></tr>`; }).join('');
   h += `<div class="det-grid">
       <div><h4>Etapas do plano neste porão</h4>${rowsE ? `<table class="mini">${rowsE}</table>` : '<p>Sem etapas no plano.</p>'}</div>
@@ -1491,12 +1497,12 @@ renderFixos(); render();
     const ativos = Object.entries(t.prod).filter(([, [, v]]) => v > 0).map(([k]) => k);
     const linhas = [
       `*${DADOS.navio} · Boletim ${pad(turnos.length)}*`,
-      `_${DIAS[t.ini.getDay()]} ${dc(t.ini)} · turno ${t.faixa}_`,
+      `_${dm(t.ini)} · turno ${t.faixa}_`,
       ``,
       `▪ Produção do turno / Shift output: *${t2(t.ton)} t* (${t.viagens} viagens · ${t0(t.ton / t.meta * 100)}% da meta)`,
       `▪ Acumulado / Accumulated: *${t2(t.acum)} t* (${p1(t.acum / manifesto * 100)})`,
       `▪ ${descarga() ? 'Saldo a bordo / Balance on board' : 'Saldo a embarcar / Balance to load'}: *${t2(saldo)} t*`,
-      `▪ Término previsto / ETC: *${dOk(DADOS.previsaoTermino) ? `${dc(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—'}* · ${!prod.length ? 'aguardando produção' : ok ? 'no prazo / on schedule' : 'em risco / at risk'}`,
+      `▪ Término previsto / ETC: *${dOk(DADOS.previsaoTermino) ? `${dm(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—'}* · ${!prod.length ? 'aguardando produção' : ok ? 'no prazo / on schedule' : 'em risco / at risk'}`,
       ativos.length ? `▪ Porão em operação / Working hold: ${ativos.join(', ')}` : '',
       at ? `▪ Plano: etapa ${at.n}/${sq.length} · porão ${at.porao} · faltam ${t2(at.ton - at.feito)} t${ativos.length && !ativos.includes(String(at.porao)) ? ` (turno operou no porão ${ativos.join(', ')})` : ''}` : '',
       `▪ Paralisações no turno / Delays: ${par.length ? `${hm(par.reduce((a, x) => a + x.m, 0))} (${par.map(x => `${x.motivo} ${hm(x.m)}`).join('; ')})` : 'nenhuma / none'}`,
@@ -1549,7 +1555,7 @@ renderFixos(); render();
         <svg class="cz-logo" id="czLogoSvg" viewBox="0 0 1692 494.765" role="img" aria-label="Triunfo Logística"></svg>
         <div>
           <div class="cz-tipo">RELATÓRIO DE OPERAÇÃO</div>
-          <div class="cz-quando">Boletim ${pad(turnos.length)} · ${DIAS[t.ini.getDay()]} ${dc(t.ini)}<br>turno ${t.faixa}</div>
+          <div class="cz-quando">Boletim ${pad(turnos.length)} · ${dm(t.ini)}<br>turno ${t.faixa}</div>
         </div>
       </div>
       <h1>${esc(DADOS.navio)}</h1>
@@ -1561,7 +1567,7 @@ renderFixos(); render();
       <div class="cz-linha">
         <div>${rot('Produção do turno')}<b>${t2(t.ton)} t</b></div>
         <div>${rot('Ritmo médio')}<b>${ritmo ? `${t0(ritmo)} t/turno` : '—'}</b></div>
-        <div>${rot('Término previsto')}<b>${dOk(DADOS.previsaoTermino) ? `${dc(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—'}</b></div>
+        <div>${rot('Término previsto')}<b>${dOk(DADOS.previsaoTermino) ? `${dm(D(DADOS.previsaoTermino))} ${hh(D(DADOS.previsaoTermino))}` : '—'}</b></div>
       </div>
       <div class="cz-linha">
         <div>${rot(descarga() ? 'Plano de descarga' : 'Plano de carga')}<b>${esc(planoTxt)}</b></div>
