@@ -74,15 +74,25 @@ b { font-weight:600; }
 /* plano de descarga sem a linha de referência do documento */
 #planoMeta { display:none !important; }
 /* ===== Relatório horizontal (imagem PNG) ===== */
-.pz-wrap { position:fixed; top:0; left:-10000px; width:1600px; background:#fff; }
-.doc.paisagem { max-width:none; width:1600px; }
-.doc.paisagem .cab { flex-direction:row; align-items:center; padding:22px 36px 18px; }
-.doc.paisagem .cab-dir { text-align:right; align-items:flex-end; }
-.doc.paisagem .pz-corpo { display:grid; grid-template-columns:1fr 1fr; align-items:start; }
-.doc.paisagem .pz-col { min-width:0; }
-.doc.paisagem .pz-col + .pz-col { border-left:1px solid var(--trl-border); }
+.pz-wrap { position:fixed; top:0; left:-10000px; width:1800px; background:#fff; }
+.doc.paisagem { max-width:none; width:1800px; }
+.doc.paisagem .cab { flex-direction:row !important; align-items:center !important; padding:22px 32px 18px !important; }
+.doc.paisagem .cab-dir { text-align:right !important; align-items:flex-end !important; }
+.doc.paisagem .logo { width:190px !important; max-width:none; }
+.doc.paisagem .pz-corpo { display:grid; grid-template-columns:repeat(6,1fr); align-items:stretch; }
+.doc.paisagem .pz-bloco { min-width:0; }
+.doc.paisagem .pz-g { grid-column:span 3; }
+.doc.paisagem .pz-p { grid-column:span 2; border-top:1px solid var(--trl-border); }
+.doc.paisagem .pz-bloco + .pz-bloco { border-left:1px solid var(--trl-border); }
+.doc.paisagem .pz-bloco.pz-p1 { border-left:none; }
 .doc.paisagem .rolagem { overflow:visible; }
-.doc.paisagem .heroi, .doc.paisagem .secao, .doc.paisagem .avanco, .doc.paisagem .obs { padding-left:32px; padding-right:32px; }
+.doc.paisagem .navio, .doc.paisagem .heroi, .doc.paisagem .secao, .doc.paisagem .avanco, .doc.paisagem .obs, .doc.paisagem .rodape { padding-left:28px !important; padding-right:28px !important; }
+.doc.paisagem .faixa { padding:10px 28px !important; gap:6px 24px !important; }
+.doc.paisagem .col-opc { display:table-cell !important; }
+.doc.paisagem .seq { grid-template-columns:repeat(var(--n,3),1fr) !important; }
+.doc.paisagem .etapa { border-bottom:none !important; box-shadow:none !important; }
+.doc.paisagem .secao-cab { flex-direction:row !important; align-items:baseline !important; }
+.doc.paisagem table.t tr.atual td:first-child { box-shadow:none !important; border-left:3px solid var(--trl-accent); }
 .cartao-zap { position:fixed; top:0; left:-10000px; width:820px; background:var(--trl-branco); font-family:var(--trl-font-corpo); color:var(--trl-texto); padding:40px 44px 34px; }
 .cartao-zap .cz-cab { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; border-bottom:4px solid var(--trl-accent); padding-bottom:18px; }
 .cartao-zap .cz-logo { width:150px; height:auto; flex:0 0 auto; color:var(--trl-preto); }
@@ -1594,20 +1604,33 @@ renderFixos(); render();
     if (logoOrig && logoDest) logoDest.appendChild(logoOrig.cloneNode(true));
     return cart;
   }
-  /* Relatório em uma página horizontal: cópia fiel do painel (mesmas informações), em duas colunas */
+  /* Relatório em uma página horizontal: cópia fiel do painel (mesmas informações)
+     faixa de cima: navio + produção por turno · faixa de baixo: plano, paralisações do turno e acumuladas */
   function construirRelatorioPaisagem(){
     const doc = document.querySelector('.doc').cloneNode(true);
     doc.classList.add('paisagem');
     doc.querySelectorAll('.barra-fonte, #editor, .rodape .acoes, .seletor button, .dica-sel, #semTurnos[hidden]').forEach(e => e.remove());
     doc.querySelectorAll('.secao-cab .nota').forEach(e => { if (/clique|toque/i.test(e.textContent)) e.remove(); });
+    /* o logo usa <use>, que a captura não desenha: copia o desenho para dentro do svg */
+    doc.querySelectorAll('svg use').forEach(u => {
+      const id = (u.getAttribute('href') || u.getAttribute('xlink:href') || '').replace('#', '');
+      const src = id && document.getElementById(id);
+      if (src){ const g = src.cloneNode(true); g.removeAttribute('id'); u.replaceWith(g); }
+    });
     const conteudo = doc.querySelector('#conteudo'), heroi = doc.querySelector('.heroi');
     const secs = [...conteudo.children];
-    const naEsquerda = s => s.classList.contains('avanco') || s.id === 'secPlano';
-    const esq = document.createElement('div'); esq.className = 'pz-col';
-    const dir = document.createElement('div'); dir.className = 'pz-col';
-    esq.append(heroi, ...secs.filter(naEsquerda));
-    dir.append(...secs.filter(s => !naEsquerda(s)));
-    const corpo = document.createElement('div'); corpo.className = 'pz-corpo'; corpo.append(esq, dir);
+    const tem = sel => s => s.matches(sel) || !!s.querySelector(sel);
+    const avanco = secs.filter(s => s.classList.contains('avanco'));
+    const plano = secs.filter(tem('#secPlano'));
+    const prod = secs.filter(tem('#tabProd'));
+    const turno = secs.filter(tem('#ltBarra'));
+    const acum = secs.filter(tem('#tabAcum'));
+    const usados = new Set([...avanco, ...plano, ...prod, ...turno, ...acum]);
+    const resto = secs.filter(s => !usados.has(s));
+    const bloco = (cls, nos) => { const b = document.createElement('div'); b.className = 'pz-bloco ' + cls; b.append(...nos); return b; };
+    const corpo = document.createElement('div'); corpo.className = 'pz-corpo';
+    corpo.append(bloco('pz-g', [heroi, ...avanco]), bloco('pz-g', prod),
+                 bloco('pz-p pz-p1', plano), bloco('pz-p', turno), bloco('pz-p', [...acum, ...resto]));
     conteudo.replaceWith(corpo);
     const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(doc);
     return wrap;
