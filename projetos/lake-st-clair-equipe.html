@@ -80,7 +80,8 @@ b { font-weight:600; }
 .pe-cab { display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid var(--trl-accent); padding-bottom:16px; }
 .pe-logo { width:230px; height:auto; color:var(--trl-preto); display:block; }
 .pe-cab-dir { text-align:right; }
-.pe-tipo { font-size:14px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--trl-fg-muted); }
+.pe-tipo { font-size:14px; font-weight:600; letter-spacing:.16em; margin-right:-.16em; text-transform:uppercase; color:var(--trl-fg-muted); }
+.pe-cab-dir { display:flex; flex-direction:column; align-items:flex-end; }
 .pe-data { font-family:var(--trl-font-titulo); font-weight:700; font-size:40px; line-height:1.1; margin-top:4px; }
 .pe-data span { font-family:var(--trl-font-corpo); font-weight:500; font-size:22px; color:var(--trl-fg-muted); }
 .pe-navio-id { display:flex; align-items:baseline; gap:24px; }
@@ -1745,7 +1746,7 @@ renderFixos(); render();
       <header class="pe-cab">
         <svg class="pe-logo" viewBox="0 0 1692 494.765" role="img" aria-label="Triunfo Logística"></svg>
         <div class="pe-cab-dir">
-          <div class="pe-tipo">Relatório de operação · Boletim ${pad(turnos.length)}</div>
+          <div class="pe-tipo">Relatório de operação</div>
           <div class="pe-data">${dm(t.ini)} ${t.ini.getFullYear()} <span>· Turno ${t.faixa}</span></div>
         </div>
       </header>
