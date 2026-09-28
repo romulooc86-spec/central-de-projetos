@@ -79,12 +79,14 @@ b { font-weight:600; }
 .doc.paisagem .cab { flex-direction:row !important; align-items:center !important; padding:22px 32px 18px !important; }
 .doc.paisagem .cab-dir { text-align:right !important; align-items:flex-end !important; }
 .doc.paisagem .logo { width:190px !important; max-width:none; }
-.doc.paisagem .pz-corpo { display:grid; grid-template-columns:repeat(6,1fr); align-items:stretch; }
+.doc.paisagem .pz-corpo { display:grid; grid-template-columns:repeat(3,1fr); align-items:stretch; }
 .doc.paisagem .pz-bloco { min-width:0; }
-.doc.paisagem .pz-g { grid-column:span 3; }
-.doc.paisagem .pz-p { grid-column:span 2; border-top:1px solid var(--trl-border); }
-.doc.paisagem .pz-bloco + .pz-bloco { border-left:1px solid var(--trl-border); }
-.doc.paisagem .pz-bloco.pz-p1 { border-left:none; }
+.doc.paisagem .pz-topo { grid-column:1 / -1; }
+.doc.paisagem .pz-heroi { display:grid; grid-template-columns:500px 1fr; gap:0 40px; align-items:center; }
+.doc.paisagem .pz-topo-esq, .doc.paisagem .pz-topo-dir { min-width:0; }
+.doc.paisagem .pz-topo-esq .avanco { padding-left:0 !important; padding-right:0 !important; margin-top:18px; }
+.doc.paisagem .pz-p { border-top:1px solid var(--trl-border); }
+.doc.paisagem .pz-p + .pz-p { border-left:1px solid var(--trl-border); }
 .doc.paisagem .rolagem { overflow:visible; }
 .doc.paisagem .navio, .doc.paisagem .heroi, .doc.paisagem .secao, .doc.paisagem .avanco, .doc.paisagem .obs, .doc.paisagem .rodape { padding-left:28px !important; padding-right:28px !important; }
 .doc.paisagem .faixa { padding:10px 28px !important; gap:6px 24px !important; }
@@ -1622,7 +1624,7 @@ renderFixos(); render();
     return cart;
   }
   /* Relatório em uma página horizontal: cópia fiel do painel (mesmas informações)
-     faixa de cima: navio + produção por turno · faixa de baixo: plano, paralisações do turno e acumuladas */
+     topo (faixa inteira): o navio · embaixo, 3 colunas: produção | plano + detalhe do porão | paralisações */
   function construirRelatorioPaisagem(){
     const doc = document.querySelector('.doc').cloneNode(true);
     doc.classList.add('paisagem');
@@ -1644,16 +1646,22 @@ renderFixos(); render();
     const acum = secs.filter(tem('#tabAcum'));
     const usados = new Set([...avanco, ...plano, ...prod, ...turno, ...acum]);
     const resto = secs.filter(s => !usados.has(s));
-    const bloco = (cls, nos) => { const b = document.createElement('div'); b.className = 'pz-bloco ' + cls; b.append(...nos); return b; };
-    /* o detalhe do porão selecionado vai para baixo das paralisações do turno (coluna mais curta) */
+    const div = cls => { const d = document.createElement('div'); d.className = cls; return d; };
+    /* topo: identificação, totais e avanço à esquerda; desenho do navio à direita */
+    const esq = div('pz-topo-esq'), dir = div('pz-topo-dir');
+    [...heroi.children].forEach(c => (c.matches('.plano, .plano-leg') ? dir : esq).append(c));
+    esq.append(...avanco);
+    heroi.classList.add('pz-heroi'); heroi.append(esq, dir);
+    /* o detalhe do porão selecionado fica logo abaixo do plano de descarga */
     const det = doc.querySelector('#detalhe');
-    const detSec = document.createElement('section'); detSec.className = 'secao';
-    if (det) detSec.append(det);
-    const corpo = document.createElement('div'); corpo.className = 'pz-corpo';
-    corpo.append(bloco('pz-g', [heroi, ...avanco]), bloco('pz-g', prod),
-                 bloco('pz-p pz-p1', plano), bloco('pz-p', det ? [...turno, detSec] : turno), bloco('pz-p', [...acum, ...resto]));
+    const planoCol = [...plano];
+    if (det){ const s = document.createElement('section'); s.className = 'secao'; s.append(det); planoCol.push(s); }
+    const bloco = (cls, nos) => { const b = div('pz-bloco ' + cls); b.append(...nos); return b; };
+    const corpo = div('pz-corpo');
+    corpo.append(bloco('pz-topo', [heroi]),
+                 bloco('pz-p pz-p1', prod), bloco('pz-p', planoCol), bloco('pz-p', [...turno, ...acum, ...resto]));
     conteudo.replaceWith(corpo);
-    const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(doc);
+    const wrap = div('pz-wrap'); wrap.append(doc);
     return wrap;
   }
 
