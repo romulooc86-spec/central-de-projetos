@@ -316,6 +316,16 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 
 /* ===== Barra da fonte de dados ===== */
 .barra-fonte { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:7px 32px; font-size:12px; background:var(--trl-cinza-100); border-bottom:1px solid var(--trl-border); }
+.relogio { display:inline-flex; align-items:baseline; gap:10px; margin-left:auto; order:2; font-size:11.5px; color:var(--trl-fg-muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.relogio::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--trl-status-ok); align-self:center; animation:pulsoVivo 1.6s ease-in-out infinite; }
+.barra-fonte.erro .relogio::before { background:var(--trl-accent); }
+.relogio .rel-hora { font-family:var(--trl-font-titulo); font-weight:700; font-size:15px; color:var(--trl-fg); }
+.relogio .rel-hora small { font-size:11px; font-weight:500; color:var(--trl-fg-muted); }
+.relogio .rel-info b { color:var(--trl-fg); font-weight:600; }
+.barra-fonte .bf-acoes { order:3; }
+@keyframes pulsoVivo { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:.35; transform:scale(.7); } }
+@media (prefers-reduced-motion:reduce) { .relogio::before { animation:none; } }
+@media (max-width:640px) { .relogio { margin-left:0; white-space:normal; flex-wrap:wrap; gap:4px 10px; } }
 .barra-fonte:empty { display:none; }
 .barra-fonte.ok b { color:var(--trl-status-ok); }
 .barra-fonte.erro { background:var(--trl-vermelho-15); }
@@ -961,6 +971,27 @@ Boletim completo no arquivo anexo. · Triunfo Logística</textarea>
 /* Os dados da operação ficam no bloco <script id="dados"> (JSON) e são editados pela Área da equipe. */
 let DADOS = JSON.parse(document.getElementById('dados').textContent);
 DADOS.responsaveis = DADOS.responsaveis || {}; /* motivo da parada -> responsável (navio/estiva/cliente/outros) */
+/* configuração do navio salva no navegador: o site é estático, então sem isto
+   "Aplicar configuração" (berço, plano, responsáveis das paradas...) se perdia ao recarregar */
+const CHAVE_CFG = 'trl-boletim-cfg:' + String(DADOS.navio || '').trim().toUpperCase();
+const CAMPOS_CFG = ['tipo', 'operacao', 'berco', 'responsaveis', 'plano', 'fonte'];
+function salvarConfigLocal(){
+  try {
+    const c = {}; CAMPOS_CFG.forEach(k => c[k] = DADOS[k]);
+    c.cargaEN = (DADOS.carga || [])[1] || ''; c.obsEN = (DADOS.observacoes || [])[1] || ''; c.salvoEm = new Date().toISOString();
+    localStorage.setItem(CHAVE_CFG, JSON.stringify(c)); return true;
+  } catch (e) { return false; }
+}
+function limparConfigLocal(){ try { localStorage.removeItem(CHAVE_CFG); } catch (e) {} }
+(function(){
+  try {
+    const c = JSON.parse(localStorage.getItem(CHAVE_CFG) || 'null'); if (!c) return;
+    CAMPOS_CFG.forEach(k => { if (c[k] !== undefined && c[k] !== null) DADOS[k] = c[k]; });
+    DADOS.carga = [(DADOS.carga || [])[0] || '', c.cargaEN || (DADOS.carga || [])[1] || ''];
+    DADOS.observacoes = [(DADOS.observacoes || [])[0] || '', c.obsEN || (DADOS.observacoes || [])[1] || ''];
+  } catch (e) {}
+})();
+
 const TRADUCAO = {
   'DDS':'Safety talk (DDS)', 'Aguardando caminhões':'Waiting for trucks', 'Aguardando estivadores':'Waiting for stevedores',
   'Aguardando implemento (grab)':'Waiting for grab', 'Problema no guincho':'Winch breakdown', 'Embarque de escavadeira':'Excavator being loaded on board',
@@ -1368,6 +1399,7 @@ function renderFixos(){
   $('navio').textContent = DADOS.navio;
   const P = DADOS.plano || {};
   $('heroMeta').innerHTML = [`<b>${esc(DADOS.carga[0] || '—')}</b>`, `${esc(DADOS.operacao[0])}`,
+    DADOS.berco ? `atracado em <b>${esc(DADOS.berco)}</b>` : '', dOk(DADOS.atracacao) ? `atracação ${dm(D(DADOS.atracacao))} ${hh(D(DADOS.atracacao))}` : '',
     `${t2(manifesto)} t`, P.viagem ? `viagem ${esc(P.viagem)}` : '', P.origem || P.destino ? `${esc(P.origem || '—')} → ${esc(P.destino || '—')}` : ''].filter(Boolean).join(' · ');
   const temObs = DADOS.observacoes && DADOS.observacoes[0];
   $('obsBloco').style.display = temObs ? '' : 'none';
@@ -1883,7 +1915,7 @@ renderFixos(); render();
       <h3>2 · Operação</h3>
       <div class="form">
         <label>Tipo<select id="nTipo"><option value="descarga" ${descarga() ? 'selected' : ''}>Descarga</option><option value="carga" ${!descarga() ? 'selected' : ''}>Carga (embarque)</option></select></label>
-        <label>Berço<input id="nBerco" value="${esc(DADOS.berco || '')}"></label>
+        <label class="largo">Local de atracação (terminal / berço)<input id="nBerco" value="${esc(DADOS.berco || '')}" placeholder="Ex.: Terminal Multirio · Berço 1"></label>
         <label class="largo">Carga em inglês<input id="nCargaEN" value="${esc(DADOS.carga[1] || '')}" placeholder="Ex.: Potassium chloride (KCl)"></label>
         <label class="largo" style="grid-column:1/-1">Observação em inglês (a observação em português vem da planilha)<input id="nObsEN" value="${esc((DADOS.observacoes || [])[1] || '')}"></label>
       </div>
@@ -1905,7 +1937,7 @@ renderFixos(); render();
       <table class="lista" id="nResp"><thead><tr><th>Motivo</th><th style="width:190px">Responsável</th></tr></thead>
         <tbody>${motivosUnicos().map((m, i) => linhaResp(m, i)).join('') || '<tr><td colspan="2" class="ed-ajuda" style="padding:8px 0">Nenhuma paralisação lida da planilha ainda.</td></tr>'}</tbody></table>
       <div class="acoes" style="margin-top:18px"><button class="btn prim" type="button" id="nSalvar">Aplicar configuração</button>
-        <span class="ed-ajuda" style="margin:0">Depois, em “Gerar e enviar”, salve o painel da equipe.</span></div>
+        <span class="ed-ajuda" style="margin:0">Fica salvo neste navegador (computador ou celular) e vale ao reabrir o painel.</span></div>
       <div id="edMsg2" class="aviso-ed" hidden></div>
       <h3>Novo navio</h3>
       <div class="bloco-exp">
@@ -1952,7 +1984,8 @@ renderFixos(); render();
       DADOS.observacoes = [(DADOS.observacoes || [])[0] || '', val('nObsEN')];
       DADOS.fonte = { planilha:val('nLink') };
       DADOS.plano = { referencia:val('nRef'), viagem:val('nVg'), origem:val('nOri'), destino:val('nDes'), caladoChegada:[num('nCF'), num('nCA')], sequencia:lerSeq() };
-      poraoSel = null; marcar(); msg2('Configuração aplicada. Salve o painel da equipe em “Gerar e enviar”.');
+      const salvou = salvarConfigLocal(); poraoSel = null; marcar();
+      msg2(salvou ? 'Configuração salva neste navegador e aplicada ao boletim. Ao reabrir o painel ela continua valendo.' : 'Configuração aplicada, mas este navegador não permite salvar (janela anônima?). Use “Salvar painel da equipe” em “Gerar e enviar”.', salvou ? 'ok' : 'erro');
     };
     $('nNova').onclick = () => {
       if (!confirm('Começar outro navio? O link, o plano e os textos em inglês serão limpos neste painel.')) return;
@@ -1960,14 +1993,35 @@ renderFixos(); render();
         atracacao:'', inicio:'', previsaoTermino:'', pranchaPadrao:DADOS.pranchaPadrao || 700, duracaoTurnoH:6,
         manifesto:{ 1:0, 2:0, 3:0, 4:0, 5:0 }, turnos:[], paralisacoes:[], fonte:{ planilha:'' }, responsaveis:{},
         plano:{ referencia:'', viagem:'', origem:'', destino:'', caladoChegada:[0, 0], sequencia:[] }, observacoes:['', ''], config:DADOS.config };
-      sel = undefined; poraoSel = null; estadoFonte.status = ''; marcar(); mostrarFonte(); abaNavio(); msg('Cole o link da aba do novo navio e clique em “Ler planilha agora”.');
+      limparConfigLocal(); sel = undefined; poraoSel = null; estadoFonte.status = ''; marcar(); mostrarFonte(); abaNavio(); msg('Cole o link da aba do novo navio e clique em “Ler planilha agora”.');
     };
   }
 })();
 
+/* relógio ao vivo + "atualizado há…" contando em tempo real; lê a planilha de novo a cada 5 min */
+(function(){
+  const base = mostrarFonte;
+  const tick = () => {
+    const agora = new Date(), q = estadoFonte.quando;
+    const seg = q ? Math.max(0, Math.floor((agora - q) / 1000)) : null;
+    if (seg !== null && seg >= 300 && !document.hidden && estadoFonte.status !== 'lendo') carregarPlanilha();
+    const s = document.getElementById('relogioVivo'); if (!s) return;
+    const ha = seg === null ? '' : seg < 60 ? `${seg} s` : `${Math.floor(seg / 60)} min ${pad(seg % 60)} s`;
+    const prox = seg === null ? 0 : Math.max(0, 300 - seg);
+    s.innerHTML = `<span class="rel-hora">${hh(agora)}<small>:${pad(agora.getSeconds())}</small></span>` +
+      (seg === null ? '' : `<span class="rel-info">atualizado há <b>${ha}</b> · próxima leitura em ${Math.floor(prox / 60)}:${pad(prox % 60)}</span>`);
+  };
+  mostrarFonte = function(){
+    base();
+    const el = $('barraFonte');
+    if (el && !el.querySelector('#relogioVivo')){ const s = document.createElement('span'); s.id = 'relogioVivo'; s.className = 'relogio'; el.appendChild(s); }
+    tick();
+  };
+  setInterval(tick, 1000);
+})();
+
 mostrarFonte();
 carregarPlanilha();
-setInterval(() => { if (!document.hidden) carregarPlanilha(); }, 5 * 60 * 1000);
 </script>
 
 

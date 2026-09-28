@@ -73,7 +73,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 
 .grupo{display:flex;flex-direction:column;gap:10px}
 .grupo h2{font-size:.78rem;font-family:var(--f-corpo);font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--texto-2);display:flex;align-items:center;gap:10px}
-.grupo h2::after{content:"";flex:1;height:1px;background:var(--borda)}
+.grupo h2::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--cor,var(--borda)) 0 64px,var(--borda) 64px)}
+.grupo h2{color:var(--cor,var(--texto-2))}
+.grupo h2 .qtd{font-size:.72rem;font-weight:600;letter-spacing:0;color:var(--texto-3);order:3}
+.ponto{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--cor,var(--texto-3));flex:none}
+.chip .ponto{width:8px;height:8px;margin-right:6px;vertical-align:0}
+.grupo .card{border-top:4px solid var(--cor,var(--borda))}
+.grupo .card:hover{border-color:var(--cor,var(--vermelho))}
+.tag.tipo{background:color-mix(in srgb,var(--cor,#8A8C91) 14%,transparent);color:var(--cor,var(--texto-2));border-color:transparent}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
 
 .card{background:var(--superficie);border:1px solid var(--borda);border-radius:10px;box-shadow:var(--sombra);display:flex;flex-direction:column;transition:border-color .15s}
@@ -161,10 +168,20 @@ const fmt = d => d ? d.split("-").reverse().join("/") : "";
 const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 function el(tag, attrs, ...kids){ const e=document.createElement(tag); for(const k in attrs||{}){ if(k==="text") e.textContent=attrs[k]; else if(k.startsWith("on")) e.addEventListener(k.slice(2),attrs[k]); else e.setAttribute(k,attrs[k]); } kids.flat().forEach(c=>c&&e.append(c)); return e; }
 const ordenar = (a,b) => (b.atualizado||"").localeCompare(a.atualizado||"") || a.titulo.localeCompare(b.titulo);
+/* cada frente tem uma cor; a ordem das seções segue a rotina (boletins e equipe primeiro) */
+const FRENTES = [
+  ["Boletins de navio", "#DA202C"], ["Área da equipe", "#7C3AED"], ["TPS", "#2563EB"],
+  ["Prime Ocean", "#0E9F8E"], ["Operações", "#D97706"], ["Pessoal", "#64748B"]
+];
+const corDe = c => (FRENTES.find(f => f[0] === c) || [0, "#8A8C91"])[1];
+const ordemDe = c => { const i = FRENTES.findIndex(f => f[0] === c); return i < 0 ? 99 : i; };
+const TIPOS = [[/boletim/i,"Boletim"],[/painel da equipe/i,"Editor"],[/painel/i,"Painel"],[/planejamento/i,"Planejamento"],[/cen[aá]rio/i,"Cenários"],
+  [/indicador/i,"Indicadores"],[/controle/i,"Controle"],[/central/i,"Central"],[/alinhamento/i,"Alinhamento"],[/docagem/i,"Docagem"]];
+const tipoDe = i => (TIPOS.find(([re]) => re.test(i.titulo)) || [0, "Projeto"])[1];
 
 function render(){
   const cats = {}; itens.forEach(i => cats[i.categoria]=(cats[i.categoria]||0)+1);
-  const nomesCat = Object.keys(cats).sort((a,b)=>cats[b]-cats[a]||a.localeCompare(b));
+  const nomesCat = Object.keys(cats).sort((a,b)=>ordemDe(a)-ordemDe(b)||a.localeCompare(b));
   if (filtroCat!=="Todos" && !cats[filtroCat]) filtroCat="Todos";
   $("#r-total").textContent = itens.length;
   $("#r-cat").textContent = nomesCat.length;
@@ -172,18 +189,20 @@ function render(){
   $("#r-ult").textContent = ult ? fmt(ult).slice(0,5) : "—";
 
   const chips = $("#chips"); chips.replaceChildren();
-  ["Todos",...nomesCat].forEach(c => chips.append(el("button",{type:"button",class:"chip","aria-pressed":String(c===filtroCat),onclick:()=>{filtroCat=c; try{localStorage.setItem("cp-filtro",c)}catch(e){} render();}}, c, el("span",{class:"n",text:c==="Todos"?itens.length:cats[c]}))));
+  ["Todos",...nomesCat].forEach(c => chips.append(el("button",{type:"button",class:"chip","aria-pressed":String(c===filtroCat),style:c==="Todos"?"":`--cor:${corDe(c)}`,onclick:()=>{filtroCat=c; try{localStorage.setItem("cp-filtro",c)}catch(e){} render();}}, c==="Todos"?null:el("i",{class:"ponto"}), c, el("span",{class:"n",text:c==="Todos"?itens.length:cats[c]}))));
 
   const q = norm($("#busca").value.trim());
   const vis = itens.filter(i => (filtroCat==="Todos"||i.categoria===filtroCat) && (!q || norm(i.titulo+" "+(i.descricao||"")+" "+i.categoria).includes(q))).sort(ordenar);
   const lista = $("#lista"); lista.replaceChildren();
   $("#vazio").hidden = vis.length>0;
   const grupos = {}; vis.forEach(i => (grupos[i.categoria] ||= []).push(i));
-  nomesCat.filter(c=>grupos[c]).forEach(c => lista.append(el("section",{class:"grupo"}, el("h2",{text:c}), el("div",{class:"grade"}, grupos[c].map(card)))));
+  nomesCat.filter(c=>grupos[c]).forEach(c => lista.append(el("section",{class:"grupo",style:`--cor:${corDe(c)}`},
+    el("h2",{}, el("i",{class:"ponto"}), c, el("span",{class:"qtd",text:String(grupos[c].length)})), el("div",{class:"grade"}, grupos[c].map(card)))));
 }
 
 function card(i){
-  const tags = ORIGEM[i.origem] ? [el("span",{class:"tag "+ORIGEM[i.origem][1],text:ORIGEM[i.origem][0]})] : [];
+  const tags = [el("span",{class:"tag tipo",text:tipoDe(i)})];
+  if (ORIGEM[i.origem]) tags.push(el("span",{class:"tag "+ORIGEM[i.origem][1],text:ORIGEM[i.origem][0]}));
   const abs = new URL(i.url, location.href).href;
   return el("article",{class:"card"},
     el("a",{class:"corpo",href:i.url,target:"_blank",rel:"noopener"},
