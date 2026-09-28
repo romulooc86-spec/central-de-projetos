@@ -4,7 +4,7 @@
 window.PROJETOS = [
   {titulo:"LAKE ST. CLAIR · Boletim ao vivo", url:"projetos/lake-st-clair-boletim-06.html", categoria:"Boletins de navio", descricao:"Relatório de operação com os dados da planilha da equipe, atualizado a cada 5 minutos.", atualizado:"2026-09-28", origem:"site"},
   {titulo:"LAKE ST. CLAIR · Painel da equipe", url:"projetos/lake-st-clair-equipe.html", categoria:"Área da equipe", descricao:"Configurar navio e gerar o boletim do cliente e a imagem do WhatsApp.", atualizado:"2026-09-28", origem:"site"},
-  {titulo:"Custos de Rebocadores (teste)", url:"projetos/custos-rebocadores.html", categoria:"Prime Ocean", descricao:"Horas e custos de rebocadores por embarcação, contrato e mês, com a planilha Controle de Rebocadores.", atualizado:"2026-09-28", origem:"site"},
+  {titulo:"Custos de Rebocadores · Resultados da gestão", url:"projetos/custos-rebocadores.html", categoria:"Prime Ocean", descricao:"Painel executivo ao vivo: renegociação de tarifas, porte certo de rebocador e índice de atendimento, lido da planilha da equipe.", atualizado:"2026-09-28", origem:"site"},
   {titulo:"Painel Pessoal", url:"https://claude.ai/artifact/23BKQki1q3DNt4NN3rPaap", categoria:"Pessoal", atualizado:"2026-09-21", origem:"claude"},
   {titulo:"Indicadores Operacionais - TPS", url:"https://claude.ai/artifact/5RorDf5tPfsGYVya8AnGbK", categoria:"TPS", atualizado:"2026-09-19", origem:"claude"},
   {titulo:"Painel Executivo Ocean I", url:"https://claude.ai/artifact/JvWun4fgKBgAdeGCzPn7hP", categoria:"Prime Ocean", atualizado:"2026-09-16", origem:"claude"},
