@@ -82,13 +82,11 @@ b { font-weight:600; }
 .doc.paisagem .pz-corpo { display:grid; grid-template-columns:repeat(3,1fr); align-items:stretch; }
 .doc.paisagem .pz-bloco { min-width:0; }
 .doc.paisagem .pz-topo { grid-column:1 / -1; }
-.doc.paisagem .pz-heroi { display:grid; grid-template-columns:500px 1fr; gap:0 40px; align-items:center; }
-.doc.paisagem .pz-topo-esq, .doc.paisagem .pz-topo-dir { min-width:0; }
-.doc.paisagem .pz-topo-dir .plano, .doc.paisagem .pz-topo-dir .plano-leg { max-width:1080px; margin-left:auto; margin-right:auto; }
-.doc.paisagem .pz-topo-esq h1 { font-size:2.8rem !important; }
-.doc.paisagem .pz-topo-esq .destaque { flex-wrap:nowrap !important; }
-.doc.paisagem .pz-topo-esq .destaque-item b.num { font-size:2.3rem !important; }
-.doc.paisagem .pz-topo-esq .avanco { padding-left:0 !important; padding-right:0 !important; margin-top:18px; }
+.doc.paisagem .pz-heroi h1 { font-size:2.6rem !important; }
+.doc.paisagem .pz-heroi .destaque { flex-wrap:nowrap !important; }
+.doc.paisagem .pz-heroi .destaque-item b.num { font-size:2.2rem !important; }
+.doc.paisagem .pz-heroi .plano, .doc.paisagem .pz-heroi .plano-leg { max-width:1100px; margin-left:auto; margin-right:auto; }
+.doc.paisagem .pz-heroi .avanco { padding-left:0 !important; padding-right:0 !important; margin-top:16px; }
 .doc.paisagem .pz-p { border-top:1px solid var(--trl-border); }
 .doc.paisagem .pz-p + .pz-p { border-left:1px solid var(--trl-border); }
 .doc.paisagem .rolagem { overflow:visible; }
@@ -1634,11 +1632,8 @@ renderFixos(); render();
     const usados = new Set([...avanco, ...plano, ...prod, ...turno, ...acum]);
     const resto = secs.filter(s => !usados.has(s));
     const div = cls => { const d = document.createElement('div'); d.className = cls; return d; };
-    /* topo: identificação, totais e avanço à esquerda; desenho do navio à direita */
-    const esq = div('pz-topo-esq'), dir = div('pz-topo-dir');
-    [...heroi.children].forEach(c => (c.matches('.plano, .plano-leg') ? dir : esq).append(c));
-    esq.append(...avanco);
-    heroi.classList.add('pz-heroi'); heroi.append(esq, dir);
+    /* topo: identificação e totais em cima, o navio logo abaixo, e o avanço da operação */
+    heroi.classList.add('pz-heroi'); heroi.append(...avanco);
     /* o detalhe do porão selecionado fica logo abaixo do plano de descarga */
     const det = doc.querySelector('#detalhe');
     const planoCol = [...plano];
