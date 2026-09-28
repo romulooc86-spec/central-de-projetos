@@ -1505,7 +1505,11 @@ function mostrarFonte(){
   const el = $('barraFonte'); if (!el) return;
   const ed = DADOS.config && DADOS.config.edicao !== false;
   if (!ed){
-    el.innerHTML = DADOS.lidoEm ? `Boletim emitido com os dados da planilha de ${dhsS(DADOS.lidoEm)}.` : '';
+    const sc = estadoFonte.status;
+    el.innerHTML = sc === 'lendo' ? 'Atualizando com a planilha da equipe…'
+      : sc === 'ok' ? `<b>● Dados ao vivo</b> da planilha da equipe · atualizados às ${hh(estadoFonte.quando)}`
+      : sc === 'erro' ? `Não foi possível atualizar agora. Mostrando os dados de ${DADOS.lidoEm ? dhsS(DADOS.lidoEm) : 'última leitura'}.`
+      : DADOS.lidoEm ? `Boletim emitido com os dados da planilha de ${dhsS(DADOS.lidoEm)}.` : '';
     el.className = 'barra-fonte cliente'; return;
   }
   const s = estadoFonte.status;
@@ -1834,7 +1838,9 @@ renderFixos(); render();
 })();
 
 mostrarFonte();
-if (DADOS.config && DADOS.config.edicao !== false) carregarPlanilha();
+carregarPlanilha();
+setInterval(() => { if (!document.hidden) carregarPlanilha(); }, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) carregarPlanilha(); });
 </script>
 
 
