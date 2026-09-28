@@ -365,43 +365,6 @@ a.mp-item { display:block; text-decoration:none; }
 .menu-painel[hidden], .menu-fundo[hidden], #secLinha[hidden] { display:none !important; }
 @media print { .menu-btn, .menu-painel, .menu-fundo { display:none !important; } }
 
-/* ===== Linha do tempo da operação ===== */
-.tl-resumo { display:grid; grid-template-columns:repeat(3, auto) 1fr; gap:10px 28px; align-items:end; margin-top:12px; padding:14px 16px; background:var(--trl-cinza-100); border-radius:6px; }
-.tl-resumo > div { display:flex; flex-direction:column; gap:1px; }
-.tl-resumo b { font-family:var(--trl-font-titulo); font-weight:700; font-size:1.35rem; line-height:1.1; font-variant-numeric:tabular-nums; }
-.tl-resumo b.par { color:var(--trl-accent); }
-.tl-resumo span:not(.rot):not(.tl-bar):not(.tl-leg) { font-size:12px; color:var(--trl-fg-muted); }
-.tl-geral { min-width:0; }
-.tl-bar { display:block; height:6px; background:var(--trl-accent); border-radius:3px; overflow:hidden; }
-.tl-bar i { display:block; height:100%; background:var(--trl-status-ok); }
-.tl-bar.grande { height:12px; border-radius:6px; }
-.tl-leg { display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--trl-fg-muted); margin-top:5px; }
-.tl-leg i { width:10px; height:10px; border-radius:2px; display:inline-block; }
-.tl-leg i.op { background:var(--trl-status-ok); } .tl-leg i.pa { background:var(--trl-accent); margin-left:8px; }
-.tl-lista { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
-.tl-dia { display:grid; grid-template-columns:78px 1fr 140px; gap:10px; align-items:stretch; padding:8px 0; border-bottom:1px solid var(--trl-border); }
-.tl-dia-cab { display:flex; flex-direction:column; justify-content:center; }
-.tl-dia-cab b { font-family:var(--trl-font-titulo); font-size:1.05rem; }
-.tl-dia-cab span { font-size:12px; color:var(--trl-fg-subtle); text-transform:capitalize; }
-.tl-cels { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; }
-.tl-cel { text-align:left; font:inherit; display:flex; flex-direction:column; gap:3px; padding:8px 10px; border:1px solid var(--trl-border); border-radius:6px; background:var(--trl-bg); cursor:pointer; min-width:0; }
-.tl-cel:hover { border-color:var(--trl-fg-subtle); }
-.tl-cel.atual { border-color:var(--trl-accent); box-shadow:0 0 0 1px var(--trl-accent); }
-.tl-per { font-size:11px; color:var(--trl-fg-subtle); font-variant-numeric:tabular-nums; }
-.tl-cel b { font-family:var(--trl-font-titulo); font-size:1rem; font-variant-numeric:tabular-nums; }
-.tl-pct { font-size:11px; color:var(--trl-fg-muted); }
-.tl-pct em { font-style:normal; color:var(--trl-accent); }
-.tl-dia-tot { display:flex; flex-direction:column; justify-content:center; text-align:right; font-size:12px; color:var(--trl-fg-muted); }
-.tl-dia-tot b { font-family:var(--trl-font-titulo); font-size:1.05rem; color:var(--trl-fg); }
-.tl-dia-tot .par { color:var(--trl-accent); }
-@media (max-width:640px) {
-  .tl-resumo { grid-template-columns:repeat(3, 1fr); gap:10px 12px; }
-  .tl-resumo .tl-geral { grid-column:1 / -1; }
-  .tl-dia { grid-template-columns:1fr auto; }
-  .tl-dia-cab { flex-direction:row; align-items:baseline; gap:8px; }
-  .tl-cels { grid-column:1 / -1; grid-row:2; grid-template-columns:repeat(2, minmax(0, 1fr)); }
-  .tl-dia-tot { grid-column:2; grid-row:1; flex-direction:row; gap:8px; align-items:baseline; }
-}
 .barra-fonte:empty { display:none; }
 .barra-fonte.ok b { color:var(--trl-status-ok); }
 .barra-fonte.erro { background:var(--trl-vermelho-15); }
@@ -2109,56 +2072,8 @@ renderFixos(); render();
 
 /* ===== Menu (☰): navios, navegação, exportação · Linha do tempo da operação ===== */
 (function(){
-  /* ---------- linha do tempo por dia e turno ---------- */
-  function renderLinhaTempo(){
-    let sec = $('secLinha');
-    const prodSec = $('tabProd') && $('tabProd').closest('section');
-    if (!sec){ if (!prodSec) return; sec = document.createElement('section'); sec.className = 'secao'; sec.id = 'secLinha'; prodSec.after(sec); }
-    if (!turnos || !turnos.length){ sec.hidden = true; return; }
-    sec.hidden = false;
-    const minT = HT / 60000;
-    const parDe = x => paradas.filter(p => p.fim > x.ini && p.ini < x.fim).reduce((a, p) => a + (Math.min(p.fim, x.fim) - Math.max(p.ini, x.ini)) / 60000, 0);
-    const dias = new Map();
-    turnos.forEach(x => {
-      const d0 = new Date(x.ini.getTime() - 7 * 3600e3);           /* dia operacional: turno das 01h conta no dia anterior */
-      const k = `${d0.getFullYear()}-${pad(d0.getMonth() + 1)}-${pad(d0.getDate())}`;
-      if (!dias.has(k)) dias.set(k, { data:new Date(d0.getFullYear(), d0.getMonth(), d0.getDate()), turnos:[] });
-      dias.get(k).turnos.push(x);
-    });
-    let totOp = 0, totPar = 0, totTon = 0;
-    const blocos = [...dias.values()].map(d => {
-      let dT = 0, dP = 0, dM = 0;
-      const cels = d.turnos.map(x => {
-        const p = Math.min(minT, parDe(x)), op = (minT - p) / minT * 100;
-        dT += x.ton; dP += p; dM += minT;
-        return `<button type="button" class="tl-cel ${x === turnos[sel] ? 'atual' : ''}" data-i="${x.i}" title="Abrir o boletim deste turno">
-          <span class="tl-per">${x.faixa}</span><b>${t0(x.ton)} t</b>
-          <span class="tl-bar"><i style="width:${op}%"></i></span>
-          <span class="tl-pct">${t0(op)}% operando${p ? ` · <em>${hm(p)} parado</em>` : ''}</span></button>`;
-      }).join('');
-      totOp += dM - dP; totPar += dP; totTon += dT;
-      return `<div class="tl-dia">
-        <div class="tl-dia-cab"><b>${dm(d.data)}</b><span>${DIAS[d.data.getDay()]}</span></div>
-        <div class="tl-cels">${cels}</div>
-        <div class="tl-dia-tot"><b>${t2(dT)} t</b><span>${t0((dM - dP) / dM * 100)}% operando</span><span class="par">${hm(dP)} parado</span></div>
-      </div>`;
-    }).join('');
-    const pctOp = totOp + totPar > 0 ? totOp / (totOp + totPar) * 100 : 0;
-    sec.innerHTML = `<div class="secao-cab"><h2>Linha do tempo da operação</h2><span class="nota">Por dia e turno · produção e tempo operando × parado</span></div>
-      <div class="tl-resumo">
-        <div><span class="rot">Produção no período</span><b>${t2(totTon)} t</b></div>
-        <div><span class="rot">Operando</span><b>${hm(totOp)}</b><span>${p1(pctOp)}</span></div>
-        <div><span class="rot">Parado</span><b class="par">${hm(totPar)}</b><span>${p1(100 - pctOp)}</span></div>
-        <div class="tl-geral"><span class="tl-bar grande"><i style="width:${pctOp}%"></i></span><span class="tl-leg"><i class="op"></i>Operando <i class="pa"></i>Parado</span></div>
-      </div>
-      <div class="tl-lista">${blocos}</div>`;
-    sec.querySelectorAll('.tl-cel').forEach(b => b.onclick = () => {
-      const i = turnos.findIndex(x => String(x.i) === b.dataset.i);
-      if (i >= 0){ sel = i; poraoSel = null; atualizarTudo(); window.scrollTo({ top:0, behavior:'smooth' }); }
-    });
-  }
-  const atualizarBase = atualizarTudo;
-  atualizarTudo = function(){ atualizarBase.apply(this, arguments); try { renderLinhaTempo(); } catch (e) {} };
+  /* (linha do tempo da operação removida a pedido) */
+  const antiga = document.getElementById('secLinha'); if (antiga) antiga.remove();
 
   /* ---------- exportar a tela (PNG / PDF) ---------- */
   const nomeBase = () => `${String(DADOS.navio || 'Relatório').replace(/[\\/:*?"<>|]/g, '').trim()} - Relatório de operação`;
@@ -2219,7 +2134,7 @@ renderFixos(); render();
   /* um arquivo gerado a partir desta página já traz o menu copiado: remove antes de recriar */
   document.querySelectorAll('.menu-btn, .menu-painel, .menu-fundo').forEach(e => e.remove());
   const cab = document.querySelector('.cab');
-  if (!cab) { renderLinhaTempo(); return; }
+  if (!cab) return;
   const btn = document.createElement('button');
   btn.type = 'button'; btn.className = 'menu-btn'; btn.id = 'menuBtn'; btn.setAttribute('aria-label', 'Abrir menu'); btn.setAttribute('aria-expanded', 'false');
   btn.innerHTML = '<span></span><span></span><span></span>';
@@ -2233,7 +2148,7 @@ renderFixos(); render();
   const LINK_EQUIPE = /^https?:$/.test(location.protocol) && /lake-st-clair-boletim-06\.html$/.test(location.pathname) ? location.pathname.replace(/lake-st-clair-boletim-06\.html$/, 'lake-st-clair-equipe.html') : '';
   let editandoId = null, apagandoId = null;
 
-  const secoes = [['Resumo', '.heroi'], ['Plano de descarga', '#secPlano'], ['Produção por turno', '#tabProd'], ['Linha do tempo', '#secLinha'], ['Paralisações', '#ltBarra']];
+  const secoes = [['Resumo', '.heroi'], ['Plano de descarga', '#secPlano'], ['Produção por turno', '#tabProd'], ['Paralisações', '#ltBarra']];
   function desenharMenu(msg){
     const lista = lerNavios(), ativoId = localStorage.getItem(NAVIO_ATIVO_CHAVE) || 'embutido';
     const edit = lista.find(n => n.id === editandoId);
@@ -2318,7 +2233,6 @@ renderFixos(); render();
   btn.onclick = () => painel.hidden ? abrir() : fechar();
   fundo.onclick = fechar;
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !painel.hidden) fechar(); });
-  renderLinhaTempo();
 })();
 
 mostrarFonte();
