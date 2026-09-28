@@ -123,6 +123,27 @@ b { font-weight:600; }
 .pe-mot b { text-align:right; font-variant-numeric:tabular-nums; }
 .pe-vazio { font-size:14px; color:var(--trl-fg-subtle); }
 .pe-rodape { display:flex; justify-content:space-between; font-size:13px; color:var(--trl-fg-subtle); border-top:1px solid var(--trl-border); padding-top:10px; }
+/* faixa do meio: navio à esquerda + quadro "Paradas do turno" à direita */
+.pe-meio { flex:1; min-height:0; display:grid; grid-template-columns:1fr 640px; gap:16px; align-items:stretch; }
+.pe-meio .pe-navio { flex:none; }
+.pe-paradas { gap:10px; }
+.pe-par-tot { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pe-par-tot > div { display:flex; flex-direction:column; }
+.pe-par-tot b { font-family:var(--trl-font-titulo); font-weight:700; font-size:34px; line-height:1.05; font-variant-numeric:tabular-nums; }
+.pe-par-tot b.parado { color:var(--trl-accent); }
+.pe-par-tot span { font-size:13.5px; color:var(--trl-fg-muted); }
+.pe-lt { position:relative; height:16px; background:#2F2F2F; border-radius:3px; overflow:hidden; margin-top:2px; }
+.pe-lt span { position:absolute; top:0; bottom:0; background:var(--trl-accent); }
+.pe-lt-h { position:relative; height:16px; font-size:11.5px; color:var(--trl-fg-subtle); }
+.pe-lt-h span { position:absolute; top:1px; transform:translateX(-50%); }
+.pe-lt-h span:first-child { transform:none; }
+.pe-lt-h span:last-child { transform:translateX(-100%); }
+.pe-par { display:grid; grid-template-columns:120px 1fr 60px; gap:10px; font-size:14px; padding:4px 0; border-bottom:1px solid var(--trl-cinza-100); }
+.pe-par:last-child { border-bottom:none; }
+.pe-par-h { color:var(--trl-fg-muted); font-variant-numeric:tabular-nums; }
+.pe-par-m { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pe-par b { text-align:right; font-variant-numeric:tabular-nums; }
+.pe-ok { font-size:15px; font-weight:600; color:var(--trl-status-ok); }
 .cartao-zap { position:fixed; top:0; left:-10000px; width:820px; background:var(--trl-branco); font-family:var(--trl-font-corpo); color:var(--trl-texto); padding:40px 44px 34px; }
 .cartao-zap .cz-cab { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; border-bottom:4px solid var(--trl-accent); padding-bottom:18px; }
 .cartao-zap .cz-logo { width:150px; height:auto; flex:0 0 auto; color:var(--trl-preto); }
@@ -1663,12 +1684,21 @@ renderFixos(); render();
     const pr = {}; turnos.forEach(x => Object.entries(x.prod).forEach(([k, [, b]]) => pr[k] = (pr[k] || 0) + b));
     const sq = calcSequencia(pr), at = sq.find(e => e.estado !== 'ok');
     const minTurno = Math.max(1, (t.fim - t.ini) / 60000);
-    const parT = paradas.filter(x => x.fim > t.ini && x.ini < t.fim).map(x => ({ motivo:x.motivo, m:(Math.min(x.fim, t.fim) - Math.max(x.ini, t.ini)) / 60000 }));
+    const parT = paradas.filter(x => x.fim > t.ini && x.ini < t.fim).map(x => {
+      const a = new Date(Math.max(x.ini, t.ini)), b = new Date(Math.min(x.fim, t.fim));
+      return { motivo:x.motivo, ini:a, fim:b, m:(b - a) / 60000 };
+    }).sort((p, q) => p.ini - q.ini);
     const parMin = parT.reduce((a, x) => a + x.m, 0);
+    /* quadro "Paradas do turno": total, linha do tempo do turno e a lista */
+    const pos = d => (d - t.ini) / 60000 / minTurno * 100;
+    const faixas = parT.map(x => `<span style="left:${pos(x.ini)}%;width:${Math.max(.6, x.m / minTurno * 100)}%"></span>`).join('');
+    const horasLt = [0, .25, .5, .75, 1].map(f => `<span style="left:${f * 100}%">${hh(new Date(t.ini.getTime() + f * minTurno * 60000))}</span>`).join('');
+    const listaPar = parT.slice(0, 5).map(x => `<div class="pe-par"><span class="pe-par-h">${hh(x.ini)}–${hh(x.fim)}</span><span class="pe-par-m">${esc(x.motivo)}</span><b>${hm(x.m)}</b></div>`).join('')
+      + (parT.length > 5 ? `<div class="pe-vazio">+ ${parT.length - 5} parada(s)</div>` : '');
     const acum = {};
     paradas.filter(x => x.ini < t.fim).forEach(x => { const m = (Math.min(x.fim, t.fim) - x.ini) / 60000; if (m > 0) acum[x.motivo] = (acum[x.motivo] || 0) + m; });
     const totAcum = Object.values(acum).reduce((a, b) => a + b, 0);
-    const topMot = Object.entries(acum).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const topMot = Object.entries(acum).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const maxMot = topMot.length ? topMot[0][1] : 1;
     const CORES = { verm:'#DA202C', texto:'#2F2F2F', sub:'#8A8C91', grade:'#EAEAEA', claro:'#B0B0B0' };
 
@@ -1726,13 +1756,20 @@ renderFixos(); render();
         <div class="pe-kpi">${rot('Produção do turno')}<b>${t2(t.ton)} t</b><span>${t.meta ? `${t0(t.ton / t.meta * 100)}% da prancha de ${t0(t.meta)} t` : ''} · ${t.viagens} viagens</span></div>
         <div class="pe-kpi">${rot('Término previsto')}<b>${quando}</b><span class="${!prod.length ? '' : noPrazo ? 'ok' : 'risco'}">${!prod.length ? 'aguardando produção' : noPrazo ? '● no prazo' : '● em risco'} · ritmo ${ritmo ? `${t0(ritmo)} t/turno` : '—'}</span></div>
       </div>
-      <div class="pe-navio"></div>
+      <div class="pe-meio">
+        <div class="pe-navio"></div>
+        <section class="pe-card pe-paradas"><h2>Paradas do turno</h2>
+          <div class="pe-par-tot"><div><b class="${parT.length ? 'parado' : ''}">${parT.length ? hm(parMin) : '0h00'}</b><span>parado · ${parT.length} ${parT.length === 1 ? 'parada' : 'paradas'}</span></div>
+            <div><b>${hm(Math.max(0, minTurno - parMin))}</b><span>operando · ${t0((minTurno - parMin) / minTurno * 100)}% do turno</span></div></div>
+          <div class="pe-lt">${faixas}</div><div class="pe-lt-h">${horasLt}</div>
+          ${listaPar || '<p class="pe-ok">✓ Sem paradas neste turno.</p>'}
+        </section>
+      </div>
       <div class="pe-cards">
         <section class="pe-card"><h2>Produção por turno</h2><div class="pe-graf">${graf}</div></section>
         <section class="pe-card"><h2>${descarga() ? 'Plano de descarga' : 'Plano de carga'}</h2>${etapas || '<p class="pe-vazio">Sem plano cadastrado.</p>'}</section>
-        <section class="pe-card"><h2>Paralisações</h2>
-          <div class="pe-turno"><b>${hm(Math.max(0, minTurno - parMin))}</b> operando de ${hm(minTurno)} no turno (${t0((minTurno - parMin) / minTurno * 100)}%)${parT.length ? ` · parado ${hm(parMin)}` : ' · sem paralisações'}</div>
-          <div class="pe-sub">Acumuladas desde o início · ${hm(totAcum)}</div>
+        <section class="pe-card"><h2>Paralisações acumuladas</h2>
+          <div class="pe-sub">Desde o início da operação · total ${hm(totAcum)}</div>
           ${motivos || '<p class="pe-vazio">Nenhuma paralisação registrada.</p>'}
         </section>
       </div>
@@ -1740,7 +1777,7 @@ renderFixos(); render();
     const logoOrig = document.getElementById('trl-logo-h');
     if (logoOrig) pe.querySelector('.pe-logo').appendChild(logoOrig.cloneNode(true));
     const svgNavio = document.querySelector('#plano svg'), leg = $('planoLeg');
-    if (svgNavio){ const c = svgNavio.cloneNode(true); c.setAttribute('width', '960'); c.setAttribute('height', '321'); pe.querySelector('.pe-navio').appendChild(c); }
+    if (svgNavio){ const c = svgNavio.cloneNode(true); c.setAttribute('width', '930'); c.setAttribute('height', '311'); pe.querySelector('.pe-navio').appendChild(c); }
     if (leg){ const l = leg.cloneNode(true); l.removeAttribute('id'); pe.querySelector('.pe-navio').appendChild(l); }
     const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(pe);
     return wrap;
