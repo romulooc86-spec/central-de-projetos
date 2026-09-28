@@ -326,6 +326,74 @@ table.t tr.sep td { font-size:10.5px; font-weight:600; letter-spacing:.08em; tex
 @keyframes pulsoVivo { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:.35; transform:scale(.7); } }
 @media (prefers-reduced-motion:reduce) { .relogio::before { animation:none; } }
 @media (max-width:640px) { .relogio { margin-left:0; white-space:normal; flex-wrap:wrap; gap:4px 10px; } }
+/* ===== Menu ☰ ===== */
+.cab { position:relative; }
+.cab-dir { padding-right:56px; }
+.menu-btn { position:absolute; top:18px; right:20px; width:42px; height:42px; border:1px solid var(--trl-border); border-radius:8px; background:var(--trl-bg); cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; }
+.menu-btn span { display:block; width:20px; height:2px; background:var(--trl-fg); border-radius:2px; }
+.menu-btn:hover { border-color:var(--trl-accent); }
+.menu-fundo { position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:60; }
+.menu-painel { position:fixed; top:0; right:0; bottom:0; width:min(380px, 92vw); background:var(--trl-bg); z-index:61; box-shadow:-8px 0 24px rgba(0,0,0,.15); overflow-y:auto; padding:0 20px 24px; padding-top:env(safe-area-inset-top, 0px); display:flex; flex-direction:column; }
+.mp-cab { display:flex; justify-content:space-between; align-items:center; padding:16px 0 12px; border-bottom:3px solid var(--trl-accent); position:sticky; top:0; background:var(--trl-bg); }
+.mp-cab b { font-family:var(--trl-font-titulo); font-size:1.15rem; letter-spacing:.04em; }
+.mp-fechar { border:none; background:none; font-size:18px; cursor:pointer; padding:6px 8px; color:var(--trl-fg-muted); }
+.mp-sec { display:flex; flex-direction:column; gap:6px; padding:14px 0; border-bottom:1px solid var(--trl-border); }
+.mp-sec select, .mp-form input { font:inherit; font-size:14px; padding:9px 10px; border:1px solid var(--trl-cinza-300); border-radius:6px; background:var(--trl-bg); color:var(--trl-fg); width:100%; }
+.mp-item { text-align:left; font:inherit; font-size:14px; padding:9px 10px; border:none; border-radius:6px; background:none; cursor:pointer; color:var(--trl-fg); }
+.mp-item:hover { background:var(--trl-cinza-100); }
+.mp-gerir summary { cursor:pointer; font-size:13px; font-weight:600; color:var(--trl-accent); padding:4px 0; }
+.mp-navios { list-style:none; margin:8px 0; padding:0; display:flex; flex-direction:column; gap:4px; }
+.mp-navios li { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:13.5px; padding:6px 0; border-bottom:1px solid var(--trl-cinza-100); }
+.mp-navios em { font-style:normal; color:var(--trl-fg-subtle); font-size:12px; }
+.mp-acoes { display:flex; gap:4px; flex:none; }
+.mp-mini { font:inherit; font-size:12px; padding:4px 8px; border:1px solid var(--trl-border); border-radius:4px; background:var(--trl-bg); cursor:pointer; }
+.mp-mini.perigo { color:#fff; background:var(--trl-accent); border-color:var(--trl-accent); }
+.mp-form { display:flex; flex-direction:column; gap:8px; margin-top:6px; padding:12px; border-radius:6px; background:var(--trl-cinza-100); }
+.mp-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; font-weight:600; color:var(--trl-fg-muted); }
+.mp-linha { display:flex; gap:8px; flex-wrap:wrap; }
+.mp-bt { font:inherit; font-size:13px; font-weight:600; padding:8px 14px; border-radius:6px; border:1px solid var(--trl-border); background:var(--trl-bg); cursor:pointer; }
+.mp-bt.prim { background:var(--trl-accent); border-color:var(--trl-accent); color:#fff; }
+.mp-msg { font-size:13px; color:var(--trl-fg-muted); padding-top:12px; min-height:1.4em; }
+@media (max-width:640px) { .menu-btn { top:14px; right:14px; } .cab-dir { padding-right:0; } }
+@media print { .menu-btn, .menu-painel, .menu-fundo { display:none !important; } }
+
+/* ===== Linha do tempo da operação ===== */
+.tl-resumo { display:grid; grid-template-columns:repeat(3, auto) 1fr; gap:10px 28px; align-items:end; margin-top:12px; padding:14px 16px; background:var(--trl-cinza-100); border-radius:6px; }
+.tl-resumo > div { display:flex; flex-direction:column; gap:1px; }
+.tl-resumo b { font-family:var(--trl-font-titulo); font-weight:700; font-size:1.35rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+.tl-resumo b.par { color:var(--trl-accent); }
+.tl-resumo span:not(.rot):not(.tl-bar):not(.tl-leg) { font-size:12px; color:var(--trl-fg-muted); }
+.tl-geral { min-width:0; }
+.tl-bar { display:block; height:6px; background:var(--trl-accent); border-radius:3px; overflow:hidden; }
+.tl-bar i { display:block; height:100%; background:var(--trl-status-ok); }
+.tl-bar.grande { height:12px; border-radius:6px; }
+.tl-leg { display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--trl-fg-muted); margin-top:5px; }
+.tl-leg i { width:10px; height:10px; border-radius:2px; display:inline-block; }
+.tl-leg i.op { background:var(--trl-status-ok); } .tl-leg i.pa { background:var(--trl-accent); margin-left:8px; }
+.tl-lista { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.tl-dia { display:grid; grid-template-columns:78px 1fr 140px; gap:10px; align-items:stretch; padding:8px 0; border-bottom:1px solid var(--trl-border); }
+.tl-dia-cab { display:flex; flex-direction:column; justify-content:center; }
+.tl-dia-cab b { font-family:var(--trl-font-titulo); font-size:1.05rem; }
+.tl-dia-cab span { font-size:12px; color:var(--trl-fg-subtle); text-transform:capitalize; }
+.tl-cels { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; }
+.tl-cel { text-align:left; font:inherit; display:flex; flex-direction:column; gap:3px; padding:8px 10px; border:1px solid var(--trl-border); border-radius:6px; background:var(--trl-bg); cursor:pointer; min-width:0; }
+.tl-cel:hover { border-color:var(--trl-fg-subtle); }
+.tl-cel.atual { border-color:var(--trl-accent); box-shadow:0 0 0 1px var(--trl-accent); }
+.tl-per { font-size:11px; color:var(--trl-fg-subtle); font-variant-numeric:tabular-nums; }
+.tl-cel b { font-family:var(--trl-font-titulo); font-size:1rem; font-variant-numeric:tabular-nums; }
+.tl-pct { font-size:11px; color:var(--trl-fg-muted); }
+.tl-pct em { font-style:normal; color:var(--trl-accent); }
+.tl-dia-tot { display:flex; flex-direction:column; justify-content:center; text-align:right; font-size:12px; color:var(--trl-fg-muted); }
+.tl-dia-tot b { font-family:var(--trl-font-titulo); font-size:1.05rem; color:var(--trl-fg); }
+.tl-dia-tot .par { color:var(--trl-accent); }
+@media (max-width:640px) {
+  .tl-resumo { grid-template-columns:repeat(3, 1fr); gap:10px 12px; }
+  .tl-resumo .tl-geral { grid-column:1 / -1; }
+  .tl-dia { grid-template-columns:1fr auto; }
+  .tl-dia-cab { flex-direction:row; align-items:baseline; gap:8px; }
+  .tl-cels { grid-column:1 / -1; grid-row:2; grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  .tl-dia-tot { grid-column:2; grid-row:1; flex-direction:row; gap:8px; align-items:baseline; }
+}
 .barra-fonte:empty { display:none; }
 .barra-fonte.ok b { color:var(--trl-status-ok); }
 .barra-fonte.erro { background:var(--trl-vermelho-15); }
@@ -950,6 +1018,25 @@ textarea.zap { width:100%; min-height:210px; font-family:ui-monospace,Menlo,Cons
 /* Os dados da operação ficam no bloco <script id="dados"> (JSON) e são editados pela Área da equipe. */
 let DADOS = JSON.parse(document.getElementById('dados').textContent);
 DADOS.responsaveis = DADOS.responsaveis || {}; /* motivo da parada -> responsável (navio/estiva/cliente/outros) */
+/* lista de navios (salva no navegador): o navio escolhido no menu substitui o embutido antes de montar o painel */
+const NAVIOS_CHAVE = 'trl-navios', NAVIO_ATIVO_CHAVE = 'trl-navio-ativo';
+function lerNavios(){ try { return JSON.parse(localStorage.getItem(NAVIOS_CHAVE) || '[]'); } catch (e) { return []; } }
+function gravarNavios(l){ try { localStorage.setItem(NAVIOS_CHAVE, JSON.stringify(l)); return true; } catch (e) { return false; } }
+const NAVIO_EMBUTIDO = { id:'embutido', nome:String(DADOS.navio || 'NAVIO'), planilha:(DADOS.fonte && DADOS.fonte.planilha) || '', fixo:true };
+(function(){
+  try {
+    let lista = lerNavios();
+    if (!lista.some(n => n.id === 'embutido')) { lista.unshift(NAVIO_EMBUTIDO); gravarNavios(lista); }
+    const ativo = lista.find(n => n.id === localStorage.getItem(NAVIO_ATIVO_CHAVE));
+    if (ativo && ativo.id !== 'embutido'){
+      DADOS = { documento:'', navio:ativo.nome, operacao:['Descarga', 'Discharge'], tipo:'descarga', carga:['', ''], berco:'',
+        atracacao:'', inicio:'', previsaoTermino:'', pranchaPadrao:DADOS.pranchaPadrao || 700, duracaoTurnoH:6,
+        manifesto:{ 1:0, 2:0, 3:0, 4:0, 5:0 }, turnos:[], paralisacoes:[], fonte:{ planilha:ativo.planilha || '' }, responsaveis:{},
+        plano:{ referencia:'', viagem:'', origem:'', destino:'', caladoChegada:[0, 0], sequencia:[] }, observacoes:['', ''], config:DADOS.config };
+    }
+  } catch (e) {}
+})();
+
 /* configuração do navio salva no navegador: o site é estático, então sem isto
    "Aplicar configuração" (berço, plano, responsáveis das paradas...) se perdia ao recarregar */
 const CHAVE_CFG = 'trl-boletim-cfg:' + String(DADOS.navio || '').trim().toUpperCase();
@@ -2001,6 +2088,204 @@ renderFixos(); render();
     tick();
   };
   setInterval(tick, 1000);
+})();
+
+/* ===== Menu (☰): navios, navegação, exportação · Linha do tempo da operação ===== */
+(function(){
+  /* ---------- linha do tempo por dia e turno ---------- */
+  function renderLinhaTempo(){
+    let sec = $('secLinha');
+    const prodSec = $('tabProd') && $('tabProd').closest('section');
+    if (!sec){ if (!prodSec) return; sec = document.createElement('section'); sec.className = 'secao'; sec.id = 'secLinha'; prodSec.after(sec); }
+    if (!turnos || !turnos.length){ sec.hidden = true; return; }
+    sec.hidden = false;
+    const minT = HT / 60000;
+    const parDe = x => paradas.filter(p => p.fim > x.ini && p.ini < x.fim).reduce((a, p) => a + (Math.min(p.fim, x.fim) - Math.max(p.ini, x.ini)) / 60000, 0);
+    const dias = new Map();
+    turnos.forEach(x => {
+      const d0 = new Date(x.ini.getTime() - 7 * 3600e3);           /* dia operacional: turno das 01h conta no dia anterior */
+      const k = `${d0.getFullYear()}-${pad(d0.getMonth() + 1)}-${pad(d0.getDate())}`;
+      if (!dias.has(k)) dias.set(k, { data:new Date(d0.getFullYear(), d0.getMonth(), d0.getDate()), turnos:[] });
+      dias.get(k).turnos.push(x);
+    });
+    let totOp = 0, totPar = 0, totTon = 0;
+    const blocos = [...dias.values()].map(d => {
+      let dT = 0, dP = 0, dM = 0;
+      const cels = d.turnos.map(x => {
+        const p = Math.min(minT, parDe(x)), op = (minT - p) / minT * 100;
+        dT += x.ton; dP += p; dM += minT;
+        return `<button type="button" class="tl-cel ${x === turnos[sel] ? 'atual' : ''}" data-i="${x.i}" title="Abrir o boletim deste turno">
+          <span class="tl-per">${x.faixa}</span><b>${t0(x.ton)} t</b>
+          <span class="tl-bar"><i style="width:${op}%"></i></span>
+          <span class="tl-pct">${t0(op)}% operando${p ? ` · <em>${hm(p)} parado</em>` : ''}</span></button>`;
+      }).join('');
+      totOp += dM - dP; totPar += dP; totTon += dT;
+      return `<div class="tl-dia">
+        <div class="tl-dia-cab"><b>${dm(d.data)}</b><span>${DIAS[d.data.getDay()]}</span></div>
+        <div class="tl-cels">${cels}</div>
+        <div class="tl-dia-tot"><b>${t2(dT)} t</b><span>${t0((dM - dP) / dM * 100)}% operando</span><span class="par">${hm(dP)} parado</span></div>
+      </div>`;
+    }).join('');
+    const pctOp = totOp + totPar > 0 ? totOp / (totOp + totPar) * 100 : 0;
+    sec.innerHTML = `<div class="secao-cab"><h2>Linha do tempo da operação</h2><span class="nota">Por dia e turno · produção e tempo operando × parado</span></div>
+      <div class="tl-resumo">
+        <div><span class="rot">Produção no período</span><b>${t2(totTon)} t</b></div>
+        <div><span class="rot">Operando</span><b>${hm(totOp)}</b><span>${p1(pctOp)}</span></div>
+        <div><span class="rot">Parado</span><b class="par">${hm(totPar)}</b><span>${p1(100 - pctOp)}</span></div>
+        <div class="tl-geral"><span class="tl-bar grande"><i style="width:${pctOp}%"></i></span><span class="tl-leg"><i class="op"></i>Operando <i class="pa"></i>Parado</span></div>
+      </div>
+      <div class="tl-lista">${blocos}</div>`;
+    sec.querySelectorAll('.tl-cel').forEach(b => b.onclick = () => {
+      const i = turnos.findIndex(x => String(x.i) === b.dataset.i);
+      if (i >= 0){ sel = i; poraoSel = null; atualizarTudo(); window.scrollTo({ top:0, behavior:'smooth' }); }
+    });
+  }
+  const atualizarBase = atualizarTudo;
+  atualizarTudo = function(){ atualizarBase.apply(this, arguments); try { renderLinhaTempo(); } catch (e) {} };
+
+  /* ---------- exportar a tela (PNG / PDF) ---------- */
+  const nomeBase = () => `${String(DADOS.navio || 'Relatório').replace(/[\\/:*?"<>|]/g, '').trim()} - Relatório de operação`;
+  function baixar(blob, nome){
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
+  async function capturarTela(){
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const alvo = document.querySelector('.doc');
+    return html2canvas(alvo, { backgroundColor:'#ffffff', scale:2, useCORS:true, scrollX:0, scrollY:-window.scrollY,
+      onclone: doc => {
+        doc.querySelectorAll('.bf-acoes, .menu-btn, .menu-painel, .menu-fundo, #editor, .rodape .acoes').forEach(e => e.remove());
+        doc.querySelectorAll('svg use').forEach(u => {
+          const id = (u.getAttribute('href') || u.getAttribute('xlink:href') || '').replace('#', '');
+          const src = id && doc.getElementById(id);
+          if (src){ const g = src.cloneNode(true); g.removeAttribute('id'); u.replaceWith(g); }
+        });
+        const st = doc.createElement('style');
+        st.textContent = 'table.t tr.atual td:first-child{box-shadow:none!important;border-left:3px solid #DA202C}.etapa.atual{box-shadow:none!important}.relogio::before{animation:none!important}';
+        doc.head.appendChild(st);
+      } });
+  }
+  function carregarJsPDF(){
+    if (window.jspdf) return Promise.resolve(window.jspdf);
+    return new Promise((ok, erro) => { const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = () => window.jspdf ? ok(window.jspdf) : erro(new Error('jsPDF')); s.onerror = erro; document.head.appendChild(s); });
+  }
+  async function exportarPNG(){
+    const c = await capturarTela();
+    const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+    if (!blob) throw new Error('sem imagem');
+    baixar(blob, nomeBase() + '.png');
+    return 'Imagem PNG baixada.';
+  }
+  async function exportarPDF(){
+    const [lib, c] = await Promise.all([carregarJsPDF(), capturarTela()]);
+    const pdf = new lib.jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const W = 210, H = 297, m = 8, largura = W - 2 * m;
+    const pxPorMm = c.width / largura, alturaPag = Math.floor((H - 2 * m) * pxPorMm);
+    for (let y = 0, pag = 0; y < c.height; y += alturaPag, pag++){
+      const h = Math.min(alturaPag, c.height - y);
+      const pedaco = document.createElement('canvas'); pedaco.width = c.width; pedaco.height = h;
+      const ctx = pedaco.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, h); ctx.drawImage(c, 0, y, c.width, h, 0, 0, c.width, h);
+      if (pag) pdf.addPage();
+      pdf.addImage(pedaco.toDataURL('image/jpeg', 0.92), 'JPEG', m, m, largura, h / pxPorMm);
+    }
+    baixar(pdf.output('blob'), nomeBase() + '.pdf');
+    return 'PDF baixado.';
+  }
+
+  /* ---------- menu ---------- */
+  /* um arquivo gerado a partir desta página já traz o menu copiado: remove antes de recriar */
+  document.querySelectorAll('.menu-btn, .menu-painel, .menu-fundo').forEach(e => e.remove());
+  const cab = document.querySelector('.cab');
+  if (!cab) { renderLinhaTempo(); return; }
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'menu-btn'; btn.id = 'menuBtn'; btn.setAttribute('aria-label', 'Abrir menu'); btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = '<span></span><span></span><span></span>';
+  cab.appendChild(btn);
+  const fundo = document.createElement('div'); fundo.className = 'menu-fundo'; fundo.hidden = true;
+  const painel = document.createElement('aside'); painel.className = 'menu-painel'; painel.id = 'menuPainel'; painel.hidden = true;
+  painel.setAttribute('role', 'dialog'); painel.setAttribute('aria-label', 'Menu do relatório');
+  document.body.append(fundo, painel);
+  const temEquipe = typeof window.abrirEditor === 'function';
+  let editandoId = null, apagandoId = null;
+
+  const secoes = [['Resumo', '.heroi'], ['Plano de descarga', '#secPlano'], ['Produção por turno', '#tabProd'], ['Linha do tempo', '#secLinha'], ['Paralisações', '#ltBarra']];
+  function desenharMenu(msg){
+    const lista = lerNavios(), ativoId = localStorage.getItem(NAVIO_ATIVO_CHAVE) || 'embutido';
+    const edit = lista.find(n => n.id === editandoId);
+    painel.innerHTML = `
+      <div class="mp-cab"><b>Menu</b><button type="button" class="mp-fechar" id="mpFechar" aria-label="Fechar menu">✕</button></div>
+      <div class="mp-sec"><span class="rot">Navio</span>
+        <select id="mpNavio" aria-label="Escolher navio">${lista.map(n => `<option value="${esc(n.id)}" ${n.id === ativoId ? 'selected' : ''}>${esc(n.nome)}</option>`).join('')}</select>
+        <details class="mp-gerir" ${editandoId !== null || apagandoId ? 'open' : ''}><summary>Gerenciar navios</summary>
+          <ul class="mp-navios">${lista.map(n => `<li><span>${esc(n.nome)}${n.id === ativoId ? ' <em>· em uso</em>' : ''}</span>
+            <span class="mp-acoes">${apagandoId === n.id
+              ? `<button type="button" class="mp-mini perigo" data-conf="${esc(n.id)}">Confirmar</button><button type="button" class="mp-mini" data-canc="1">Não</button>`
+              : `<button type="button" class="mp-mini" data-ed="${esc(n.id)}">Editar</button>${n.fixo ? '' : `<button type="button" class="mp-mini" data-ap="${esc(n.id)}">Apagar</button>`}`}</span></li>`).join('')}</ul>
+          <div class="mp-form">
+            <b>${edit ? 'Editar navio' : 'Incluir navio'}</b>
+            <label>Nome do navio<input id="mpNome" value="${esc(edit ? edit.nome : '')}" placeholder="Ex.: MV OCEAN STAR"></label>
+            <label>Link da aba do navio (Google Planilhas)<input id="mpLink" value="${esc(edit ? edit.planilha : '')}" placeholder="https://docs.google.com/spreadsheets/d/.../edit#gid=..."></label>
+            <div class="mp-linha"><button type="button" class="mp-bt prim" id="mpSalvarNavio">${edit ? 'Salvar alterações' : 'Incluir navio'}</button>${edit ? '<button type="button" class="mp-bt" id="mpCancelar">Cancelar</button>' : ''}</div>
+          </div>
+        </details></div>
+      <div class="mp-sec"><span class="rot">Ir para</span>${secoes.filter(([, s]) => document.querySelector(s)).map(([t, s]) => `<button type="button" class="mp-item" data-ir="${s}">${t}</button>`).join('')}</div>
+      <div class="mp-sec"><span class="rot">Exportar</span>
+        <button type="button" class="mp-item" id="mpPNG">Imagem PNG da tela</button>
+        <button type="button" class="mp-item" id="mpPDF">PDF da tela (A4)</button>
+        ${temEquipe ? '<button type="button" class="mp-item" id="mpExec">Imagem executiva 16:9 e boletim do cliente</button>' : ''}</div>
+      <div class="mp-sec"><span class="rot">Dados</span>
+        <button type="button" class="mp-item" id="mpAtualizar">Atualizar com a planilha agora</button>
+        ${temEquipe ? '<button type="button" class="mp-item" id="mpConfig">Configurar navio</button>' : ''}</div>
+      <p class="mp-msg" id="mpMsg" role="status">${msg ? esc(msg) : ''}</p>`;
+    ligar();
+  }
+  const aviso = t => { const m = $('mpMsg'); if (m) m.textContent = t; };
+  function abrir(){ desenharMenu(); painel.hidden = false; fundo.hidden = false; btn.setAttribute('aria-expanded', 'true'); setTimeout(() => { const f = $('mpFechar'); if (f) f.focus(); }, 30); }
+  function fechar(){ painel.hidden = true; fundo.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
+  function trocarNavio(id){ try { localStorage.setItem(NAVIO_ATIVO_CHAVE, id); } catch (e) {} location.reload(); }
+  function ligar(){
+    $('mpFechar').onclick = fechar;
+    $('mpNavio').onchange = e => trocarNavio(e.target.value);
+    painel.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => { const alvo = document.querySelector(b.dataset.ir); fechar(); if (alvo) (alvo.closest('section') || alvo).scrollIntoView({ behavior:'smooth', block:'start' }); });
+    painel.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => { editandoId = b.dataset.ed; apagandoId = null; desenharMenu(); });
+    painel.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { apagandoId = b.dataset.ap; editandoId = null; desenharMenu(); });
+    painel.querySelectorAll('[data-canc]').forEach(b => b.onclick = () => { apagandoId = null; desenharMenu(); });
+    painel.querySelectorAll('[data-conf]').forEach(b => b.onclick = () => {
+      const id = b.dataset.conf, eraAtivo = (localStorage.getItem(NAVIO_ATIVO_CHAVE) || 'embutido') === id;
+      gravarNavios(lerNavios().filter(n => n.id !== id)); apagandoId = null;
+      if (eraAtivo) trocarNavio('embutido'); else desenharMenu('Navio apagado da lista.');
+    });
+    const cancelar = $('mpCancelar'); if (cancelar) cancelar.onclick = () => { editandoId = null; desenharMenu(); };
+    $('mpSalvarNavio').onclick = () => {
+      const nome = $('mpNome').value.trim(), link = $('mpLink').value.trim();
+      if (!nome){ aviso('Informe o nome do navio.'); return; }
+      if (link && !/docs\.google\.com\/spreadsheets\/d\//.test(link)){ aviso('O link precisa ser de uma aba do Google Planilhas (termina com gid=…).'); return; }
+      const lista = lerNavios();
+      if (editandoId){
+        const n = lista.find(x => x.id === editandoId); if (n){ n.nome = nome; n.planilha = link; }
+        const ativo = (localStorage.getItem(NAVIO_ATIVO_CHAVE) || 'embutido') === editandoId;
+        gravarNavios(lista); editandoId = null;
+        if (ativo) { location.reload(); return; }
+        desenharMenu('Navio atualizado.');
+      } else {
+        const id = 'n' + Date.now().toString(36);
+        lista.push({ id, nome, planilha:link }); gravarNavios(lista);
+        desenharMenu(`“${nome}” incluído. Escolha-o na lista para abrir.`);
+      }
+    };
+    const exec = async (fn, rot) => { aviso(rot); try { aviso(await fn()); } catch (e) { aviso('Não foi possível exportar agora. Tente de novo; se persistir, use Ctrl+P → Salvar como PDF.'); } };
+    $('mpPNG').onclick = () => exec(exportarPNG, 'Gerando a imagem…');
+    $('mpPDF').onclick = () => exec(exportarPDF, 'Gerando o PDF…');
+    const e1 = $('mpExec'); if (e1) e1.onclick = () => { fechar(); window.abrirEditor('enviar'); };
+    const e2 = $('mpConfig'); if (e2) e2.onclick = () => { fechar(); window.abrirEditor('navio'); };
+    $('mpAtualizar').onclick = async () => { aviso('Lendo a planilha…'); const ok = await carregarPlanilha(); aviso(ok ? 'Dados atualizados.' : 'Não foi possível ler a planilha agora.'); };
+  }
+  btn.onclick = () => painel.hidden ? abrir() : fechar();
+  fundo.onclick = fechar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !painel.hidden) fechar(); });
+  renderLinhaTempo();
 })();
 
 mostrarFonte();
