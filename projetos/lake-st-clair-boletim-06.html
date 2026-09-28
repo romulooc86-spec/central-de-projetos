@@ -96,7 +96,7 @@ b { font-weight:600; }
 .pe-kpi span.ok { color:var(--trl-status-ok); font-weight:600; }
 .pe-kpi span.risco { color:var(--trl-accent); font-weight:600; }
 .pe-navio { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-.pe-navio > svg { display:block; flex:none; width:930px; height:311px; max-width:none; }
+.pe-navio > svg { display:block; flex:none; max-width:none; }
 .pe-navio .plano-leg { font-size:13px; justify-content:center; }
 .pe-cards { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:16px; height:300px; }
 .pe-card { border:1px solid var(--trl-border); border-radius:8px; padding:16px 20px; overflow:hidden; display:flex; flex-direction:column; gap:8px; }
@@ -1760,7 +1760,7 @@ renderFixos(); render();
     const logoOrig = document.getElementById('trl-logo-h');
     if (logoOrig) pe.querySelector('.pe-logo').appendChild(logoOrig.cloneNode(true));
     const svgNavio = document.querySelector('#plano svg'), leg = $('planoLeg');
-    if (svgNavio){ const c = svgNavio.cloneNode(true); c.setAttribute('width', '930'); c.setAttribute('height', '311'); pe.querySelector('.pe-navio').appendChild(c); }
+    if (svgNavio){ const c = svgNavio.cloneNode(true); const vb = (c.getAttribute('viewBox') || '0 0 796 266').split(/[\s,]+/).map(Number); const alt = Math.min(318, 1110 * vb[3] / vb[2]); c.setAttribute('height', alt); c.setAttribute('width', alt * vb[2] / vb[3]); c.style.width = (alt * vb[2] / vb[3]) + 'px'; c.style.height = alt + 'px'; pe.querySelector('.pe-navio').appendChild(c); }
     if (leg){ const l = leg.cloneNode(true); l.removeAttribute('id'); pe.querySelector('.pe-navio').appendChild(l); }
     const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(pe);
     return wrap;
