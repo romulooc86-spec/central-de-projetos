@@ -71,6 +71,8 @@ b { font-weight:600; }
 @media (max-width:640px) { .destaque { flex-wrap:wrap; } .destaque-item { min-width:calc(50% - 7px); } .destaque-item b.num { font-size:1.6rem; } }
 
 /* ===== Cartão da imagem do WhatsApp (fora da tela; capturado com html2canvas) ===== */
+/* plano de descarga sem a linha de referência do documento */
+#planoMeta { display:none !important; }
 /* ===== Relatório horizontal (imagem PNG) ===== */
 .pz-wrap { position:fixed; top:0; left:-10000px; width:1600px; background:#fff; }
 .doc.paisagem { max-width:none; width:1600px; }
@@ -1616,7 +1618,7 @@ renderFixos(); render();
     document.body.appendChild(cart);
     try {
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      const canvas = await html2canvas(cart.firstElementChild, { backgroundColor:'#ffffff', scale:2, useCORS:true, windowWidth:1700 });
+      const canvas = await html2canvas(cart.firstElementChild, { backgroundColor:'#ffffff', scale:2, useCORS:true, scrollX:0, scrollY:0 });
       const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
       if (!blob) throw new Error('sem blob');
       const nome = `${DADOS.navio.replace(/[\\/:*?"<>|]/g, '').trim()} - Relatório de operação.png`;
