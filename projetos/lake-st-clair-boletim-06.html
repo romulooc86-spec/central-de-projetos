@@ -96,10 +96,10 @@ b { font-weight:600; }
 .pe-kpi span.ok { color:var(--trl-status-ok); font-weight:600; }
 .pe-kpi span.risco { color:var(--trl-accent); font-weight:600; }
 .pe-navio { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-.pe-navio > svg { height:250px; width:auto; max-width:100%; }
+.pe-navio > svg { display:block; }
 .pe-navio .plano-leg { font-size:13px; justify-content:center; }
 .pe-cards { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:16px; height:300px; }
-.pe-card { border:1px solid var(--trl-border); border-radius:8px; padding:16px 20px; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+.pe-card { border:1px solid var(--trl-border); border-radius:8px; padding:16px 20px; overflow:hidden; display:flex; flex-direction:column; gap:8px; }
 .pe-card h2 { font-family:var(--trl-font-titulo); font-weight:700; font-size:18px; letter-spacing:.06em; text-transform:uppercase; }
 .pe-graf svg { display:block; width:100%; height:auto; }
 .pe-etapa { display:flex; flex-direction:column; gap:4px; padding:6px 0 8px; border-bottom:1px solid var(--trl-cinza-100); }
@@ -116,7 +116,7 @@ b { font-weight:600; }
 .pe-turno { font-size:15px; }
 .pe-turno b { font-family:var(--trl-font-titulo); font-size:22px; }
 .pe-sub { font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--trl-fg-muted); margin-top:4px; }
-.pe-mot { display:grid; grid-template-columns:200px 1fr 64px; align-items:center; gap:10px; font-size:14px; }
+.pe-mot { display:grid; grid-template-columns:250px 1fr 58px; align-items:center; gap:10px; font-size:14px; }
 .pe-mot-n { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .pe-mot-b { height:10px; background:var(--trl-cinza-100); border-radius:5px; overflow:hidden; }
 .pe-mot-b i { display:block; height:100%; background:var(--trl-accent); border-radius:5px; }
@@ -1651,7 +1651,7 @@ renderFixos(); render();
     const acum = {};
     paradas.filter(x => x.ini < t.fim).forEach(x => { const m = (Math.min(x.fim, t.fim) - x.ini) / 60000; if (m > 0) acum[x.motivo] = (acum[x.motivo] || 0) + m; });
     const totAcum = Object.values(acum).reduce((a, b) => a + b, 0);
-    const topMot = Object.entries(acum).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topMot = Object.entries(acum).sort((a, b) => b[1] - a[1]).slice(0, 4);
     const maxMot = topMot.length ? topMot[0][1] : 1;
     const CORES = { verm:'#DA202C', texto:'#2F2F2F', sub:'#8A8C91', grade:'#EAEAEA', claro:'#B0B0B0' };
 
@@ -1723,7 +1723,7 @@ renderFixos(); render();
     const logoOrig = document.getElementById('trl-logo-h');
     if (logoOrig) pe.querySelector('.pe-logo').appendChild(logoOrig.cloneNode(true));
     const svgNavio = document.querySelector('#plano svg'), leg = $('planoLeg');
-    if (svgNavio) pe.querySelector('.pe-navio').appendChild(svgNavio.cloneNode(true));
+    if (svgNavio){ const c = svgNavio.cloneNode(true); c.setAttribute('width', '960'); c.setAttribute('height', '321'); pe.querySelector('.pe-navio').appendChild(c); }
     if (leg){ const l = leg.cloneNode(true); l.removeAttribute('id'); pe.querySelector('.pe-navio').appendChild(l); }
     const wrap = document.createElement('div'); wrap.className = 'pz-wrap'; wrap.append(pe);
     return wrap;
