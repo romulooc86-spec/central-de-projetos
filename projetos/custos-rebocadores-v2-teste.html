@@ -1516,7 +1516,7 @@ V.resumo = function() {
                 hAbove += r.h;
             }
         });
-        msgs.push(`<b>Oportunidade:</b> ${NF0.format(hAbove/a.h*100)}% das horas de ${cur} foram pagas acima de ${fR(cap)}/h; renegociar essas horas para o teto geraria <b>${fMi(sv)}</b> (aba <i>Simulador</i>).`);
+        msgs.push(`<b>Oportunidade:</b> ${NF0.format(hAbove/a.h*100)}% das horas de ${cur} foram pagas acima de ${fR(cap)}/h; renegociar essas horas para o teto geraria <b>${fMi(sv)}</b>.`);
     }
     // volume de manobras e novas frentes
     if (a.n && b.n) {
@@ -3473,7 +3473,6 @@ const TABS = [
     ['forn', 'Fornecedores'],
     ['onde', 'Onde gastamos'],
     ['efic', 'Eficiência'],
-    ['sim', 'Simulador'],
     ['dados', 'Dados']
 ];
 
