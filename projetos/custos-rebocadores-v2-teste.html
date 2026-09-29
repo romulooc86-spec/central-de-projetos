@@ -213,7 +213,7 @@ body.present .tabs button[data-t="dados"]{display:none!important}
   .brand p{display:none}
   .ly{width:30px;font-size:11.5px}
 }
-/* ===== Resultados da gestão + dados ao vivo ===== */
+/* ===== Eficiência em custos + dados ao vivo ===== */
 .live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--on-navy-mu);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 12px 6px 10px}
 .live i{width:8px;height:8px;border-radius:50%;background:#9AAEB4;flex:none}
 .live i.on{background:var(--teal);box-shadow:0 0 0 0 rgba(6,190,174,.6);animation:livep 2.2s infinite}
@@ -243,7 +243,7 @@ body.present .tabs button[data-t="dados"]{display:none!important}
 .iab-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 @media (max-width:640px){.gh-t{font-size:16px}.gestao-hero .mi-num{font-size:24px;display:inline-block}.lev-v{font-size:24px}.live{font-size:10.5px;padding:5px 10px}}
 @media print{.live{display:none}}
-/* ===== Versão de teste: marcos, curva da gestão, oportunidades ===== */
+/* ===== Versão de teste: marcos, curva de eficiência, oportunidades ===== */
 .teste{background:var(--teal-wash);color:var(--teal-deep);border:1px dashed var(--teal-deep);border-radius:8px;padding:7px 12px;font:700 12px var(--font-display);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;text-align:center}
 .mcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:-6px 0 16px}
 .mc{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--navy);border-radius:10px;padding:11px 14px;box-shadow:var(--shadow)}
@@ -331,6 +331,20 @@ body.present .wrap,body.present .tabs,body.present .top-in{max-width:1600px}
 body.present{font-size:15px}
 .mc-s b,.lev-l b{color:var(--tx);font-weight:800}
 tbody td:first-child:has(.rk){white-space:nowrap}
+svg .axt{font:700 10.5px var(--font-display);letter-spacing:.09em;fill:var(--tx3)}
+/* marco principal com mais destaque */
+.gestao-hero{position:relative;overflow:hidden;padding:26px 30px;border-left:6px solid var(--teal)}
+.gestao-hero::after{content:"";position:absolute;right:-60px;top:-40px;width:340px;height:260px;background:var(--teal);opacity:.10;clip-path:polygon(0 30%,78% 0,100% 62%,22% 100%);pointer-events:none}
+.gestao-hero .mi-ic{display:none}
+.gestao-hero .gh-t{font:600 18px/1.4 var(--font-display)}
+.gestao-hero .mi-num{display:block;font:800 58px/1.05 var(--font-display);color:var(--teal);margin:6px 0 4px;letter-spacing:-.02em}
+.gestao-hero .milestone-grid{margin-top:18px;gap:0}
+.gestao-hero .milestone-item{padding:0 26px;border-left:1px solid rgba(255,255,255,.18)}
+.gestao-hero .milestone-item:first-child{padding-left:0;border-left:0}
+.gestao-hero .milestone-item .mv{font-size:24px}
+.mcs .mc.acc{background:var(--navy);border-left-color:var(--teal)}
+.mcs .mc.acc .mc-l{color:var(--teal)}.mcs .mc.acc .mc-v{color:#fff}.mcs .mc.acc .mc-s,.mcs .mc.acc .mc-s b{color:#CFE3EA}
+@media (max-width:640px){.gestao-hero .mi-num{font-size:40px}.gestao-hero .milestone-item{padding:8px 0;border-left:0;min-width:45%}}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -2343,7 +2357,7 @@ function timeline(host, pts, iniIdx) { // pts: [{l, y, m, c, eff}]
         const x0 = m.l + bw * iniIdx;
         g += `<rect x="${x0}" y="${m.t}" width="${W - m.r - x0}" height="${ih}" style="fill:var(--teal-wash)" opacity=".7"/>`;
         g += `<line x1="${x0}" x2="${x0}" y1="${m.t - 6}" y2="${m.t + ih}" style="stroke:var(--teal-deep);stroke-width:1.5;stroke-dasharray:4 3"/>`;
-        g += `<text x="${x0 + 6}" y="${m.t - 10}" class="dl" style="fill:var(--teal-deep)">Início da gestão · ${GESTAO_LBL}</text>`;
+        g += `<text x="${x0 + 6}" y="${m.t - 10}" class="dl" style="fill:var(--teal-deep)">Início do programa de eficiência · ${GESTAO_LBL}</text>`;
     }
     for (let k = 0; k <= 4; k++) {
         const y = m.t + ih * (1 - k / 4);
@@ -2382,7 +2396,7 @@ V.gestao = function() {
     const cur = S.cur, prv = S.cur - 1;
     const rs = rowsF(['H']);
     const L = alavancas(rs, prv, cur);
-    if (!L) return { html: card('Resultados da gestão', '', '<div class="empty">Sem dados dos dois anos para comparar com o filtro atual.</div>'), after() {} };
+    if (!L) return { html: card('Eficiência em custos', '', '<div class="empty">Sem dados dos dois anos para comparar com o filtro atual.</div>'), after() {} };
     const { t0, t1, A0, A1 } = L;
     const eco = L.eco1 + L.eco2;
     const sem = t1.c + eco;
@@ -2394,8 +2408,8 @@ V.gestao = function() {
     const hero = `<div class="milestone gestao-hero">
       <div class="mi-ic">★</div>
       <div style="flex:1;min-width:0">
-        <div class="gh-k">Resultado das melhorias · ${prv} × ${cur} · ${per}</div>
-        <div class="gh-t">${eco >= 0 ? 'Tarifa e porte certo evitaram' : 'Tarifa e porte somam'} <span class="mi-num">${fEco(eco)}</span> em gastos com rebocadores</div>
+        <div class="gh-k">Programa de eficiência em custos · ${prv} × ${cur} · ${per}</div>
+        <div class="gh-t">${eco >= 0 ? 'Renegociação e porte certo evitaram' : 'Tarifa e porte somam'} <span class="mi-num">${fEco(eco)}</span> em gastos com rebocadores</div>
         <div class="milestone-grid">
           <div class="milestone-item"><div class="ml">Gasto real em ${cur}</div><div class="mv">${fMi(t1.c)}</div></div>
           <div class="milestone-item"><div class="ml">Ao custo/h de ${prv} seria</div><div class="mv acc">${fMi(sem)}</div></div>
@@ -2460,7 +2474,7 @@ V.gestao = function() {
         rowA('Operações canceladas (valor pago)', (a, c) => fN(c.n) + ` <span class="mu">${fMi(c.c)}</span>`)
     ], 'dense');
     const c3 = card('3 · Planejamento das manobras (índice de atendimento)', `Meta de atendimento: <b>5 h</b> para manobras no fundeio e <b>3 h</b> dentro do porto. Hora acima da meta é hora paga com rebocador parado ou aguardando. Manobras de até ${MAN_MAX_H} h.`,
-        `<div class="iabs">${bars}</div><div class="iab-leg"><span><i style="background:var(--y-old)"></i>antes da gestão</span><span><i style="background:var(--teal-deep)"></i>desde ${GESTAO_LBL}</span><span class="mu">% das manobras no fundeio dentro da meta de 5 h, por mês</span></div><div style="margin-top:12px">${iaTbl}</div>`);
+        `<div class="iabs">${bars}</div><div class="iab-leg"><span><i style="background:var(--y-old)"></i>antes do programa</span><span><i style="background:var(--teal-deep)"></i>desde ${GESTAO_LBL}</span><span class="mu">% das manobras no fundeio dentro da meta de 5 h, por mês</span></div><div style="margin-top:12px">${iaTbl}</div>`);
 
     // mensagens para a diretoria
     const msgs = [];
@@ -2473,7 +2487,7 @@ V.gestao = function() {
     if (dH != null) msgs.push(`<b>Volume:</b> as horas ${dH >= 0 ? 'cresceram' : 'caíram'} ${fP(Math.abs(dH), false)} (${fH(t0.h)} → ${fH(t1.h)}), conforme a demanda das operações; o gasto ${dC <= 0 ? 'caiu' : 'subiu'} ${fP(Math.abs(dC), false)}.`);
 
     const html = `${hero}${lev}${ctx}
-      ${card('Evolução mês a mês', 'Barras: gasto mensal com rebocadores (serviço por hora). Linha: custo médio por hora. Área destacada: período da gestão atual. Filtro de fornecedor e ativo aplicado; período completo.', '<div id="tl"></div>', 'mt')}
+      ${card('Evolução mês a mês', 'Barras: gasto mensal com rebocadores (serviço por hora). Linha: custo médio por hora. Área destacada: período do programa de eficiência. Filtro de fornecedor e ativo aplicado; período completo.', '<div id="tl"></div>', 'mt')}
       <div class="two">${c1}${c2}</div>
       <div class="two">${c3}${card('Destaques para a diretoria', 'Gerado automaticamente a partir da planilha', `<ul class="msgs">${msgs.map(m => `<li>${m}</li>`).join('')}</ul><p class="note">Como calculamos: ${cur} contra ${prv} no mesmo período. A economia é a diferença entre o gasto de ${cur} e o que as mesmas horas custariam ao custo médio por hora de ${prv}, separada em preço dentro do mesmo porte (renegociação) e troca de porte (rebocador menor). Diárias e afretamentos ficam fora.</p>`)}</div>`;
     return {
@@ -2534,7 +2548,7 @@ function iniciarAoVivo() {
 }
 
 /* ===================== VERSÃO DE TESTE — análises extras para a diretoria =====================
-   Janela da gestão: out/25 até o último registro. Base: os 12 meses anteriores (out/24–set/25).
+   Janela do programa: out/25 até o último registro. Base: os 12 meses anteriores (out/24–set/25).
    Filtros de fornecedor e ativo valem; o filtro de período não se aplica a estes quadros. */
 const mk = r => r.d.slice(0, 7);
 const addM = (k, n) => { let [y, m] = k.split('-').map(Number); m += n; while (m > 12) { m -= 12; y++; } while (m < 1) { m += 12; y--; } return y + '-' + String(m).padStart(2, '0'); };
@@ -2561,7 +2575,7 @@ function ponte(w0, w1) { // gasto antes -> volume -> tarifa (mesmo porte) -> por
     return { t0, t1, vol, preco, porte };
 }
 
-function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes da gestão
+function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes do programa
     const ev = [];
     const primeiro = {}, ultimo = {};
     H.forEach(r => { const k = mk(r); if (!primeiro[r.a] || k < primeiro[r.a]) primeiro[r.a] = k; if (!ultimo[r.a] || k > ultimo[r.a]) ultimo[r.a] = k; });
@@ -2584,35 +2598,46 @@ function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes
     return ev.sort((x, y) => x.k.localeCompare(y.k));
 }
 
-function curva(host, meses, ev) { // barras = economia do mês; linha = acumulada
-    const W = 1100, H = 330, m = { l: 70, r: 70, t: 64, b: 36 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo = resultado de cada mês; marcos escritos no gráfico
+    const W = 1100, H = 400, m = { l: 20, r: 20, t: 70, b: 30 }, iw = W - m.l - m.r;
     if (!meses.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
     let ac = 0; meses.forEach(o => { ac += o.eco; o.ac = ac; });
-    const vmax = Math.max(...meses.map(o => Math.abs(o.eco))) || 1, amax = Math.max(...meses.map(o => Math.abs(o.ac))) || 1;
-    const bmx = niceMax(vmax * 1.1), amx = niceMax(amax * 1.1);
+    const topA = m.t, hA = 190, baseM = topA + hA + 70, hM = 34;          // área acumulada | faixa mensal
+    const amin = Math.min(0, ...meses.map(o => o.ac)), amax = Math.max(0, ...meses.map(o => o.ac)) * 1.12 || 1;
+    const vmax = Math.max(...meses.map(o => Math.abs(o.eco))) || 1;
     const bw = iw / meses.length, X = i => m.l + bw * i + bw / 2;
-    const Yb = v => m.t + ih / 2 - (v / bmx) * (ih / 2), Ya = v => m.t + ih / 2 - (v / amx) * (ih / 2);
-    let g = `<line class="base" x1="${m.l}" x2="${W - m.r}" y1="${Yb(0)}" y2="${Yb(0)}"/>`;
-    [-1, -.5, .5, 1].forEach(f => { const y = Yb(bmx * f); g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${y}" y2="${y}"/><text class="ax" x="${m.l - 8}" y="${y + 4}" text-anchor="end">${fMi(bmx * f).replace('R$ ', '')}</text><text class="ax" x="${W - m.r + 8}" y="${Ya(amx * f) + 4}">${fMi(amx * f).replace('R$ ', '')}</text>`; });
-    g += `<text class="ax" x="${m.l - 8}" y="${m.t - 44}" text-anchor="end">no mês</text><text class="ax" x="${W - m.r + 8}" y="${m.t - 44}">acumulada</text>`;
-    meses.forEach((o, i) => {
-        const y = Yb(Math.max(0, o.eco)), h = Math.abs(Yb(o.eco) - Yb(0));
-        g += `<rect class="bar cv-b" data-i="${i}" x="${X(i) - bw * .32}" y="${y}" width="${bw * .64}" height="${Math.max(1, h)}" rx="3" style="fill:${o.eco >= 0 ? 'var(--teal)' : 'var(--y-old)'}"/>`;
-        g += `<text class="ax" x="${X(i)}" y="${H - 14}" text-anchor="middle">${mLbl(o.k)}</text>`;
-    });
-    g += `<polyline class="ln" style="stroke:var(--y-mid);stroke-width:3" points="${meses.map((o, i) => X(i) + ',' + Ya(o.ac)).join(' ')}"/>`;
+    const Ya = v => topA + hA * (1 - (v - amin) / (amax - amin || 1)), Ym = v => baseM - (v / vmax) * hM;
+    let g = '';
+    // área e linha da economia acumulada
+    const pts = meses.map((o, i) => [X(i), Ya(o.ac)]);
+    g += `<line class="base" x1="${m.l}" x2="${W - m.r}" y1="${Ya(0)}" y2="${Ya(0)}"/><text class="ax" x="${m.l}" y="${Ya(0) - 6}">R$ 0</text>`;
+    g += `<path d="${suave(pts)} L${pts[pts.length - 1][0]},${Ya(0)} L${pts[0][0]},${Ya(0)} Z" style="fill:var(--teal);opacity:.14"/>`;
+    g += `<path class="ln" d="${suave(pts)}" style="stroke:var(--teal-deep);stroke-width:3.2;fill:none"/>`;
+    meses.forEach((o, i) => { const y = Ya(o.ac); g += `<circle cx="${X(i)}" cy="${y}" r="3.5" style="fill:var(--teal-deep)"/><text class="dlab" x="${X(i)}" y="${o.ac >= 0 ? y - 10 : y + 18}" text-anchor="middle">${fMi(o.ac).replace('R$ ', '')}</text>`; });
     const li = meses.length - 1;
-    g += `<circle class="dot" cx="${X(li)}" cy="${Ya(meses[li].ac)}" r="5.5" style="fill:var(--y-mid)"/><text class="dl" x="${X(li) - 8}" y="${Ya(meses[li].ac) - 12}" text-anchor="end">${fMi(meses[li].ac)}</text>`;
-    // marcos numerados no topo
+    g += `<circle cx="${X(li)}" cy="${Ya(meses[li].ac)}" r="7" style="fill:var(--teal-deep);stroke:var(--card);stroke-width:3"/>`;
+    g += `<text class="axt" x="${m.l}" y="${topA - 50}">ECONOMIA ACUMULADA</text>`;
+    // marcos escritos no gráfico (alternando altura para não sobrepor)
     const idx = {}; meses.forEach((o, i) => idx[o.k] = i);
-    const noMes = {};
-    ev.forEach((e, n) => { const i = idx[e.k]; if (i == null) return; const lv = (noMes[i] = (noMes[i] || 0) + 1) - 1; e.n = n + 1;
-        g += `<line x1="${X(i)}" x2="${X(i)}" y1="${m.t - 30 + lv * 21}" y2="${m.t + ih}" style="stroke:var(--teal-deep);stroke-width:1;stroke-dasharray:3 3;opacity:.55"/>`;
-        g += `<circle cx="${X(i)}" cy="${m.t - 34 + lv * 21}" r="9" style="fill:var(--navy)"/><text x="${X(i)}" y="${m.t - 30 + lv * 21}" text-anchor="middle" style="fill:#fff;font:800 10.5px var(--font-display)">${n + 1}</text>`; });
-    host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Economia mês a mês e acumulada desde o início da gestão">${g}</svg>`;
+    let lv = 0, lastI = -9;
+    ev.forEach((e, n) => { const i = idx[e.k]; if (i == null) return; lv = (i - lastI < 3) ? (lv + 1) % 3 : 0; lastI = i;
+        const ty = topA - 34 + lv * 16, anchor = i > meses.length * 0.7 ? 'end' : 'start';
+        g += `<g class="cv-ev" data-n="${n}"><line x1="${X(i)}" x2="${X(i)}" y1="${ty + 4}" y2="${Ya(meses[i].ac)}" style="stroke:var(--navy);stroke-width:1;stroke-dasharray:2 3;opacity:.45"/>`;
+        g += `<circle cx="${X(i)}" cy="${ty}" r="4" style="fill:var(--navy)"/><text x="${X(i) + (anchor === 'end' ? -8 : 8)}" y="${ty + 4}" text-anchor="${anchor}" style="font:700 11.5px var(--font-display);fill:var(--navy)">${esc(e.t)}</text></g>`; });
+    // faixa mensal
+    g += `<text class="axt" x="${m.l}" y="${baseM - hM - 14}">RESULTADO DE CADA MÊS</text><line class="base" x1="${m.l}" x2="${W - m.r}" y1="${baseM}" y2="${baseM}"/>`;
+    meses.forEach((o, i) => {
+        const y = o.eco >= 0 ? Ym(o.eco) : baseM, h = Math.abs(Ym(o.eco) - baseM);
+        g += `<rect x="${X(i) - bw * .3}" y="${y}" width="${bw * .6}" height="${Math.max(1.5, h)}" rx="2" style="fill:${o.eco >= 0 ? 'var(--teal)' : 'var(--y-old)'}"/>`;
+        g += `<text class="dlab" x="${X(i)}" y="${o.eco >= 0 ? y - 5 : y + h + 12}" text-anchor="middle">${(o.eco >= 0 ? '+' : '−') + fMi(Math.abs(o.eco)).replace('R$ ', '')}</text>`;
+        g += `<text class="ax" x="${X(i)}" y="${H - 6}" text-anchor="middle" style="font-weight:700">${mLbl(o.k)}</text>`;
+        g += `<rect class="cv-b" data-i="${i}" x="${X(i) - bw / 2}" y="${topA - 10}" width="${bw}" height="${H - topA}" fill="transparent" style="cursor:pointer"/>`;
+    });
+    host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Economia acumulada e resultado de cada mês">${g}</svg>`;
     $$('.cv-b', host).forEach(el => { const o = meses[+el.dataset.i];
-        el.addEventListener('mousemove', e => showTip(`<div class="th">${mLbl(o.k)}</div><div class="tr"><span>Economia no mês</span><b>${fEco(o.eco)}</b></div><div class="tr"><span>Acumulada</span><b>${fEco(o.ac)}</b></div><div class="tr"><span>Custo médio</span><b>${fR(o.eff)}/h</b></div>`, e));
+        el.addEventListener('mousemove', e => showTip(`<div class="th">${mLbl(o.k)}</div><div class="tr"><span>Resultado do mês</span><b>${fEco(o.eco)}</b></div><div class="tr"><span>Acumulado</span><b>${fEco(o.ac)}</b></div><div class="tr"><span>Custo médio</span><b>${fR(o.eff)}/h</b></div><div class="tr mu">clique para detalhar</div>`, e));
         el.addEventListener('mouseleave', hideTip); });
+    $$('.cv-ev', host).forEach(el => { el.style.cursor = 'pointer'; el.addEventListener('click', () => { const e = ev[+el.dataset.n]; const mm = /(?:do|da|tarifa) (.+)$/i.exec(e.t); if (mm && agencies().includes(mm[1].trim())) drawerItem('a', mm[1].trim(), mm[1].trim()); else drawerMes(e.k); }); });
 }
 
 function gestaoExtra() {
@@ -2623,7 +2648,7 @@ function gestaoExtra() {
     const cheios = meses.filter(o => o.h > 60);
     const melhor = cheios.slice().sort((x, y) => x.eff - y.eff)[0];
     const ev = marcosAuto(H);
-    ev.unshift({ k: GESTAO_INI, t: 'Início da gestão', s: 'Romulo assume a gestão da Prime Ocean' });
+    ev.unshift({ k: GESTAO_INI, t: 'Início do programa de eficiência', s: 'nova política de contratação e planejamento de rebocadores' });
     if (melhor) ev.push({ k: melhor.k, t: 'Menor custo por hora da série', s: fR(melhor.eff) + '/h' });
     ev.sort((x, y) => x.k.localeCompare(y.k));
     const virada = meses.find((o, i) => meses.slice(0, i + 1).reduce((s, x) => s + x.eco, 0) > 0);
@@ -2666,7 +2691,7 @@ function gestaoExtra() {
     const tile = (l, v, s, cls) => `<div class="mc ${cls || ''}"><div class="mc-l">${l}</div><div class="mc-v">${v}</div><div class="mc-s">${s}</div></div>`;
     const marcos = `<div class="mcs">
       ${tile('Economia acumulada', fMi(ecoAc), `desde <b>${GESTAO_LBL}</b>, ao custo/h dos <b>12 meses anteriores</b>`, 'acc')}
-      ${tile('Custo médio por hora', `${fR(a0.eff)} → ${fR(a1.eff)}`, `<b>${fP(dlt(a1.eff, a0.eff))}</b> · 12 meses antes × gestão`)}
+      ${tile('Custo médio por hora', `${fR(a0.eff)} → ${fR(a1.eff)}`, `<b>${fP(dlt(a1.eff, a0.eff))}</b> · 12 meses antes × programa`)}
       ${reneg ? tile('Maior renegociação', `${esc(reneg.a)} ${fP(reneg.v1 / reneg.v0 - 1)}`, `tarifa de <b>${fR(reneg.v0)}</b> para <b>${fR(reneg.v1)}/h</b>`) : ''}
       ${melhor ? tile('Menor custo/h da série', fR(melhor.eff), `em <b>${mLbl(melhor.k)}</b>`) : ''}
       ${cm0 && cm1 ? tile('Custo por manobra', `${fR(cm0)} → ${fR(cm1)}`, `<b>${fP(dlt(cm1, cm0))}</b> por atendimento`) : ''}
@@ -2676,11 +2701,11 @@ function gestaoExtra() {
     const evList = ev.map((e, i) => `<li><span class="evn">${i + 1}</span><b>${mLbl(e.k)} · ${esc(e.t)}</b> <span class="mu">${esc(e.s)}</span></li>`).join('');
     const tituloCurva = virada ? `A economia virou positiva em ${mLbl(virada.k)} e soma ${fMi(ecoAc)}` : `Economia acumulada: ${fEco(ecoAc)}`;
     const mid = `
-      ${card('Curva da gestão · ' + tituloCurva, `Economia de cada mês = horas do mês × custo médio por hora dos 12 meses anteriores (${fR(a0.eff)}/h) − gasto real. Barras Tiffany: economia; cinza: mês acima da base. Linha: acumulado. Marcos detectados na planilha.`,
-        `<div id="cv"></div><ol class="evs">${evList}</ol>`, 'mt')}
-      ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e a gestão compensou ${fMi(-(P.preco + P.porte))}`, `Do gasto dos 12 meses antes (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)}) ao gasto da gestão (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Serviço por hora.`,
+      ${card(`Economia acumulada: ${fMi(ecoAc)} desde ${GESTAO_LBL}`, `Quanto se deixou de gastar: o custo por hora de cada mês comparado à média dos 12 meses anteriores (<b>${fR(a0.eff)}/h</b>). Em cima, o total acumulado e os marcos; embaixo, o resultado de cada mês${virada ? ` — o acumulado ficou positivo em <b>${mLbl(virada.k)}</b>` : ''}. Clique num mês ou num marco para detalhar.`,
+        `<div id="cv"></div>`, 'mt')}
+      ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e as ações de eficiência compensaram ${fMi(-(P.preco + P.porte))}`, `Do gasto dos 12 meses antes (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)}) ao gasto do programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Serviço por hora.`,
         `<div id="wf2"></div>`, 'mt')}
-      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto na gestão (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra: gasto; traço: mesmo item nos 12 meses antes; à direita, participação e acumulado (Pareto).`,
+      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto no programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra: gasto; traço: mesmo item nos 12 meses antes; à direita, participação e acumulado (Pareto).`,
         `<div class="seg2 t10-seg" style="margin-bottom:12px">${T10_DIM.map((d, i) => `<button data-k="${d.k}" class="${i ? '' : 'on'}">${d.l}</button>`).join('')}</div><div id="t10"></div>`, 'mt')}`;
 
     const shMax = Math.max(...F.map(o => Math.max(o.s0, o.s1))) || 1;
@@ -2703,14 +2728,14 @@ function gestaoExtra() {
     const end = `
       <div class="two">
         ${card(reneg ? `Fornecedores · ${esc(reneg.a)} renegociado (${fP(reneg.v1 / reneg.v0 - 1)}) e mix mais barato` : 'Fornecedores', `Participação no gasto e tarifa contratada mediana (VALOR/HR) — <span class="dotc" style="background:var(--y-old)"></span>12 meses antes &nbsp;<span class="dotc" style="background:var(--y-cur)"></span>gestão.`,
-            alerta + `<div class="sub-h">Participação no gasto</div><div id="fsh"></div><div class="sub-h">Tarifa contratada mediana (R$/h) · ○ antes → ● gestão</div><div id="ftar"></div>`)}
-        ${card(cc0 != null ? `Controle do gasto · sem centro de custo caiu de ${pp(cc0)} para ${pp(cc1)}` : 'Controle do gasto', `Gasto da gestão por centro de custo / contrato (coluna CONTRATO). Base para rateio e repasse ao cliente.`,
+            alerta + `<div class="sub-h">Participação no gasto</div><div id="fsh"></div><div class="sub-h">Tarifa contratada mediana (R$/h) · ○ antes → ● programa</div><div id="ftar"></div>`)}
+        ${card(cc0 != null ? `Controle do gasto · sem centro de custo caiu de ${pp(cc0)} para ${pp(cc1)}` : 'Controle do gasto', `Gasto do programa por centro de custo / contrato (coluna CONTRATO). Base para rateio e repasse ao cliente.`,
             `<div class="lvl">${ccRows}</div>`)}
       </div>
       <div class="two">
-        ${card(`Projeção ${y} · gasto de ${fMi(projC)} e economia de ${fMi(projEco)} no ano`, `Ritmo de ${y} até ${S.maxDate.split('-').reverse().join('/')} estendido até dezembro; economia ao custo/h dos 12 meses anteriores à gestão.`,
+        ${card(`Projeção ${y} · gasto de ${fMi(projC)} e economia de ${fMi(projEco)} no ano`, `Ritmo de ${y} até ${S.maxDate.split('-').reverse().join('/')} estendido até dezembro; economia ao custo/h dos 12 meses anteriores ao programa.`,
             `<div class="kgrid k3" style="margin:0">${kpi('Gasto até agora', fMi(at.c), [], fH(at.h) + ' de rebocador')}${kpi('Gasto projetado no ano', fMi(projC), [], 'mantido o ritmo atual')}${kpi('Economia projetada', fMi(projEco), [], 'frente ao custo/h anterior')}</div>`)}
-        ${card(`Próximos passos · ${fMi(oppTot)} em oportunidades mapeadas`, 'Onde a gestão ainda pode reduzir o gasto (valores desde ' + GESTAO_LBL + '; podem se sobrepor)',
+        ${card(`Próximos passos · ${fMi(oppTot)} em oportunidades mapeadas`, 'Onde ainda dá para reduzir o gasto (valores desde ' + GESTAO_LBL + '; podem se sobrepor)',
             `<ul class="opps">${opps.map(o => `<li><div><b>${esc(o.t)}</b><span class="mu">${o.s}</span></div><strong>${fMi(o.v)}</strong></li>`).join('')}</ul>`)}
       </div>`;
 
@@ -2729,7 +2754,7 @@ function gestaoExtra() {
                 { name: 'Mais demanda', sub: '+' + fH(P.t1.h - P.t0.h), v: P.vol },
                 { name: 'Renegociação', sub: 'mesmo porte, preço menor', v: P.preco },
                 { name: 'Porte certo', sub: 'rebocador menor', v: P.porte },
-                { name: 'Gasto na gestão', sub: fH(P.t1.h), v: P.t1.c, total: true }
+                { name: 'Gasto no programa', sub: fH(P.t1.h), v: P.t1.c, total: true }
             ]);
         }
     };
@@ -2841,7 +2866,7 @@ function top10(host, w0, w1, k) {
         tip: `<div class="tr"><span>Horas</span><b>${fH(o.h)}</b></div><div class="tr"><span>Custo/h</span><b>${fR(o.v / o.h)}</b></div>${k === 'op' ? '' : `<div class="tr"><span>Linhas</span><b>${fN(o.n)}</b></div>`}` }))
         .sort((a, b) => b.v - a.v).slice(0, 10);
     const soma = it.reduce((s, o) => s + o.v, 0);
-    $('#t10-t').textContent = `10 maiores linhas de custo · por ${D.l.toLowerCase()}: ${NF0.format(soma / tot * 100)}% do gasto da gestão`;
+    $('#t10-t').textContent = `10 maiores linhas de custo · por ${D.l.toLowerCase()}: ${NF0.format(soma / tot * 100)}% do gasto do programa`;
     hbars(host, it, { fmt: fMi, total: tot });
     host._items = it; host._k = k;
 }
@@ -2955,7 +2980,7 @@ function drawerItem(dimK, key, label) {
     const outraDim = dimK === 'e' ? 'l' : 'e';
     const O = T10_DIM.find(d => d.k === outraDim);
     openDrawer(`${D.l}: ${label}`, dx(`Tudo o que foi pago em "${esc(label)}" desde ${mLbl(GESTAO_INI)}, comparado aos 12 meses anteriores.`, `Soma de VALOR/TOTAL das linhas da aba DADOS (serviço por hora) com este ${D.l.toLowerCase()}. Custo/h = gasto ÷ horas.`) +
-        kp([['Gasto na gestão', fMi(a1.c), pp(a1.c / tot) + ' do total'], ['12 meses antes', fMi(a0.c), a0.c ? fP(a1.c / a0.c - 1) : 'sem uso antes'], ['Horas', fH(a1.h), fN(r1.length) + ' linhas'], ['Custo médio', fR(a1.eff) + '/h', a0.eff ? 'antes ' + fR(a0.eff) + '/h' : '']]) +
+        kp([['Gasto no programa', fMi(a1.c), pp(a1.c / tot) + ' do total'], ['12 meses antes', fMi(a0.c), a0.c ? fP(a1.c / a0.c - 1) : 'sem uso antes'], ['Horas', fH(a1.h), fN(r1.length) + ' linhas'], ['Custo médio', fR(a1.eff) + '/h', a0.eff ? 'antes ' + fR(a0.eff) + '/h' : '']]) +
         `<h4>Gasto por mês</h4><div id="dm"></div><h4>Por ${O.l.toLowerCase()}</h4><div id="do"></div><h4>Maiores operações</h4>${ops(r1)}`,
         body => {
             const ms = [...new Set(G.w1.map(mk))].sort();
@@ -2969,7 +2994,7 @@ function drawerMes(k) {
     const G = window._G; if (!G) return;
     const o = G.meses.find(x => x.k === k); if (!o) return;
     const rs = G.w1.filter(r => mk(r) === k), a = agg(rs);
-    openDrawer(`Mês: ${mLbl(k)}`, dx(`Resultado de ${mLbl(k)}: quanto foi gasto e quanto se economizou frente ao custo por hora dos 12 meses anteriores à gestão.`, `Economia do mês = horas do mês × ${fR(G.a0.eff)}/h (média de ${mLbl(BASE_INI)} a ${mLbl(BASE_FIM)}) − gasto real do mês.`) +
+    openDrawer(`Mês: ${mLbl(k)}`, dx(`Resultado de ${mLbl(k)}: quanto foi gasto e quanto se economizou frente ao custo por hora dos 12 meses anteriores ao programa.`, `Economia do mês = horas do mês × ${fR(G.a0.eff)}/h (média de ${mLbl(BASE_INI)} a ${mLbl(BASE_FIM)}) − gasto real do mês.`) +
         kp([['Economia no mês', fEco(o.eco), o.eco >= 0 ? 'abaixo da base' : 'acima da base'], ['Acumulada até aqui', fEco(o.ac), ''], ['Gasto', fMi(a.c), fH(a.h)], ['Custo médio', fR(a.eff) + '/h', 'base ' + fR(G.a0.eff) + '/h']]) +
         `<h4>Por fornecedor</h4><div id="dma"></div><h4>Por rebocador</h4><div id="dme"></div><h4>Maiores operações</h4>${ops(rs)}`,
         body => { hbars($('#dma', body), agrupa(rs, r => r.a), { fmt: fMi, noPareto: true }); hbars($('#dme', body), agrupa(rs, r => r.eN).slice(0, 10), { fmt: fMi, noPareto: true }); });
@@ -2980,28 +3005,28 @@ function drawerMarco(i) {
     const lab = ($$('.mcs .mc')[i] || {}).querySelector?.('.mc-l')?.textContent || '';
     const porFornEff = w => [...new Set(G.w0.concat(G.w1).map(r => r.a))].map(a => ({ label: a, a: agg(G.w0.filter(r => r.a === a)).eff, b: agg(G.w1.filter(r => r.a === a)).eff }));
     if (/Economia/i.test(lab)) {
-        openDrawer('Economia acumulada', dx('Quanto a gestão deixou de gastar desde ' + mLbl(GESTAO_INI) + ', mês a mês.', `Para cada mês: horas × ${fR(G.a0.eff)}/h (custo médio dos 12 meses anteriores) − gasto real. A soma dá ${fMi(G.ecoAc)}. Clique em uma barra da Curva da gestão para abrir o mês.`) +
+        openDrawer('Economia acumulada', dx('Quanto a operação deixou de gastar desde ' + mLbl(GESTAO_INI) + ', mês a mês.', `Para cada mês: horas × ${fR(G.a0.eff)}/h (custo médio dos 12 meses anteriores) − gasto real. A soma dá ${fMi(G.ecoAc)}. Clique em uma barra da Curva de eficiência para abrir o mês.`) +
             `<div class="dml">${G.meses.map(o => `<div class="${o.eco >= 0 ? 'p' : 'n'}" data-k="${o.k}"><span>${mLbl(o.k)}</span><i style="width:${Math.min(100, Math.abs(o.eco) / Math.max(...G.meses.map(x => Math.abs(x.eco))) * 100)}%"></i><b>${fEco(o.eco)}</b><em>${fR(o.eff)}/h</em></div>`).join('')}</div>`,
             body => $$('.dml div', body).forEach(el => el.onclick = () => drawerMes(el.dataset.k)));
     } else if (/Custo médio por hora/i.test(lab)) {
-        openDrawer('Custo médio por hora', dx('Quanto custa, em média, uma hora de rebocador: antes e depois da gestão.', 'Gasto ÷ horas das linhas de serviço por hora. ○ 12 meses antes → ● gestão. Tiffany: ficou mais barato.') +
+        openDrawer('Custo médio por hora', dx('Quanto custa, em média, uma hora de rebocador: antes e depois do programa.', 'Gasto ÷ horas das linhas de serviço por hora. ○ 12 meses antes → ● programa. Tiffany: ficou mais barato.') +
             kp([['12 meses antes', fR(G.a0.eff) + '/h', fH(G.a0.h)], ['Gestão', fR(G.a1.eff) + '/h', fH(G.a1.h)], ['Variação', fP(dlt(G.a1.eff, G.a0.eff)), '']]) + '<h4>Por fornecedor</h4><div id="dd1"></div><h4>Por porte do rebocador</h4><div id="dd2"></div>',
             body => { dumbbell($('#dd1', body), porFornEff(), { fmt: fR, labelW: 150 }); dumbbell($('#dd2', body), TIER_ORDER.map(t => ({ label: TIER_LABEL[t], a: agg(G.w0.filter(r => r.tier === t)).eff, b: agg(G.w1.filter(r => r.tier === t)).eff })), { fmt: fR, labelW: 150 }); });
     } else if (/renegocia/i.test(lab) && G.reneg) {
         const a = G.reneg.a, V0 = G.w0.filter(r => r.a === a), V1 = G.w1.filter(r => r.a === a);
         const vs = [...new Set(V0.concat(V1).map(r => r.eN))].map(v => ({ label: v, a: med(V0.filter(r => r.eN === v).map(r => r.vh)), b: med(V1.filter(r => r.eN === v).map(r => r.vh)), h: agg(V1.filter(r => r.eN === v)).h })).sort((x, y) => (y.h || 0) - (x.h || 0)).slice(0, 8);
-        openDrawer('Maior renegociação: ' + a, dx(`A tarifa contratada (VALOR/HR) do fornecedor ${esc(a)} antes e depois da gestão, por rebocador.`, 'Mediana da coluna VALOR/HR das linhas de cada período. A mediana ignora valores atípicos (diárias, mobilização).') +
-            kp([['Tarifa antes', fR(G.reneg.v0) + '/h', ''], ['Tarifa na gestão', fR(G.reneg.v1) + '/h', fP(G.reneg.v1 / G.reneg.v0 - 1)], ['Horas na gestão', fH(agg(V1).h), pp(G.F.find(o => o.a === a)?.s1) + ' do gasto']]) + '<h4>Tarifa por rebocador · ○ antes → ● gestão</h4><div id="dr"></div>',
+        openDrawer('Maior renegociação: ' + a, dx(`A tarifa contratada (VALOR/HR) do fornecedor ${esc(a)} antes e depois do programa, por rebocador.`, 'Mediana da coluna VALOR/HR das linhas de cada período. A mediana ignora valores atípicos (diárias, mobilização).') +
+            kp([['Tarifa antes', fR(G.reneg.v0) + '/h', ''], ['Tarifa no programa', fR(G.reneg.v1) + '/h', fP(G.reneg.v1 / G.reneg.v0 - 1)], ['Horas no programa', fH(agg(V1).h), pp(G.F.find(o => o.a === a)?.s1) + ' do gasto']]) + '<h4>Tarifa por rebocador · ○ antes → ● programa</h4><div id="dr"></div>',
             body => dumbbell($('#dr', body), vs, { fmt: fR, labelW: 140 }));
     } else if (/Menor custo/i.test(lab) && G.melhor) drawerMes(G.melhor.k);
     else if (/manobra/i.test(lab)) {
         const cm = (w, f) => { const m = w.filter(r => isMan(r) && f(r)); return m.length ? m.reduce((s, r) => s + r.vt, 0) / m.length : null; };
         openDrawer('Custo por manobra', dx('Quanto custa, em média, cada atendimento de manobra (até 12 h).', 'VALOR/TOTAL ÷ número de linhas de manobra. Fundeio: ORIGEM E DESTINO com "FUNDEIO"; porto: as demais.') +
-            kp([['Antes', fR(G.cm0), ''], ['Gestão', fR(G.cm1), fP(dlt(G.cm1, G.cm0))]]) + '<h4>Fundeio × porto · ○ antes → ● gestão</h4><div id="dcm"></div>',
+            kp([['Antes', fR(G.cm0), ''], ['Gestão', fR(G.cm1), fP(dlt(G.cm1, G.cm0))]]) + '<h4>Fundeio × porto · ○ antes → ● programa</h4><div id="dcm"></div>',
             body => dumbbell($('#dcm', body), [{ label: 'Fundeio', a: cm(G.w0, isFun), b: cm(G.w1, isFun) }, { label: 'Porto', a: cm(G.w0, r => !isFun(r)), b: cm(G.w1, r => !isFun(r)) }], { fmt: fR, labelW: 110 }));
     } else if (/centro de custo/i.test(lab)) {
         openDrawer('Gasto sem centro de custo', dx('Quanto do gasto foi lançado sem contrato ou centro de custo (coluna CONTRATO vazia), o que impede ratear ou repassar o custo.', 'Gasto das linhas com CONTRATO vazio ÷ gasto total, em cada período.') +
-            kp([['Antes', pp(G.cc0), ''], ['Gestão', pp(G.cc1), '']]) + '<h4>Gasto da gestão por centro de custo · traço: 12 meses antes</h4><div id="dcc"></div>',
+            kp([['Antes', pp(G.cc0), ''], ['Gestão', pp(G.cc1), '']]) + '<h4>Gasto do programa por centro de custo · traço: 12 meses antes</h4><div id="dcc"></div>',
             body => top10($('#dcc', body), G.w0, G.w1, 'c'));
     }
 }
@@ -3024,13 +3049,13 @@ function drawerAlavanca(i) {
 }
 
 const INFO = {
-    'Curva da gestão': ['A economia de cada mês desde o início da gestão e o total acumulado, com os marcos que explicam a curva.', 'Economia do mês = horas × custo/h médio dos 12 meses anteriores − gasto real. Clique numa barra para abrir o mês e num marco para ver o detalhe.'],
-    'Ponte do custo': ['Como o gasto foi dos 12 meses anteriores ao período da gestão: o que subiu pela demanda e o que a gestão reduziu.', 'Mais demanda = horas a mais × custo/h anterior. Renegociação = preço menor dentro do mesmo porte. Porte certo = troca para rebocadores menores. O eixo começa perto do menor valor para as variações aparecerem.'],
-    '10 maiores': ['Os 10 itens que mais pesam no gasto da gestão, no agrupamento escolhido.', 'Soma de VALOR/TOTAL por item; o traço é o mesmo item nos 12 meses anteriores; à direita, participação e acumulado (Pareto). Clique numa barra para detalhar.'],
-    'Evolução mês a mês': ['Gasto mensal e custo médio por hora ao longo de 24 meses, com a faixa do período da gestão.', 'Barras = gasto do mês; linha = gasto ÷ horas. Respeita os filtros de fornecedor e ativo.'],
+    'Economia acumulada': ['Quanto se deixou de gastar desde o início do programa, mês a mês e no acumulado, com os marcos que explicam a curva.', 'Resultado do mês = horas do mês × custo/h médio dos 12 meses anteriores − gasto real do mês. O acumulado soma os meses. Clique num mês ou num marco para ver o detalhe.'],
+    'Ponte do custo': ['Como o gasto foi dos 12 meses anteriores ao período do programa: o que subiu pela demanda e o que as ações de eficiência reduziram.', 'Mais demanda = horas a mais × custo/h anterior. Renegociação = preço menor dentro do mesmo porte. Porte certo = troca para rebocadores menores. O eixo começa perto do menor valor para as variações aparecerem.'],
+    '10 maiores': ['Os 10 itens que mais pesam no gasto do programa, no agrupamento escolhido.', 'Soma de VALOR/TOTAL por item; o traço é o mesmo item nos 12 meses anteriores; à direita, participação e acumulado (Pareto). Clique numa barra para detalhar.'],
+    'Evolução mês a mês': ['Gasto mensal e custo médio por hora ao longo de 24 meses, com a faixa do período do programa.', 'Barras = gasto do mês; linha = gasto ÷ horas. Respeita os filtros de fornecedor e ativo.'],
     'Fornecedores': ['Quanto cada fornecedor pesa no gasto e como mudou a tarifa contratada.', 'Participação = gasto do fornecedor ÷ gasto total. Tarifa = mediana de VALOR/HR. Clique num fornecedor para detalhar.'],
     'Controle do gasto': ['Para onde foi o gasto, por centro de custo/contrato.', 'Soma de VALOR/TOTAL por CONTRATO; "Sem centro de custo" = coluna vazia.'],
-    'Projeção': ['Quanto o ano deve fechar se o ritmo atual continuar.', 'Gasto e horas do ano até o último registro × (365 ÷ dias decorridos). Economia ao custo/h anterior à gestão.'],
+    'Projeção': ['Quanto o ano deve fechar se o ritmo atual continuar.', 'Gasto e horas do ano até o último registro × (365 ÷ dias decorridos). Economia ao custo/h anterior ao programa.'],
     'Próximos passos': ['Onde ainda dá para reduzir o gasto.', 'Arredondamento = VALOR/TOTAL − horas × VALOR/HR; diárias = linhas de diária; porto = horas acima de 3 h × custo/h; tarifa do maior fornecedor = diferença para o custo/h médio dos demais. Os valores podem se sobrepor.'],
     'Destaques': ['Resumo em texto para a diretoria, gerado dos números da tela.', 'Mesmos cálculos dos quadros acima.'],
     '1 · ': ['Custo por hora de cada fornecedor no mesmo período de cada ano.', 'Gasto ÷ horas. ○ ano anterior → ● ano atual.'],
@@ -3202,7 +3227,7 @@ window.addEventListener('load', () => {
 });
 /* ---------- shell ---------- */
 const TABS = [
-    ['gestao', 'Resultados da gestão'],
+    ['gestao', 'Eficiência em custos'],
     ['resumo', 'Resumo executivo'],
     ['preco', 'Preço por hora'],
     ['volume', 'Volume × preço'],
