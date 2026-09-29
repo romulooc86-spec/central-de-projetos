@@ -309,6 +309,28 @@ body.fopen #filters{display:flex}
 @media (max-width:640px){.htit{font-size:16px}.badge img{height:30px}.hsep{height:22px}.top .ibtn{width:34px;height:34px}.drw{width:100%}}
 .top .ibtn svg{width:18px;height:18px;flex:none}.fbtn svg{width:15px;height:15px;flex:none}
 .badge img{height:46px}
+/* ===== v2: padrão analítico ===== */
+svg .grid{display:none}
+svg .ax{font-weight:600}
+svg .cx{font:700 11.5px var(--font-display)!important;fill:var(--tx2)!important;letter-spacing:.01em}
+svg .dl{font:700 11.5px var(--font-display)!important}
+.legend,.legend span,.iab-leg span,.bandleg{font-weight:700}
+svg .vl{font:600 10px var(--font-body)!important;fill:var(--tx2)}
+svg .dlab{font:600 10.5px var(--font-body);fill:var(--tx3);pointer-events:none}
+:root{--dbc:rgba(6,190,174,.5)}
+td.db{background-image:linear-gradient(90deg,var(--dbc) var(--p),transparent var(--p));background-repeat:no-repeat;background-size:100% 5px;background-position:0 calc(100% - 3px)}
+td.dmax{font-weight:800;color:var(--tx)}
+td.dv{font-weight:800}td.dv-g{color:var(--teal-deep)}td.dv-b{color:var(--crit)}td.dv-n{color:var(--tx2)}
+.rk{display:inline-flex;width:19px;height:19px;border-radius:50%;background:var(--card-soft);border:1px solid var(--bd2);font:700 10px var(--font-display);align-items:center;justify-content:center;margin-right:8px;color:var(--tx2);vertical-align:1px}
+tbody tr:first-child .rk{background:var(--navy);color:#fff;border-color:var(--navy)}
+.srt{font-size:9px;color:var(--teal-deep)}
+.seg{position:relative}.seg.sm span{position:absolute;top:100%;margin-top:3px;color:var(--tx2);font:700 10px var(--font-body);white-space:nowrap}
+.lrow{margin:9px 0 20px}
+body.present #fbar,body.present .teste,body.present .foot,body.present .inf,body.present #filters{display:none!important}
+body.present .wrap,body.present .tabs,body.present .top-in{max-width:1600px}
+body.present{font-size:15px}
+.mc-s b,.lev-l b{color:var(--tx);font-weight:800}
+tbody td:first-child:has(.rk){white-space:nowrap}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -2383,9 +2405,9 @@ V.gestao = function() {
       </div></div>`;
 
     const lev = `<div class="levs">
-      ${levCard(1, 'Renegociação de tarifas', fEco(L.eco1), [`Custo por hora menor com o mesmo porte de rebocador.`, `<span class="mu">Queda do R$/h dentro de cada porte × horas de ${cur}</span>`], L.eco1 >= 0 ? 'good' : 'bad')}
-      ${levCard(2, 'Rebocador do porte certo', fEco(L.eco2), [`Manobras simples com embarcações menores e mais baratas.`, `<span class="mu">Troca de porte, ao custo/h de ${prv}</span>`], L.eco2 >= 0 ? 'good' : 'bad')}
-      ${levCard(3, 'Planejamento das manobras', `${pp(A0.fp)} → ${pp(A1.fp)}`, [`Manobras no fundeio dentro da meta de 5 h.`, `<span class="mu">Porto (meta 3 h): ${pp(A0.pp)} → ${pp(A1.pp)}</span>`], (A1.fp || 0) >= (A0.fp || 0) ? 'good' : 'bad')}
+      ${levCard(1, 'Renegociação de tarifas', fEco(L.eco1), [`Custo por hora <b>menor</b> com o <b>mesmo porte</b> de rebocador.`, `<span class="mu">Queda do R$/h dentro de cada porte × horas de ${cur}</span>`], L.eco1 >= 0 ? 'good' : 'bad')}
+      ${levCard(2, 'Rebocador do porte certo', fEco(L.eco2), [`Manobras simples com embarcações <b>menores e mais baratas</b>.`, `<span class="mu">Troca de porte, ao custo/h de ${prv}</span>`], L.eco2 >= 0 ? 'good' : 'bad')}
+      ${levCard(3, 'Planejamento das manobras', `${pp(A0.fp)} → ${pp(A1.fp)}`, [`Manobras no <b>fundeio</b> dentro da meta de <b>5 h</b>.`, `<span class="mu">Porto (meta 3 h): ${pp(A0.pp)} → ${pp(A1.pp)}</span>`], (A1.fp || 0) >= (A0.fp || 0) ? 'good' : 'bad')}
     </div>`;
 
     const ctx = `<div class="kgrid ctxk">
@@ -2643,12 +2665,12 @@ function gestaoExtra() {
 
     const tile = (l, v, s, cls) => `<div class="mc ${cls || ''}"><div class="mc-l">${l}</div><div class="mc-v">${v}</div><div class="mc-s">${s}</div></div>`;
     const marcos = `<div class="mcs">
-      ${tile('Economia acumulada', fMi(ecoAc), `desde ${GESTAO_LBL}, ao custo/h dos 12 meses anteriores`, 'acc')}
-      ${tile('Custo médio por hora', `${fR(a0.eff)} → ${fR(a1.eff)}`, `${fP(dlt(a1.eff, a0.eff))} · 12 meses antes × gestão`)}
-      ${reneg ? tile('Maior renegociação', `${esc(reneg.a)} ${fP(reneg.v1 / reneg.v0 - 1)}`, `tarifa de ${fR(reneg.v0)} para ${fR(reneg.v1)}/h`) : ''}
-      ${melhor ? tile('Menor custo/h da série', fR(melhor.eff), mLbl(melhor.k)) : ''}
-      ${cm0 && cm1 ? tile('Custo por manobra', `${fR(cm0)} → ${fR(cm1)}`, fP(dlt(cm1, cm0))) : ''}
-      ${cc0 != null ? tile('Gasto sem centro de custo', `${pp(cc0)} → ${pp(cc1)}`, 'rastreabilidade do gasto') : ''}
+      ${tile('Economia acumulada', fMi(ecoAc), `desde <b>${GESTAO_LBL}</b>, ao custo/h dos <b>12 meses anteriores</b>`, 'acc')}
+      ${tile('Custo médio por hora', `${fR(a0.eff)} → ${fR(a1.eff)}`, `<b>${fP(dlt(a1.eff, a0.eff))}</b> · 12 meses antes × gestão`)}
+      ${reneg ? tile('Maior renegociação', `${esc(reneg.a)} ${fP(reneg.v1 / reneg.v0 - 1)}`, `tarifa de <b>${fR(reneg.v0)}</b> para <b>${fR(reneg.v1)}/h</b>`) : ''}
+      ${melhor ? tile('Menor custo/h da série', fR(melhor.eff), `em <b>${mLbl(melhor.k)}</b>`) : ''}
+      ${cm0 && cm1 ? tile('Custo por manobra', `${fR(cm0)} → ${fR(cm1)}`, `<b>${fP(dlt(cm1, cm0))}</b> por atendimento`) : ''}
+      ${cc0 != null ? tile('Gasto sem centro de custo', `${pp(cc0)} → ${pp(cc1)}`, 'mais <b>rastreabilidade</b> do gasto') : ''}
     </div>`;
 
     const evList = ev.map((e, i) => `<li><span class="evn">${i + 1}</span><b>${mLbl(e.k)} · ${esc(e.t)}</b> <span class="mu">${esc(e.s)}</span></li>`).join('');
@@ -3028,6 +3050,156 @@ function bindDetalhes() {
         h.insertAdjacentHTML('beforeend', ' <button class="inf" title="O que é este quadro">i</button>');
         h.querySelector('.inf').onclick = ev => { ev.stopPropagation(); openDrawer(h.textContent.replace(/\s*i$/, ''), dx(INFO[k][0], INFO[k][1])); }; });
 }
+
+/* ===================== v2: padrão analítico para todas as abas =====================
+   - tabelas: ranking do maior para o menor, barra de dados em todas as colunas numéricas,
+     variação colorida (▼ Tiffany = melhor, ▲ marinho = atenção) e maior valor em negrito;
+   - barras empilhadas: percentual em todos os segmentos (os pequenos ficam fora da barra);
+   - linhas: curvas suavizadas e rótulos discretos;
+   - roda sozinho sempre que a tela muda (abas, alternância tabela/mapa e painel de detalhe). */
+
+function numBR(s) {
+    const m = /([−-])?\s*R?\$?\s*([\d.]+(?:,\d+)?)\s*(mi\b|mil\b)?/.exec(String(s).replace(/ /g, ' '));
+    if (!m) return null;
+    let v = parseFloat(m[2].replace(/\./g, '').replace(',', '.'));
+    if (!isFinite(v)) return null;
+    if (m[3] === 'mi') v *= 1e6; else if (m[3] === 'mil') v *= 1e3;
+    return m[1] ? -v : v;
+}
+const isVar = (th, td) => /^var/i.test(th || '') || /[▲▼]|p\.p\./.test(td.textContent);
+
+function analiticoTabela(t) {
+    if (t.dataset.an || t.classList.contains('hm')) return;
+    t.dataset.an = '1';
+    const ths = [...t.querySelectorAll('thead th')].map(x => x.textContent.trim());
+    const tb = t.tBodies[0]; if (!tb) return;
+    const rows = [...tb.rows].filter(r => !r.classList.contains('tot'));
+    if (!rows.length) return;
+    const metricas = !ths[0] || /^ano$/i.test(ths[0]);          // linhas = indicadores, colunas = anos
+    const entidade = !metricas && ths[0] && !/^data$/i.test(ths[0]) && rows.length >= 2;
+    // 1) ranking do maior para o menor
+    if (entidade) {
+        const cur = String(S.cur);
+        let ci = ths.findIndex(h => h === cur);
+        if (ci < 0) ci = ths.findIndex(h => /R\$\/h/.test(h) && h.endsWith(cur));
+        if (ci < 0) ci = ths.findIndex(h => /^gasto$/i.test(h) || /^economia$/i.test(h) || /^valor$/i.test(h));
+        if (ci > 0) {
+            rows.sort((a, b) => (numBR(b.cells[ci]?.textContent) ?? -1e18) - (numBR(a.cells[ci]?.textContent) ?? -1e18));
+            const tot = [...tb.rows].filter(r => r.classList.contains('tot'));
+            rows.concat(tot).forEach(r => tb.appendChild(r));
+            const th = t.querySelectorAll('thead th')[ci]; if (th && !th.querySelector('.srt')) th.insertAdjacentHTML('beforeend', ' <span class="srt" title="ordenado do maior para o menor">▼</span>');
+        }
+        rows.forEach((r, i) => { const c = r.cells[0]; if (c && !c.querySelector('.rk')) c.insertAdjacentHTML('afterbegin', `<span class="rk">${i + 1}</span>`); });
+    }
+    // 2) barras de dados e destaques
+    const ncol = Math.max(...rows.map(r => r.cells.length));
+    const barra = (td, v, max, cls) => { if (v == null || !max) return; const p = Math.max(0, Math.min(100, Math.abs(v) / max * 100)); td.classList.add('db', cls || 'db1'); td.style.setProperty('--p', p.toFixed(1) + '%'); };
+    const temCel = td => td && td.classList.contains('n') && !td.classList.contains('bcell');
+    if (metricas) {
+        rows.forEach(r => { const cs = [...r.cells].filter(temCel); const vs = cs.map(td => numBR(td.textContent)); const mx = Math.max(...vs.filter(v => v != null).map(Math.abs)); cs.forEach((td, i) => barra(td, vs[i], mx)); });
+    } else {
+        for (let ci = 1; ci < ncol; ci++) {
+            const cs = rows.map(r => r.cells[ci]).filter(temCel);
+            if (!cs.length) continue;
+            if (cs.some(td => isVar(ths[ci], td))) {
+                cs.forEach(td => { const t2 = td.textContent; td.classList.add('dv', /▼|−/.test(t2) ? 'dv-g' : (/▲|\+/.test(t2) ? 'dv-b' : 'dv-n')); });
+                continue;
+            }
+            const vs = cs.map(td => numBR(td.textContent)); const mx = Math.max(...vs.filter(v => v != null).map(Math.abs));
+            cs.forEach((td, i) => { barra(td, vs[i], mx); if (vs[i] != null && Math.abs(vs[i]) === mx && cs.length > 2) td.classList.add('dmax'); });
+        }
+    }
+}
+
+/* barras empilhadas com percentual em todos os segmentos */
+function stackBar(items, { fmt, min = 7 }) {
+    const tot = items.reduce((a, b) => a + b.v, 0) || 1;
+    return `<div class="stack">${items.filter(i => i.v > 0).map(i => { const p = i.v / tot, pc = p * 100; const lab = (pc >= 10 ? NF0 : NF1).format(pc) + '%';
+        return `<div class="seg ${pc < min ? 'sm' : ''}" style="width:${pc}%;background:${i.color};color:${i.tc || '#fff'}" data-tip="${esc(i.name)}|${esc(fmt(i.v))}|${NF1.format(pc)}%"><span>${lab}</span></div>`; }).join('')}</div>`;
+}
+
+/* linhas suavizadas (Catmull-Rom -> Bézier) */
+function suave(pts) {
+    if (pts.length < 3) return 'M' + pts.map(p => p.join(',')).join('L');
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, k = 0.18;
+        d += `C${p1[0] + (p2[0] - p0[0]) * k},${p1[1] + (p2[1] - p0[1]) * k} ${p2[0] - (p3[0] - p1[0]) * k},${p2[1] - (p3[1] - p1[1]) * k} ${p2[0]},${p2[1]}`;
+    }
+    return d;
+}
+function suavizarLinhas(root) {
+    $$('polyline.ln', root).forEach(pl => {
+        const pts = (pl.getAttribute('points') || '').trim().split(/\s+/).map(s => s.split(',').map(Number)).filter(p => p.length === 2 && isFinite(p[0]));
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', suave(pts)); path.setAttribute('class', 'ln'); path.setAttribute('style', pl.getAttribute('style') || '');
+        if (pl.dataset.lab) path.dataset.lab = pl.dataset.lab;
+        pl.replaceWith(path);
+    });
+}
+
+/* gráfico de linhas: rótulos discretos na série atual */
+const _lineChartBase = lineChart;
+lineChart = function(host, o) {
+    _lineChartBase(host, o);
+    const svg = $('svg', host); if (!svg) return;
+    try {
+    const f = v => { try { return o.yfmt(v); } catch (e) { return ""; } };
+    const segs = [];
+    o.series.forEach((s, si) => { let cur = []; s.pts.forEach(p => { if (p.y == null) { if (cur.length) segs.push({ si, pts: cur }); cur = []; } else cur.push(p); }); if (cur.length) segs.push({ si, pts: cur }); });
+    const lines = $$('polyline.ln', svg);
+    const alvo = o.series.length - 1;
+    let g = '';
+    lines.forEach((pl, i) => {
+        const sg = segs[i]; if (!sg || sg.si !== alvo) return;
+        const xy = pl.getAttribute('points').trim().split(/\s+/).map(s => s.split(',').map(Number));
+        xy.forEach((p, j) => { if (j === xy.length - 1) return; g += `<text class="dlab" x="${p[0]}" y="${p[1] - 9}" text-anchor="middle">${f(sg.pts[j].y)}</text>`; });
+    });
+    svg.insertAdjacentHTML('beforeend', g);
+    } catch (e) {}
+};
+
+/* barras agrupadas: rótulo em todas as barras (discreto) */
+const _groupedBarsBase = groupedBars;
+groupedBars = function(host, o) { return _groupedBarsBase(host, { ...o, label: 'all' }); };
+
+/* evolução mês a mês (timeline) e curva: rótulos discretos nos pontos da linha */
+function rotularTimeline() {
+    const svg = $('#tl svg'); if (!svg || svg.dataset.lab) return; svg.dataset.lab = '1';
+    const dots = $$('circle.dot', svg); let g = '';
+    const vals = window._TL || [];
+    dots.forEach((c, i) => { const v = vals[i]; if (v == null) return; g += `<text class="dlab" x="${c.getAttribute('cx')}" y="${+c.getAttribute('cy') - 9}" text-anchor="middle">${NF0.format(v)}</text>`; });
+    svg.insertAdjacentHTML('beforeend', g);
+}
+const _timelineBase = timeline;
+timeline = function(host, pts, ini) { window._TL = pts.filter(p => p.eff != null).map(p => p.eff); _timelineBase(host, pts, ini); };
+
+/* aplica tudo sempre que a tela muda */
+let _anT = 0;
+function aplicarAnalitico() {
+    clearTimeout(_anT);
+    _anT = setTimeout(() => {
+        [document.getElementById('view'), document.getElementById('drwBody')].forEach(root => {
+            if (!root) return;
+            $$('table', root).forEach(analiticoTabela);
+            suavizarLinhas(root);
+        });
+        rotularTimeline();
+    }, 30);
+}
+['view', 'drwBody'].forEach(id => { const el = document.getElementById(id); if (el) new MutationObserver(aplicarAnalitico).observe(el, { childList: true, subtree: true }); });
+
+/* modo apresentação em tela cheia */
+window.addEventListener('load', () => {
+    const b = $('#present'); if (!b) return;
+    b.addEventListener('click', () => setTimeout(() => {
+        const on = document.body.classList.contains('present');
+        if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+        if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    }, 0));
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.body.classList.contains('present')) b.click(); });
+    b.title = 'Modo apresentação (tela cheia) — Esc para sair';
+});
 /* ---------- shell ---------- */
 const TABS = [
     ['gestao', 'Resultados da gestão'],
