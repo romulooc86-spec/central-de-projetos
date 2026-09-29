@@ -2,11 +2,11 @@
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Custos de Rebocadores (teste v2)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>:root{
   color-scheme:light;
-  --font-display:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-display:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
   --navy:#042738;--navy-soft:#103C52;--teal:#06BEAE;--teal-deep:#048C80;--teal-wash:#E0F6F3;
   --page:#F2F6F6;--card:#FFFFFF;--card-soft:#F8FBFB;
   --tx:#0B2530;--tx2:#52656C;--tx3:#8B9A9F;--on-navy:#fff;--on-navy-mu:#A9C3CB;
@@ -262,6 +262,11 @@ body.present .tabs button[data-t="dados"]{display:none!important}
 .opps li div{display:flex;flex-direction:column;gap:2px;font-size:13px}
 .opps li strong{font:800 16px var(--font-display);white-space:nowrap;color:var(--teal-deep)}
 @media (max-width:640px){.mc-v{font-size:16px}.mc.acc .mc-v{font-size:18px}}
+.sub-h{font:700 11px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin:14px 0 6px}
+.chips-k{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips-k span{background:var(--card-soft);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;font-size:12.5px;color:var(--tx2)}
+.chips-k b{color:var(--tx);margin-left:4px}
+.t10-seg{flex-wrap:wrap}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -969,7 +974,7 @@ function heatMap(host, {
 }
 
 /* ---------- decomposição preço x mix x volume ----------
-   keyFn opcional agrupa por outra dimensão além de agência (r.a) — por exemplo
+   keyFn opcional agrupa por outra dimensão além de fornecedor (r.a) — por exemplo
    por porte de embarcação (r.tier), para isolar quanto da variação de custo veio
    de renegociar tarifa (mesma faixa) vs. trocar de embarcação (mudou de faixa). */
 function decompose(y0, y1, rs, keyFn) {
@@ -1059,9 +1064,9 @@ function openMonthDrawer(year, month) {
       ${kpi('Custo por manobra', a.n?fR(a.c/a.n):'—', [], '')}
     </div>
     ${insights.length?`<ul class="msgs drw-msgs">${insights.map(m=>`<li>${m}</li>`).join('')}</ul>`:''}
-    ${byAg.length?`<h4>Gasto por agência neste mês</h4><div id="drw-chart"></div>`:''}
-    <h4>Detalhe por agência <span class="mu">— clique para ver o ano inteiro</span></h4>
-    ${tbl([{t:'Agência'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[agRowsHtml(g)])}`;
+    ${byAg.length?`<h4>Gasto por fornecedor neste mês</h4><div id="drw-chart"></div>`:''}
+    <h4>Detalhe por fornecedor <span class="mu">— clique para ver o ano inteiro</span></h4>
+    ${tbl([{t:'Fornecedor'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[agRowsHtml(g)])}`;
     openDrawer(label, body, root => {
         wireAgRows(root, year);
         if (byAg.length) groupedBars($('#drw-chart', root), {
@@ -1107,7 +1112,7 @@ function openMonthAllYearsDrawer(mi) {
     const rows = per.map(p => `<tr class="rowclick" data-y="${p.y}"><td>${p.y}</td><td class="n">${fN(p.a.n)}</td><td class="n">${fH(p.a.h)}</td><td class="n">${fMi(p.a.c)}</td><td class="n">${p.a.eff?fR(p.a.eff):'—'}</td><td class="n">${p.a.n?fR(p.a.c/p.a.n):'—'}</td></tr>`).join('');
     const body = `${insight}
     ${withData.length?'<div id="drw-chart"></div>':''}
-    <h4>Por ano <span class="mu">— clique para ver o mês por agência</span></h4>
+    <h4>Por ano <span class="mu">— clique para ver o mês por fornecedor</span></h4>
     ${tbl([{t:'Ano'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'},{t:'R$/manobra',c:'n'}],[rows])}`;
     openDrawer(label, body, root => {
         $$('.rowclick[data-y]', root).forEach(tr => tr.addEventListener('click', () => openMonthDrawer(+tr.dataset.y, month)));
@@ -1142,7 +1147,7 @@ function openYearDrawer(year) {
         if (dec) {
             const pp = dec.price,
                 mm = dec.mix;
-            insight = `<ul class="msgs drw-msgs"><li>Vs. ${prevYear}: <b>${fR(Math.abs(pp))}</b>/h ${pp<0?'vieram da redução de tarifa dentro das agências':'vieram de aumento de tarifa nas agências'} e <b>${fR(Math.abs(mm))}</b>/h ${mm<0?'da mudança para agências mais baratas (mix)':'de um mix mais caro'}.</li></ul>`;
+            insight = `<ul class="msgs drw-msgs"><li>Vs. ${prevYear}: <b>${fR(Math.abs(pp))}</b>/h ${pp<0?'vieram da redução de tarifa dentro dos fornecedores':'vieram de aumento de tarifa nos fornecedores'} e <b>${fR(Math.abs(mm))}</b>/h ${mm<0?'da mudança para fornecedores mais baratas (mix)':'de um mix mais caro'}.</li></ul>`;
         }
     }
     const monthly = MES.map((_, mi) => agg(g.filter(r => r.m === mi + 1)));
@@ -1154,8 +1159,8 @@ function openYearDrawer(year) {
     ${insight}
     <h4>Sazonalidade em ${year}</h4>
     <div id="drw-chart"></div>
-    <h4>Por agência <span class="mu">— clique para detalhar</span></h4>
-    ${tbl([{t:'Agência'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[agRowsHtml(g)])}`;
+    <h4>Por fornecedor <span class="mu">— clique para detalhar</span></h4>
+    ${tbl([{t:'Fornecedor'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[agRowsHtml(g)])}`;
     openDrawer(String(year), body, root => {
         wireAgRows(root, year);
         lineChart($('#drw-chart', root), {
@@ -1177,7 +1182,7 @@ function openYearDrawer(year) {
     });
 }
 
-/* clique numa agência (tabela, barras ou mapa de calor) → detalhe daquela agência naquele ano, vs. a frota */
+/* clique num fornecedor (tabela, barras ou mapa de calor) → detalhe daquele fornecedor naquele ano, vs. a frota */
 function openAgencyYearDrawer(agency, year) {
     const g = S.all.filter(r => r.t === 'H' && r.a === agency && r.y === year && (!S.f.loc || r.l === S.f.loc));
     const a = agg(g);
@@ -1194,7 +1199,7 @@ function openAgencyYearDrawer(agency, year) {
     });
     const insights = [];
     if (dv != null) insights.push(`Tarifa <b>${fP(Math.abs(dv),false)} ${dv<0?'abaixo':'acima'}</b> da média da frota em ${year} (${fR(fleet.eff)}/h).`);
-    if (sv > 1) insights.push(`Renegociar as horas desta agência acima de ${fR(cap)}/h geraria <b>${fMi(sv)}</b> de economia (${fH(hAb)}).`);
+    if (sv > 1) insights.push(`Renegociar as horas deste fornecedor acima de ${fR(cap)}/h geraria <b>${fMi(sv)}</b> de economia (${fH(hAb)}).`);
     const monthly = MES.map((_, mi) => agg(g.filter(r => r.m === mi + 1)));
     const rows = MES.map((m, i) => monthly[i].n ? `<tr class="rowclick" data-m="${i+1}"><td>${m.toUpperCase()}</td><td class="n">${fN(monthly[i].n)}</td><td class="n">${fH(monthly[i].h)}</td><td class="n">${fMi(monthly[i].c)}</td><td class="n">${monthly[i].eff?fR(monthly[i].eff):'—'}</td></tr>` : '').join('');
     const body = `<div class="kgrid k3">
@@ -1267,7 +1272,7 @@ function openTierDrawer(tier, year) {
     <h4>Mês a mês em ${year}</h4>
     <div id="drw-chart"></div>
     <h4>Embarcações desta faixa <span class="mu">— ${byVessel.length} embarcaç${byVessel.length===1?'ão':'ões'}</span></h4>
-    ${tbl([{t:'Embarcação / agência'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[vesselRows])}`;
+    ${tbl([{t:'Embarcação / fornecedor'},{t:'Manobras',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'R$/h',c:'n'}],[vesselRows])}`;
     openDrawer(TIER_LABEL[tier] + ' · ' + year, body, root => {
         lineChart($('#drw-chart', root), {
             series: [{
@@ -1317,7 +1322,7 @@ function trend(d, mode = true, ref = '') {
     };
 }
 
-/* alterna entre tabela e mapa de calor no mesmo card — usado em Preço, Volume e Agências */
+/* alterna entre tabela e mapa de calor no mesmo card — usado em Preço, Volume e Fornecedores */
 function toggleView(id, label1, label2) {
     return `<div class="seg2 vtoggle" data-vt="${id}"><button data-k="tab" class="on">${label1}</button><button data-k="heat">${label2}</button></div><div id="${id}-body"></div>`;
 }
@@ -1371,7 +1376,7 @@ V.resumo = function() {
     if (dec) {
         const pp = dec.price,
             mm = dec.mix;
-        msgs.push(`<b>De onde vem a variação:</b> da diferença de ${fR(Math.abs(a.eff-p.eff))}/h, <b>${fR(Math.abs(pp))}</b> ${pp<0?'vêm da redução de tarifa dentro das próprias agências':'são aumento de tarifa dentro das agências'} e <b>${fR(Math.abs(mm))}</b> ${mm<0?'vêm da mudança no mix (mais horas nas agências mais baratas)':'vêm de mix mais caro'}.`);
+        msgs.push(`<b>De onde vem a variação:</b> da diferença de ${fR(Math.abs(a.eff-p.eff))}/h, <b>${fR(Math.abs(pp))}</b> ${pp<0?'vêm da redução de tarifa dentro das próprios fornecedores':'são aumento de tarifa dentro dos fornecedores'} e <b>${fR(Math.abs(mm))}</b> ${mm<0?'vêm da mudança no mix (mais horas nos fornecedores mais baratas)':'vêm de mix mais caro'}.`);
         const vd = dlt(a.h, p.h),
             cd = dlt(a.c, p.c);
         msgs.push(`<b>Gasto total:</b> ${cd>=0?'subiu':'caiu'} <b>${fP(Math.abs(cd),false)}</b> (${fMi(p.c)} → ${fMi(a.c)}) porque o volume de horas ${vd>=0?'cresceu':'caiu'} <b>${fP(Math.abs(vd),false)}</b> — preço menor, mas mais horas contratadas.`);
@@ -1412,19 +1417,19 @@ V.resumo = function() {
     if (novos.length) {
         msgs.push(`<b>Novas frentes:</b> em ${cur}, ${novos.length} ativo(s) passaram a gerar manobras que não existiam em ${base} — ${novos.slice(0,4).map(esc).join(', ')}${novos.length>4?' e outros':''}. Isso empurra o volume para cima mesmo com preço/h em queda.`);
     }
-    // marco: quanto pagaríamos sem a redução (ou aumento) de tarifa nas agências
+    // marco: quanto pagaríamos sem a redução (ou aumento) de tarifa nos fornecedores
     let milestoneHtml = '';
     if (dec && a.h) {
         const savings = -dec.priceTot; // >0 = economia por redução de tarifa
-        const hypot = a.c - dec.priceTot; // gasto se a tarifa/h de cada agência não tivesse mudado desde `base`
+        const hypot = a.c - dec.priceTot; // gasto se a tarifa/h de cada fornecedor não tivesse mudado desde `base`
         if (Math.abs(savings) > Math.max(1000, a.c * 0.002)) {
             const isGood = savings > 0;
             milestoneHtml = `<div class="milestone">
         <div class="mi-ic">${isGood?'★':'⚠'}</div>
         <div>
           <div>${isGood
-            ? `<b>Marco:</b> a redução de tarifa das agências entre ${prv} e ${cur} evitou <span class="mi-num">${fMi(savings)}</span> em gastos`
-            : `<b>Atenção:</b> o aumento de tarifa das agências entre ${prv} e ${cur} adicionou <span class="mi-num">${fMi(Math.abs(savings))}</span> ao gasto`} — considerando o mesmo volume e mix de horas de ${cur} (${perLabel()}).</div>
+            ? `<b>Marco:</b> a redução de tarifa dos fornecedores entre ${prv} e ${cur} evitou <span class="mi-num">${fMi(savings)}</span> em gastos`
+            : `<b>Atenção:</b> o aumento de tarifa dos fornecedores entre ${prv} e ${cur} adicionou <span class="mi-num">${fMi(Math.abs(savings))}</span> ao gasto`} — considerando o mesmo volume e mix de horas de ${cur} (${perLabel()}).</div>
           <div class="milestone-grid">
             <div class="milestone-item"><div class="ml">Gasto real em ${cur}</div><div class="mv">${fMi(a.c)}</div></div>
             <div class="milestone-item"><div class="ml">Gasto sem a ${isGood?'redução':'variação'} de tarifa</div><div class="mv acc">${fMi(hypot)}</div></div>
@@ -1594,12 +1599,12 @@ V.preco = function() {
     };
     const html = `${card('Custo médio por hora — mês a mês','R$ por hora de rebocador realizada (gasto ÷ horas). Meses com menos de 20 h não são plotados. Clique num ponto para comparar os anos naquele mês.',`<div class="lgd">${legend(ser)}</div><div id="ch-line"></div>`)}
   <div class="two">
-   ${card('Tarifa média por agência','R$ por hora faturada (média ponderada) — '+perLabel()+' · clique numa barra para detalhar',tarBars)}
+   ${card('Tarifa média por fornecedor','R$ por hora faturada (média ponderada) — '+perLabel()+' · clique numa barra para detalhar',tarBars)}
    ${card('Em que faixa de tarifa pagamos as horas','% das horas faturadas por faixa de R$/h — quanto mais claro, mais barato',`<div class="ladder">${ladder}</div><div class="legend bandleg">${bands.map(b=>`<span><i style="background:${b.c}"></i>${b.n}</span>`).join('')}</div>`)}
   </div>
   ${card('Mapa de calor — custo por hora, ano × mês','R$/h efetivo · tons mais escuros da paleta Prime Ocean = mais caro · meses com menos de 20 h faturadas ficam em branco · clique numa célula para o detalhe do mês',`<div id="ch-hm"></div>`,'mt')}
-  ${card('Tarifa média por agência','R$/h — alterne entre tabela e mapa de calor · clique numa agência/célula para detalhar',toggleView('preco-ag','Tabela','Mapa de calor'),'mt')}
-  ${card('Como ler','',`<p class="note"><b>Custo efetivo</b> = gasto ÷ horas realmente utilizadas (é o "valor médio por hora" do SUMÁRIO). <b>Tarifa contratada</b> = gasto ÷ horas faturadas (o preço/h combinado). A diferença entre as duas é o arredondamento de horas cobrado pelas agências. Diárias, afretamentos e linhas com erro de digitação ficam fora desta aba para não distorcer a comparação (ver aba <i>Dados</i>).</p>`,'mt')}`;
+  ${card('Tarifa média por fornecedor','R$/h — alterne entre tabela e mapa de calor · clique num fornecedor/célula para detalhar',toggleView('preco-ag','Tabela','Mapa de calor'),'mt')}
+  ${card('Como ler','',`<p class="note"><b>Custo efetivo</b> = gasto ÷ horas realmente utilizadas (é o "valor médio por hora" do SUMÁRIO). <b>Tarifa contratada</b> = gasto ÷ horas faturadas (o preço/h combinado). A diferença entre as duas é o arredondamento de horas cobrado pelos fornecedores. Diárias, afretamentos e linhas com erro de digitação ficam fora desta aba para não distorcer a comparação (ver aba <i>Dados</i>).</p>`,'mt')}`;
     return {
         html,
         after() {
@@ -1645,7 +1650,7 @@ V.preco = function() {
             wireToggle('preco-ag', {
                 tab: host => {
                     host.innerHTML = tbl([{
-                        t: 'Agência'
+                        t: 'Fornecedor'
                     }, ...S.years.map(y => ({
                         t: y,
                         c: 'n'
@@ -1708,14 +1713,14 @@ V.volume = function() {
             note: 'Δ horas (' + (dec.t1.h - dec.t0.h >= 0 ? '+' : '') + NF0.format(dec.t1.h - dec.t0.h) + ' h) × custo/h de ' + cmp
         },
         {
-            name: 'Tarifa nas agências',
+            name: 'Tarifa nos fornecedores',
             v: dec.priceTot,
-            note: 'Mudança de tarifa dentro de cada agência, sobre as horas de ' + cur
+            note: 'Mudança de tarifa dentro de cada fornecedor, sobre as horas de ' + cur
         },
         {
-            name: 'Mix de agências',
+            name: 'Mix de fornecedores',
             v: dec.mixTot,
-            note: 'Mudança na distribuição das horas entre agências, sobre as horas de ' + cur
+            note: 'Mudança na distribuição das horas entre fornecedores, sobre as horas de ' + cur
         },
         {
             name: 'Gasto ' + cur,
@@ -1806,7 +1811,7 @@ V.volume = function() {
     const dp = dec.per.filter(x => x.h0 || x.h1).sort((a, b) => (b.h1) - (a.h1));
     const rows = dp.map(x => `<tr><td><i class="dotc" style="background:${agColor(x.a)}"></i>${esc(x.a)}</td><td class="n">${NF1.format(x.s0*100)}%</td><td class="n">${NF1.format(x.s1*100)}%</td><td class="n">${x.h0?fR(x.e0):'—'}</td><td class="n">${x.h1?fR(x.e1):'—'}</td><td class="n">${x.h0&&x.h1?trendCell(dlt(x.e1,x.e0)):'—'}</td></tr>`).join('');
     const html = `<div class="ctl"><label>Comparar ${cur} com <select id="sel-base">${S.years.filter(y=>y!==cur).map(y=>`<option ${y===cmp?'selected':''}>${y}</option>`).join('')}</select></label><span class="mu">período: ${perLabel()}</span></div>
-   ${card('Por que o gasto mudou: volume, tarifa ou mix?','Ponte do gasto com rebocadores por hora, '+cmp+' → '+cur+' ('+perLabel()+'). Barras vermelhas aumentam o gasto; verdes reduzem.',`<div id="ch-wf"></div><p class="note">Volume = variação de horas × custo/h de ${cmp}. Tarifa = redução de preço <i>dentro</i> de cada agência. Mix = deslocamento de horas entre agências com tarifas diferentes. A soma dos três explica exatamente a variação do gasto.</p>`)}
+   ${card('Por que o gasto mudou: volume, tarifa ou mix?','Ponte do gasto com rebocadores por hora, '+cmp+' → '+cur+' ('+perLabel()+'). Barras vermelhas aumentam o gasto; verdes reduzem.',`<div id="ch-wf"></div><p class="note">Volume = variação de horas × custo/h de ${cmp}. Tarifa = redução de preço <i>dentro</i> de cada fornecedor. Mix = deslocamento de horas entre fornecedores com tarifas diferentes. A soma dos três explica exatamente a variação do gasto.</p>`)}
    <div class="two">
     ${card('Gasto acumulado no ano','R$ acumulado mês a mês (serviços por hora) · clique num ponto para comparar os anos naquele mês',`<div class="lgd">${legend(cs)}</div><div id="ch-cc"></div>`)}
     ${card('Horas acumuladas no ano','Horas de rebocador realizadas, acumulado',`<div class="lgd">${legend(hs)}</div><div id="ch-ch"></div>`)}
@@ -1815,7 +1820,7 @@ V.volume = function() {
     ${card('Manobras acumuladas no ano','Nº de manobras de rebocador, acumulado mês a mês',`<div class="lgd">${legend(ns)}</div><div id="ch-cn"></div>`)}
     ${card('Custo médio por manobra, mês a mês','Gasto ÷ nº de manobras (não cumulativo) — meses com menos de 3 manobras não são plotados. É este o indicador que pode subir mesmo com o R$/h caindo, se as manobras ficarem mais longas ou mais numerosas por operação.',`<div class="lgd">${legend(ns)}</div><div id="ch-cpm"></div>`)}
    </div>
-   ${card('Mix e custo por hora, por agência','Participação nas horas e custo efetivo (R$/h) em '+cmp+' e '+cur+' · alterne para o mapa de calor · clique para detalhar',toggleView('vol-ag','Tabela','Mapa de calor'),'mt')}`;
+   ${card('Mix e custo por hora, por fornecedor','Participação nas horas e custo efetivo (R$/h) em '+cmp+' e '+cur+' · alterne para o mapa de calor · clique para detalhar',toggleView('vol-ag','Tabela','Mapa de calor'),'mt')}`;
     return {
         html,
         after() {
@@ -1866,7 +1871,7 @@ V.volume = function() {
             wireToggle('vol-ag', {
                 tab: host => {
                     host.innerHTML = tbl([{
-                        t: 'Agência'
+                        t: 'Fornecedor'
                     }, {
                         t: '% horas ' + cmp,
                         c: 'n'
@@ -1937,10 +1942,10 @@ V.forn = function() {
     })).sort((x, y) => y.c - x.c);
     const top = sorted[0];
     const conc = top && totC ? `<p class="note"><b>Concentração:</b> ${esc(top.a)} responde por <b>${NF0.format(top.c/totC*100)}%</b> do gasto por hora de ${cur} (${perLabel()}). Quanto maior a concentração, maior o poder de negociação — e o risco de dependência.</p>` : '';
-    const html = `${card('Ranking de agências — '+cur,'Serviços por hora · '+perLabel()+' · variação contra '+prv+' · clique numa agência para detalhar',tbl([{t:'Agência'},{t:'Linhas',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'% gasto',c:'n'},{t:'Tarifa média',c:'n'},{t:'Custo/h efetivo',c:'n'},{t:'Var. tarifa',c:'n'},{t:'Var. gasto',c:'n'}],[rows,foot]).replace('<table','<table class="dense"')+conc)}
-  ${card('Custo por hora efetivo, por agência × ano','Comparativo entre agências ao longo dos anos · alterne para o mapa de calor · clique para detalhar',toggleView('forn-hm','Tabela','Mapa de calor'),'mt')}
-  <div class="two">${card('Participação no gasto','% do gasto por agência, por ano',`<div class="lgd">${lg}</div><div class="ladder">${mixRows}</div>`)}
-  ${card('Participação nas horas','% das horas de rebocador por agência, por ano',`<div class="lgd">${lg}</div><div class="ladder">${mixH}</div>`)}</div>`;
+    const html = `${card('Ranking de fornecedores — '+cur,'Serviços por hora · '+perLabel()+' · variação contra '+prv+' · clique num fornecedor para detalhar',tbl([{t:'Fornecedor'},{t:'Linhas',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'},{t:'% gasto',c:'n'},{t:'Tarifa média',c:'n'},{t:'Custo/h efetivo',c:'n'},{t:'Var. tarifa',c:'n'},{t:'Var. gasto',c:'n'}],[rows,foot]).replace('<table','<table class="dense"')+conc)}
+  ${card('Custo por hora efetivo, por fornecedor × ano','Comparativo entre fornecedores ao longo dos anos · alterne para o mapa de calor · clique para detalhar',toggleView('forn-hm','Tabela','Mapa de calor'),'mt')}
+  <div class="two">${card('Participação no gasto','% do gasto por fornecedor, por ano',`<div class="lgd">${lg}</div><div class="ladder">${mixRows}</div>`)}
+  ${card('Participação nas horas','% das horas de rebocador por fornecedor, por ano',`<div class="lgd">${lg}</div><div class="ladder">${mixH}</div>`)}</div>`;
     return {
         html,
         after() {
@@ -1949,7 +1954,7 @@ V.forn = function() {
             wireToggle('forn-hm', {
                 tab: host => {
                     host.innerHTML = tbl([{
-                        t: 'Agência'
+                        t: 'Fornecedor'
                     }, ...S.years.map(y => ({
                         t: y,
                         c: 'n'
@@ -2014,7 +2019,7 @@ V.onde = function() {
    ${card('Por contrato / centro de custo — '+cur,'Somente '+cur+' (os rótulos de contrato mudam entre os anos na planilha)',tbl([{t:'Contrato'},{t:'Gasto',c:'n'},{t:'%',c:'n'},{t:'Horas',c:'n'},{t:'Custo/h',c:'n'}],[ctRows]))}
    ${card('Navios / clientes que mais geraram gasto — '+cur,semCl?`${NF0.format(semCl)} linhas de ${cur} sem cliente/navio preenchido na planilha`:'',tbl([{t:'Navio / cliente'},{t:'Linhas',c:'n'},{t:'Horas',c:'n'},{t:'Gasto',c:'n'}],[clRows]))}
   </div>
-  ${card('10 maiores linhas de custo — '+cur,'Uma linha = um rebocador em uma operação',tbl([{t:'Data'},{t:'Rebocador'},{t:'Agência'},{t:'Ativo'},{t:'Horas',c:'n'},{t:'R$/h',c:'n'},{t:'Valor',c:'n'},{t:'Observação'}],[topRows]).replace('<table','<table class="dense"'),'mt')}`;
+  ${card('10 maiores linhas de custo — '+cur,'Uma linha = um rebocador em uma operação',tbl([{t:'Data'},{t:'Rebocador'},{t:'Fornecedor'},{t:'Ativo'},{t:'Horas',c:'n'},{t:'R$/h',c:'n'},{t:'Valor',c:'n'},{t:'Observação'}],[topRows]).replace('<table','<table class="dense"'),'mt')}`;
     return {
         html,
         after() {}
@@ -2075,7 +2080,7 @@ V.efic = function() {
     })).filter(x => x.c != null);
     const warn = cv.length && cv[cv.length - 1].c < 0.5 ? `<div class="alert"><b>Atenção:</b> em ${cv[cv.length-1].y} só ${NF0.format(cv[cv.length-1].c*100)}% das linhas têm horas previstas (IA) preenchidas. Sem esse dado não dá para medir o excedente — hoje o principal indicador de aderência ao planejado.</div>` : '';
     const html = `<div class="two">
-   ${card('Arredondamento de horas','As agências cobram hora cheia. Valor pago − (horas realizadas × tarifa). Quando negativo, a agência cobrou menos que o tempo real.',tbl([{t:''},...yrs.map(y=>({t:y,c:'n'}))],[rowA]))}
+   ${card('Arredondamento de horas','Os fornecedores cobram hora cheia. Valor pago − (horas realizadas × tarifa). Quando negativo, o fornecedor cobrou menos que o tempo real.',tbl([{t:''},...yrs.map(y=>({t:y,c:'n'}))],[rowA]))}
    ${card('Horas excedentes ao previsto (coluna IA)','Operações que passaram das horas previstas geram custo não planejado.'+' '+perLabel(),warn+tbl([{t:''},...yrs.map(y=>({t:y,c:'n'}))],[rowE]))}
   </div>
   <div class="two">
@@ -2131,8 +2136,8 @@ V.sim = function() {
     const lvRows = lv.map(x => `<div class="lvr"><span class="lk">${fR(x.k)}</span><div class="lb"><i style="width:${x.a.h/mxL*100}%;${(S.simMode==='cap'&&x.k>S.cap)?'':'opacity:.55'}"></i></div><span class="lv">${fH(x.a.h)} · ${fMi(x.a.c)}</span></div>`).join('');
     const pr = Object.values(per).sort((a, b) => b.s - a.s).map(o => `<tr><td><i class="dotc" style="background:${agColor(o.a)}"></i>${esc(o.a)}</td><td class="n">${fR(o.tg)}</td><td class="n">${fH(o.h)}</td><td class="n"><b>${fMi(o.s)}</b></td></tr>`).join('');
     const html = `<div class="ctl">
-    <div class="seg2"><button data-m="cap" class="${S.simMode==='cap'?'on':''}">Teto único de R$/h</button><button data-m="min" class="${S.simMode==='min'?'on':''}">Padronizar na menor tarifa recorrente de cada agência</button></div>
-    ${S.simMode==='cap'?`<label class="sl">Teto: <b id="capv">${fR(S.cap)}</b>/h <input type="range" id="cap" min="1250" max="3000" step="50" value="${S.cap}"></label>`:`<span class="mu">Menor tarifa com pelo menos 8 linhas no ano, por agência</span>`}
+    <div class="seg2"><button data-m="cap" class="${S.simMode==='cap'?'on':''}">Teto único de R$/h</button><button data-m="min" class="${S.simMode==='min'?'on':''}">Padronizar na menor tarifa recorrente de cada fornecedor</button></div>
+    ${S.simMode==='cap'?`<label class="sl">Teto: <b id="capv">${fR(S.cap)}</b>/h <input type="range" id="cap" min="1250" max="3000" step="50" value="${S.cap}"></label>`:`<span class="mu">Menor tarifa com pelo menos 8 linhas no ano, por fornecedor</span>`}
    </div>
    <div class="kgrid k3">
     ${kpi('Economia potencial em '+S.cur,fMi(sv),[{t:'<b>'+NF1.format(sv/t.c*100)+'%</b> do gasto por hora ('+fMi(t.c)+')',cls:'good',ic:'▼'}],perLabel())}
@@ -2141,7 +2146,7 @@ V.sim = function() {
    </div>
    <div class="two">
     ${card('Distribuição das horas por nível de tarifa — '+S.cur,'Barras mais fortes = horas acima da tarifa-alvo'+(S.simMode==='cap'?' (teto)':''),`<div class="lvl">${lvRows}</div>`)}
-    ${card('Economia por agência','Se as horas acima da tarifa-alvo fossem renegociadas para ela',tbl([{t:'Agência'},{t:'Tarifa-alvo',c:'n'},{t:'Horas acima',c:'n'},{t:'Economia',c:'n'}],[pr||'<tr><td colspan="4" class="mu">Nenhuma hora acima da tarifa-alvo</td></tr>']))}
+    ${card('Economia por fornecedor','Se as horas acima da tarifa-alvo fossem renegociadas para ela',tbl([{t:'Fornecedor'},{t:'Tarifa-alvo',c:'n'},{t:'Horas acima',c:'n'},{t:'Economia',c:'n'}],[pr||'<tr><td colspan="4" class="mu">Nenhuma hora acima da tarifa-alvo</td></tr>']))}
    </div>
    <p class="note">Simulação simples: assume que a mesma quantidade de horas seria contratada, mas na tarifa-alvo. Não considera diferenças de porte/potência do rebocador, disponibilidade nem prazos contratuais — serve para dimensionar a oportunidade em uma negociação.</p>`;
     return {
@@ -2179,7 +2184,7 @@ V.dados = function() {
     const whyOf = r => r.hi ? 'Horas = 0 na planilha (inferidas: valor ÷ tarifa)' : why[r.t];
     const fl = flag.slice(0, 60).map(r => `<tr><td>${r.d.split('-').reverse().join('/')}</td><td class="n">${r.ln}</td><td>${esc(r.e)}</td><td>${esc(r.a)}</td><td class="n">${r.h==null?'—':NF1.format(r.h)}</td><td class="n">${r.vh==null?'—':fR(r.vh)}</td><td class="n">${r.vt==null?'—':fR(r.vt)}</td><td>${whyOf(r)}</td></tr>`).join('');
     const incBody = flag.length
-        ? tbl([{t:'Data'},{t:'Linha',c:'n'},{t:'Rebocador'},{t:'Agência'},{t:'Horas',c:'n'},{t:'R$/h',c:'n'},{t:'Valor',c:'n'},{t:'Motivo'}],[fl]).replace('<table','<table class="dense"') + (flag.length>60?`<p class="note">Mostrando as 60 mais recentes de ${fN(flag.length)}.</p>`:'')
+        ? tbl([{t:'Data'},{t:'Linha',c:'n'},{t:'Rebocador'},{t:'Fornecedor'},{t:'Horas',c:'n'},{t:'R$/h',c:'n'},{t:'Valor',c:'n'},{t:'Motivo'}],[fl]).replace('<table','<table class="dense"') + (flag.length>60?`<p class="note">Mostrando as 60 mais recentes de ${fN(flag.length)}.</p>`:'')
         : '<p class="note">Nenhuma linha fora do padrão nesta base — todas batem com as regras de classificação ao lado.</p>';
     const html = `<div class="eyebrow">Última página · não aparece no modo apresentação</div>
   ${card((flag.length?'⚠ ':'✓ ')+'Inconsistências da planilha'+(flag.length?' ('+fN(flag.length)+')':''),'Linhas que caem fora do padrão esperado (horas implausíveis, tarifa atípica, sem valor/horas) — “Linha” é o número da linha na aba DADOS',incBody,flag.length?'alert':'ok')}
@@ -2348,7 +2353,7 @@ V.gestao = function() {
       ${kpi('Atendimentos dentro da meta', pp(A1.pct), [{ cls: A1.pct >= A0.pct ? 'good' : 'bad', ic: A1.pct >= A0.pct ? '▲' : '▼', t: `<b>${dpp(A1.pct, A0.pct)}</b> vs ${prv} <span class="mu">(${pp(A0.pct)})</span>` }], fN(A1.n) + ' atendimentos de manobra em ' + cur)}
     </div>`;
 
-    // 1) tarifa por agência
+    // 1) tarifa por fornecedor
     const ags = L.ag.filter(o => (o.h1 || 0) > 0 || (o.h0 || 0) > 0).sort((a, b) => (b.h1 || 0) - (a.h1 || 0));
     const eMaxAg = Math.max(...ags.map(o => Math.max(o.e0 || 0, o.e1 || 0))) || 1;
     const agRows = ags.map(o => {
@@ -2356,11 +2361,11 @@ V.gestao = function() {
         return `<tr><td><i class="dotc" style="background:${agColor(o.a)}"></i>${esc(o.a)}</td>
           <td class="bcell"><div class="bb"><i class="b0" style="width:${(o.e0 || 0) / eMaxAg * 100}%"></i></div><div class="bb"><i class="b1" style="width:${(o.e1 || 0) / eMaxAg * 100}%"></i></div></td>
           <td class="n">${o.e0 ? fR(o.e0) : '—'}<br>${o.e1 ? '<b>' + fR(o.e1) + '</b>' : '—'}</td>
-          <td class="n"><span class="tc ${d == null ? '' : d < 0 ? 'good' : 'bad'}">${o.e0 && o.e1 ? fP(d) : (o.e1 ? 'nova' : 'saiu')}</span></td>
+          <td class="n"><span class="tc ${d == null ? '' : d < 0 ? 'good' : 'bad'}">${o.e0 && o.e1 ? fP(d) : (o.e1 ? 'novo' : 'saiu')}</span></td>
           <td class="n">${fH(o.h1)}</td></tr>`;
     });
-    const c1 = card('1 · Renegociação de tarifas', `Custo médio por hora de cada agência — <span class="dotc" style="background:var(--y-old)"></span>${prv} &nbsp;<span class="dotc" style="background:var(--y-cur)"></span>${cur}, no mesmo período.`,
-        tbl([{ t: 'Agência' }, { t: '' }, { t: 'R$/h', c: 'n' }, { t: 'Var.', c: 'n' }, { t: 'Horas ' + cur, c: 'n' }], agRows, 'loc'));
+    const c1 = card('1 · Renegociação de tarifas', `Custo médio por hora de cada fornecedor — <span class="dotc" style="background:var(--y-old)"></span>${prv} &nbsp;<span class="dotc" style="background:var(--y-cur)"></span>${cur}, no mesmo período.`,
+        tbl([{ t: 'Fornecedor' }, { t: '' }, { t: 'R$/h', c: 'n' }, { t: 'Var.', c: 'n' }, { t: 'Horas ' + cur, c: 'n' }], agRows, 'loc'));
 
     // 2) porte das embarcações
     const tierRows = [prv, cur].map(y => {
@@ -2404,7 +2409,7 @@ V.gestao = function() {
     if (dH != null) msgs.push(`<b>Volume:</b> as horas ${dH >= 0 ? 'cresceram' : 'caíram'} ${fP(Math.abs(dH), false)} (${fH(t0.h)} → ${fH(t1.h)}), conforme a demanda das operações; o gasto ${dC <= 0 ? 'caiu' : 'subiu'} ${fP(Math.abs(dC), false)}.`);
 
     const html = `${hero}${lev}${ctx}
-      ${card('Evolução mês a mês', 'Barras: gasto mensal com rebocadores (serviço por hora). Linha: custo médio por hora. Área destacada: período da gestão atual. Filtro de agência e ativo aplicado; período completo.', '<div id="tl"></div>', 'mt')}
+      ${card('Evolução mês a mês', 'Barras: gasto mensal com rebocadores (serviço por hora). Linha: custo médio por hora. Área destacada: período da gestão atual. Filtro de fornecedor e ativo aplicado; período completo.', '<div id="tl"></div>', 'mt')}
       <div class="two">${c1}${c2}</div>
       <div class="two">${c3}${card('Destaques para a diretoria', 'Gerado automaticamente a partir da planilha', `<ul class="msgs">${msgs.map(m => `<li>${m}</li>`).join('')}</ul><p class="note">Como calculamos: ${cur} contra ${prv} no mesmo período. A economia é a diferença entre o gasto de ${cur} e o que as mesmas horas custariam ao custo médio por hora de ${prv}, separada em preço dentro do mesmo porte (renegociação) e troca de porte (rebocador menor). Diárias e afretamentos ficam fora.</p>`)}</div>`;
     return {
@@ -2466,7 +2471,7 @@ function iniciarAoVivo() {
 
 /* ===================== VERSÃO DE TESTE — análises extras para a diretoria =====================
    Janela da gestão: out/25 até o último registro. Base: os 12 meses anteriores (out/24–set/25).
-   Filtros de agência e ativo valem; o filtro de período não se aplica a estes quadros. */
+   Filtros de fornecedor e ativo valem; o filtro de período não se aplica a estes quadros. */
 const mk = r => r.d.slice(0, 7);
 const addM = (k, n) => { let [y, m] = k.split('-').map(Number); m += n; while (m > 12) { m -= 12; y++; } while (m < 1) { m += 12; y--; } return y + '-' + String(m).padStart(2, '0'); };
 const BASE_INI = addM(GESTAO_INI, -12), BASE_FIM = addM(GESTAO_INI, -1);
@@ -2498,8 +2503,8 @@ function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes
     H.forEach(r => { const k = mk(r); if (!primeiro[r.a] || k < primeiro[r.a]) primeiro[r.a] = k; if (!ultimo[r.a] || k > ultimo[r.a]) ultimo[r.a] = k; });
     const fim = S.maxDate.slice(0, 7);
     Object.keys(primeiro).forEach(a => {
-        if (primeiro[a] >= GESTAO_INI) ev.push({ k: primeiro[a], t: `Entrada da ${a}`, s: 'novo fornecedor' });
-        if (ultimo[a] < addM(fim, -3) && addM(ultimo[a], 1) >= GESTAO_INI) ev.push({ k: addM(ultimo[a], 1), t: `Saída da ${a}`, s: 'deixou de ser acionada' });
+        if (primeiro[a] >= GESTAO_INI) ev.push({ k: primeiro[a], t: `Entrada do ${a}`, s: 'novo fornecedor' });
+        if (ultimo[a] < addM(fim, -3) && addM(ultimo[a], 1) >= GESTAO_INI) ev.push({ k: addM(ultimo[a], 1), t: `Saída do ${a}`, s: 'deixou de ser acionado' });
     });
     // renegociação: tarifa contratada mediana do trimestre cai ≥10% frente à base
     [...new Set(H.map(r => r.a))].forEach(a => {
@@ -2610,7 +2615,9 @@ function gestaoExtra() {
       ${card('Curva da gestão · ' + tituloCurva, `Economia de cada mês = horas do mês × custo médio por hora dos 12 meses anteriores (${fR(a0.eff)}/h) − gasto real. Barras Tiffany: economia; cinza: mês acima da base. Linha: acumulado. Marcos detectados na planilha.`,
         `<div id="cv"></div><ol class="evs">${evList}</ol>`, 'mt')}
       ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e a gestão compensou ${fMi(-(P.preco + P.porte))}`, `Do gasto dos 12 meses antes (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)}) ao gasto da gestão (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Serviço por hora.`,
-        `<div id="wf2"></div>`, 'mt')}`;
+        `<div id="wf2"></div>`, 'mt')}
+      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto na gestão (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra: gasto; traço: mesmo item nos 12 meses antes; à direita, participação e acumulado (Pareto).`,
+        `<div class="seg2 t10-seg" style="margin-bottom:12px">${T10_DIM.map((d, i) => `<button data-k="${d.k}" class="${i ? '' : 'on'}">${d.l}</button>`).join('')}</div><div id="t10"></div>`, 'mt')}`;
 
     const shMax = Math.max(...F.map(o => Math.max(o.s0, o.s1))) || 1;
     const fRows = F.filter(o => o.s0 > 0.005 || o.s1 > 0.005).map(o => `<tr><td><i class="dotc" style="background:${agColor(o.a)}"></i>${esc(o.a)}</td>
@@ -2618,21 +2625,21 @@ function gestaoExtra() {
         <td class="n">${pp(o.s0)}<br><b>${pp(o.s1)}</b></td>
         <td class="n">${o.v0 ? fR(o.v0) : '—'}<br><b>${o.v1 ? fR(o.v1) : (o.s1 ? '—' : 'saiu')}</b></td>
         <td class="n"><span class="tc ${o.v0 && o.v1 ? (o.v1 < o.v0 ? 'good' : o.v1 > o.v0 ? 'bad' : '') : ''}">${o.v0 && o.v1 ? fP(o.v1 / o.v0 - 1) : (o.v1 ? 'novo' : '—')}</span></td></tr>`);
-    const alerta = top && top.s1 > 0.5 ? `<div class="alert"><b>Atenção:</b> ${esc(top.a)} concentra <b>${pp(top.s1)}</b> do gasto a ${fR(top.e1)}/h. Se chegasse ao custo médio das demais agências (${fR(outros.eff)}/h), a economia seria de <b>${fMi(topGap)}</b> no período.</div>` : '';
+    const alerta = top && top.s1 > 0.5 ? `<div class="alert"><b>Atenção:</b> ${esc(top.a)} concentra <b>${pp(top.s1)}</b> do gasto a ${fR(top.e1)}/h. Se chegasse ao custo médio das demais fornecedores (${fR(outros.eff)}/h), a economia seria de <b>${fMi(topGap)}</b> no período.</div>` : '';
     const ccRows = ccList.map(([c, v]) => `<div class="lvr"><span class="lk" title="${esc(c)}">${esc(c.length > 14 ? c.slice(0, 13) + '…' : c)}</span><span class="lb"><i style="width:${v / ccMax * 100}%;${c === 'Sem centro de custo' ? 'background:var(--y-old)' : ''}"></i></span><span class="lv">${fMi(v)}</span></div>`).join('');
 
     const opps = [
         { t: 'Arredondamento de horas', v: arred, s: 'valor cobrado acima das horas reais × tarifa (hora cheia, mínimo por chamada)' },
         { t: 'Diárias e afretamentos', v: dC, s: `${fN(D1.length)} diárias desde ${GESTAO_LBL}; negociar pacote ou limitar stand-by` },
         { t: 'Horas além da meta de 3 h no porto', v: portoC, s: `${fN(porto.length)} atendimentos acima da meta; planejar janela e mobilização` },
-        { t: `Tarifa da ${top.a}`, v: topGap, s: 'referência: custo/h médio das demais agências (portes diferentes)' }
+        { t: `Tarifa do ${top.a}`, v: topGap, s: 'referência: custo/h médio das demais fornecedores (portes diferentes)' }
     ].filter(o => o.v > 1000);
     const oppTot = opps.reduce((s, o) => s + o.v, 0);
 
     const end = `
       <div class="two">
-        ${card(reneg ? `Fornecedores · ${esc(reneg.a)} renegociada (${fP(reneg.v1 / reneg.v0 - 1)}) e mix mais barato` : 'Fornecedores', `Participação no gasto e tarifa contratada mediana (VALOR/HR) — <span class="dotc" style="background:var(--y-old)"></span>12 meses antes &nbsp;<span class="dotc" style="background:var(--y-cur)"></span>gestão.`,
-            alerta + tbl([{ t: 'Agência' }, { t: '' }, { t: 'Gasto', c: 'n' }, { t: 'Tarifa', c: 'n' }, { t: 'Var.', c: 'n' }], fRows, 'loc'))}
+        ${card(reneg ? `Fornecedores · ${esc(reneg.a)} renegociado (${fP(reneg.v1 / reneg.v0 - 1)}) e mix mais barato` : 'Fornecedores', `Participação no gasto e tarifa contratada mediana (VALOR/HR) — <span class="dotc" style="background:var(--y-old)"></span>12 meses antes &nbsp;<span class="dotc" style="background:var(--y-cur)"></span>gestão.`,
+            alerta + `<div class="sub-h">Participação no gasto</div><div id="fsh"></div><div class="sub-h">Tarifa contratada mediana (R$/h) · ○ antes → ● gestão</div><div id="ftar"></div>`)}
         ${card(cc0 != null ? `Controle do gasto · sem centro de custo caiu de ${pp(cc0)} para ${pp(cc1)}` : 'Controle do gasto', `Gasto da gestão por centro de custo / contrato (coluna CONTRATO). Base para rateio e repasse ao cliente.`,
             `<div class="lvl">${ccRows}</div>`)}
       </div>
@@ -2646,6 +2653,11 @@ function gestaoExtra() {
     return {
         marcos, mid, end, reneg,
         after() {
+            hbars($('#fsh'), F.filter(o => o.s0 > 0.005 || o.s1 > 0.005).map(o => ({ label: o.a, v: o.s1, v0: o.s0, color: agColor(o.a) })), { fmt: pp, noPareto: true });
+            dumbbell($('#ftar'), F.filter(o => o.v0 || o.v1).map(o => ({ label: o.a, a: o.v0, b: o.v1 })), { fmt: fR });
+            const t10 = k => { $$('.t10-seg button').forEach(b => b.classList.toggle('on', b.dataset.k === k)); top10($('#t10'), w0, w1, k); };
+            $$('.t10-seg button').forEach(b => b.onclick = () => t10(b.dataset.k));
+            t10(T10_DIM[0].k);
             curva($('#cv'), meses, ev);
             ponteSvg($('#wf2'), [
                 { name: '12 meses antes', sub: fH(P.t0.h), v: P.t0.c, total: true },
@@ -2667,7 +2679,7 @@ V.gestao = function() {
         + X.end;
     if (X.reneg) html = html.replace('<h3>1 · Renegociação de tarifas</h3>', `<h3>1 · Renegociação: ${esc(X.reneg.a)} de ${fR(X.reneg.v0)} para ${fR(X.reneg.v1)}/h</h3>`);
     html = html.replace('<h3>2 · Rebocador do porte certo</h3>', '<h3>2 · Porte certo: mais horas em rebocador pequeno, menos no grande</h3>');
-    return { html: '<div class="teste">Versão de teste · para análise antes de publicar</div>' + html, after() { b.after(); X.after(); } };
+    return { html: '<div class="teste">Versão de teste · para análise antes de publicar</div>' + html, after() { b.after(); X.after(); upgradeCards(); } };
 };
 
 /* ponte com eixo cortado: começa perto do menor valor para as variações aparecerem */
@@ -2692,13 +2704,110 @@ function ponteSvg(host, steps) {
     });
     host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ponte do custo">${g}</svg>`;
 }
+
+/* ===================== gráficos analíticos (no lugar das tabelas) ===================== */
+const T10_DIM = [
+    { k: 'e', l: 'Rebocador', key: r => r.eN, lab: r => r.eN },
+    { k: 'a', l: 'Fornecedor', key: r => r.a, lab: r => r.a },
+    { k: 'l', l: 'Ativo atendido', key: r => r.l, lab: r => r.l },
+    { k: 'od', l: 'Trajeto', key: r => (r.od || '—').toUpperCase(), lab: r => (r.od || '—').toUpperCase() },
+    { k: 'c', l: 'Centro de custo', key: r => r.c || 'SEM CENTRO DE CUSTO', lab: r => r.c || 'SEM CENTRO DE CUSTO' },
+    { k: 'op', l: 'Operações', key: r => r.d + '|' + r.eN + '|' + r.od + '|' + r.ln, lab: r => `${r.d.split('-').reverse().slice(0, 2).join('/')} · ${r.eN} · ${r.od || r.l}` }
+];
+
+function hbars(host, items, { fmt = fMi, noPareto = false, total } = {}) {
+    if (!host) return;
+    if (!items.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
+    items = items.slice().sort((a, b) => b.v - a.v);
+    const tot = total || items.reduce((s, o) => s + o.v, 0) || 1;
+    const W = 760, rh = 30, L = 220, R = noPareto ? 70 : 140, top = 8, H = top + items.length * rh + 4;
+    const vmax = Math.max(...items.map(o => Math.max(o.v, o.v0 || 0))) || 1;
+    const X = v => L + (W - L - R - 70) * (v / vmax);
+    let g = '', ac = 0;
+    if (!noPareto) g += `<text class="ax" x="${W - R + 30}" y="0" style="font-size:9.5px">do total</text><text class="ax" x="${W - 8}" y="0" text-anchor="end" style="font-size:9.5px">acumulado</text>`;
+    items.forEach((o, i) => {
+        const y = top + i * rh, lb = o.label.length > 32 ? o.label.slice(0, 31) + '…' : o.label;
+        ac += o.v;
+        g += `<text class="ax cx" x="${L - 10}" y="${y + 19}" text-anchor="end" style="font-size:12px"><title>${esc(o.label)}</title>${esc(lb)}</text>`;
+        g += `<rect class="bar hb" data-i="${i}" x="${L}" y="${y + 6}" width="${Math.max(2, X(o.v) - L)}" height="${rh - 12}" rx="3" style="fill:${o.color || 'var(--teal-deep)'}"/>`;
+        if (o.v0 != null && o.v0 > 0) g += `<line x1="${X(o.v0)}" x2="${X(o.v0)}" y1="${y + 3}" y2="${y + rh - 3}" style="stroke:var(--tx3);stroke-width:2.5"><title>12 meses antes: ${fmt(o.v0)}</title></line>`;
+        g += `<text class="vl" x="${Math.max(X(o.v), o.v0 ? X(o.v0) : 0) + 8}" y="${y + 19}">${fmt(o.v)}</text>`;
+        if (!noPareto) g += `<text class="ax" x="${W - R + 30}" y="${y + 19}">${NF1.format(o.v / tot * 100)}%</text><text class="ax" x="${W - 8}" y="${y + 19}" text-anchor="end" style="font-weight:700">${NF0.format(ac / tot * 100)}%</text>`;
+    });
+    host.innerHTML = `<svg viewBox="0 -10 ${W} ${H + 10}" role="img" aria-label="ranking">${g}</svg>`;
+    $$('.hb', host).forEach(el => { const o = items[+el.dataset.i];
+        el.addEventListener('mousemove', e => showTip(`<div class="th">${esc(o.label)}</div><div class="tr"><span>Gestão</span><b>${fmt(o.v)}</b></div>${o.v0 != null ? `<div class="tr"><span>12 meses antes</span><b>${fmt(o.v0)}</b></div>` : ''}${o.tip || ''}`, e));
+        el.addEventListener('mouseleave', hideTip); });
+}
+
+function dumbbell(host, rows, { fmt = fR, higherBetter = false, labelW = 170 } = {}) {
+    if (!host) return;
+    rows = rows.filter(o => o.a != null || o.b != null);
+    if (!rows.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
+    const W = 760, rh = 40, L = labelW, R = 90, H = rows.length * rh + 22;
+    const vals = rows.flatMap(o => [o.a, o.b]).filter(v => v != null);
+    const lo = Math.min(...vals) * 0.85, hi = Math.max(...vals) * 1.08;
+    const X = v => L + 16 + (W - L - R - 36) * ((v - lo) / (hi - lo || 1));
+    let g = '';
+    rows.forEach((o, i) => {
+        const y = i * rh + 22;
+        const melhor = o.a != null && o.b != null && (higherBetter ? o.b > o.a : o.b < o.a);
+        const cor = o.b == null ? 'var(--tx3)' : (melhor ? 'var(--teal-deep)' : 'var(--navy)');
+        g += `<text class="ax cx" x="${L - 6}" y="${y + 4}" text-anchor="end" style="font-size:12px">${esc(o.label)}</text>`;
+        g += `<line class="grid" x1="${L + 10}" x2="${W - R - 10}" y1="${y}" y2="${y}"/>`;
+        if (o.a != null && o.b != null) g += `<line x1="${X(o.a)}" x2="${X(o.b)}" y1="${y}" y2="${y}" style="stroke:${cor};stroke-width:5;opacity:.35;stroke-linecap:round"/>`;
+        if (o.a != null) g += `<circle cx="${X(o.a)}" cy="${y}" r="6" style="fill:var(--card);stroke:var(--tx3);stroke-width:2.2"><title>antes: ${fmt(o.a)}</title></circle><text class="ax" x="${X(o.a)}" y="${y - 11}" text-anchor="middle" style="font-size:10.5px">${fmt(o.a)}</text>`;
+        if (o.b != null) g += `<circle cx="${X(o.b)}" cy="${y}" r="7" style="fill:${cor}"><title>depois: ${fmt(o.b)}</title></circle><text class="vl" x="${X(o.b)}" y="${y + 21}" text-anchor="middle">${fmt(o.b)}</text>`;
+        const d = o.a && o.b ? (higherBetter ? (o.b - o.a) * 100 : o.b / o.a - 1) : null;
+        const txt = d == null ? (o.b == null ? 'saiu' : 'novo') : (higherBetter ? (d >= 0 ? '+' : '−') + NF0.format(Math.abs(d)) + ' p.p.' : fP(d));
+        g += `<text x="${W - 8}" y="${y + 4}" text-anchor="end" style="font:800 12.5px var(--font-display);fill:${d == null ? 'var(--tx3)' : cor}">${txt}</text>`;
+    });
+    host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="antes e depois">${g}</svg>`;
+}
+
+function top10(host, w0, w1, k) {
+    const D = T10_DIM.find(d => d.k === k);
+    const tot = w1.reduce((s, r) => s + r.vt, 0);
+    const m1 = new Map(), m0 = new Map();
+    w1.forEach(r => { const kk = D.key(r); const o = m1.get(kk) || { label: D.lab(r), v: 0, h: 0, n: 0 }; o.v += r.vt; o.h += r.h; o.n++; m1.set(kk, o); });
+    if (k !== 'op') w0.forEach(r => { const kk = D.key(r); m0.set(kk, (m0.get(kk) || 0) + r.vt); });
+    const it = [...m1.entries()].map(([kk, o]) => ({ ...o, v0: k === 'op' ? null : (m0.get(kk) || 0),
+        tip: `<div class="tr"><span>Horas</span><b>${fH(o.h)}</b></div><div class="tr"><span>Custo/h</span><b>${fR(o.v / o.h)}</b></div>${k === 'op' ? '' : `<div class="tr"><span>Linhas</span><b>${fN(o.n)}</b></div>`}` }))
+        .sort((a, b) => b.v - a.v).slice(0, 10);
+    const soma = it.reduce((s, o) => s + o.v, 0);
+    $('#t10-t').textContent = `10 maiores linhas de custo · por ${D.l.toLowerCase()}: ${NF0.format(soma / tot * 100)}% do gasto da gestão`;
+    hbars(host, it, { fmt: fMi, total: tot });
+}
+
+function upgradeCards() { // troca as tabelas dos cards 1, 2 e 3 (ano × ano) por gráficos
+    const cur = S.cur, prv = S.cur - 1, rs = rowsF(['H']);
+    const r0 = rs.filter(r => r.y === prv), r1 = rs.filter(r => r.y === cur);
+    const cardOf = t => [...$$('#view .card')].find(c => ((c.querySelector('h3') || {}).textContent || '').startsWith(t));
+    const swap = (c, id) => { const el = c && c.querySelector('.tw'); if (!el) return null; const d = document.createElement('div'); d.id = id; el.replaceWith(d); return d; };
+    const c1 = cardOf('1 · ');
+    if (c1) {
+        const ags = [...new Set(r0.concat(r1).map(r => r.a))].map(a => ({ label: a, a: agg(r0.filter(r => r.a === a)).eff, b: agg(r1.filter(r => r.a === a)).eff, h: agg(r1.filter(r => r.a === a)).h }))
+            .sort((x, y) => (y.h || 0) - (x.h || 0));
+        dumbbell(swap(c1, 'd1'), ags, { fmt: fR });
+        c1.querySelector('.card-head p').innerHTML = `Custo médio por hora de cada fornecedor · ○ ${prv} → ● ${cur}, no mesmo período. Tiffany: ficou mais barato.`;
+    }
+    const c2 = cardOf('2 · ');
+    if (c2) dumbbell(swap(c2, 'd2'), TIER_ORDER.map(t => ({ label: TIER_LABEL[t], a: agg(r0.filter(r => r.tier === t)).eff, b: agg(r1.filter(r => r.tier === t)).eff })), { fmt: fR });
+    const c3 = cardOf('3 · ');
+    if (c3) {
+        const A0 = atend(r0), A1 = atend(r1);
+        const d = swap(c3, 'd3');
+        dumbbell(d, [{ label: 'Fundeio · meta 5 h', a: A0.fp, b: A1.fp }, { label: 'Porto · meta 3 h', a: A0.pp, b: A1.pp }], { fmt: pp, higherBetter: true, labelW: 150 });
+        if (d) d.insertAdjacentHTML('afterend', `<div class="chips-k"><span>Horas além da meta por atendimento <b>${A0.exMan == null ? '—' : NF1.format(A0.exMan)} → ${A1.exMan == null ? '—' : NF1.format(A1.exMan)} h</b></span><span>Custo das horas além da meta em ${cur} <b>${fMi(A1.exC)}</b></span></div>`);
+    }
+}
 /* ---------- shell ---------- */
 const TABS = [
     ['gestao', 'Resultados da gestão'],
     ['resumo', 'Resumo executivo'],
     ['preco', 'Preço por hora'],
     ['volume', 'Volume × preço'],
-    ['forn', 'Agências'],
+    ['forn', 'Fornecedores'],
     ['onde', 'Onde gastamos'],
     ['efic', 'Eficiência'],
     ['sim', 'Simulador'],
@@ -2708,7 +2817,7 @@ const TABS = [
 function renderFilters() {
     const ags = agencies();
     $('#filters').innerHTML = `<div class="fg"><span class="fl">Período</span><div class="seg2"><button data-p="ytd" class="${S.f.per==='ytd'?'on':''}">Mesmo período de cada ano (${perLabel()})</button><button data-p="ano" class="${S.f.per==='ano'?'on':''}">Ano completo</button></div></div>
-   <div class="fg"><span class="fl">Agência</span><div class="chips">${ags.map(a=>`<button class="chip ${S.f.ag.has(a)?'on':''}" data-a="${esc(a)}"><i style="background:${agColor(a)}"></i>${esc(a)}</button>`).join('')}</div></div>
+   <div class="fg"><span class="fl">Fornecedor</span><div class="chips">${ags.map(a=>`<button class="chip ${S.f.ag.has(a)?'on':''}" data-a="${esc(a)}"><i style="background:${agColor(a)}"></i>${esc(a)}</button>`).join('')}</div></div>
    <div class="fg"><span class="fl">Ativo</span><select id="f-loc"><option value="">Todos</option>${locals().map(l=>`<option ${S.f.loc===l?'selected':''}>${esc(l)}</option>`).join('')}</select></div>`;
     $$('#filters [data-p]').forEach(b => b.onclick = () => {
         S.f.per = b.dataset.p;
