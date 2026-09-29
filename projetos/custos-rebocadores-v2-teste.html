@@ -335,9 +335,9 @@ body.fopen #filters{display:flex}
 .drw-body .dops div{font-size:14px}.drw-body .dops small{font-size:12.5px}
 .drw-body .dml div{font-size:14px;grid-template-columns:64px 1fr 110px 84px}
 .drw-body .iab span{font-size:11px}
-.drw-body svg .cx{font-size:17px!important}
-.drw-body svg .ax,.drw-body svg .axt{font-size:15px!important}
-.drw-body svg .vl,.drw-body svg .dlab{font-size:15px!important}
+.drw-body svg .cx{font-size:15px!important}
+.drw-body svg .ax,.drw-body svg .axt{font-size:12.5px!important}
+.drw-body svg .vl,.drw-body svg .dlab{font-size:13px!important}
 .drw-body svg text[style*="font:800 12.5px"]{font-size:16px!important}
 .hovc{font-size:13.5px;max-width:480px}.hovc .ht{font-size:13px}.hovc .hmem{font-size:12.8px}.hcab b{font-size:14.5px}
 @media (max-width:640px){.drw{width:100%}.drw-body{font-size:14px}}
@@ -2881,9 +2881,10 @@ function hbars(host, items, { fmt = fMi, noPareto = false, total, total0, keepOr
         el.addEventListener('mouseleave', hideTip); });
 }
 
-function dumbbell(host, rows, { fmt = fR, higherBetter = false, labelW = 170 } = {}) {
+function dumbbell(host, rows, { fmt = fR, higherBetter = false, labelW = 170, keepOrder = false } = {}) {
     if (!host) return;
     rows = rows.filter(o => o.a != null || o.b != null);
+    if (!keepOrder) rows = rows.slice().sort((x, y) => ((y.b ?? y.a ?? -1e18) - (x.b ?? x.a ?? -1e18)));  // maior para o menor
     if (!rows.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
     const W = 760, rh = 40, L = labelW, R = 90, H = rows.length * rh + 22;
     const vals = rows.flatMap(o => [o.a, o.b]).filter(v => v != null);
@@ -3257,17 +3258,28 @@ function analiticoTabela(t) {
 /* barras empilhadas com percentual em todos os segmentos */
 function stackBar(items, { fmt, min = 7 }) {
     const tot = items.reduce((a, b) => a + b.v, 0) || 1;
-    return `<div class="stack">${items.filter(i => i.v > 0).map(i => { const p = i.v / tot, pc = p * 100; const lab = (pc >= 10 ? NF0 : NF1).format(pc) + '%';
+    return `<div class="stack">${items.filter(i => i.v > 0).sort((a, b) => b.v - a.v).map(i => { const p = i.v / tot, pc = p * 100; const lab = (pc >= 10 ? NF0 : NF1).format(pc) + '%';
         return `<div class="seg ${pc < min ? 'sm' : ''}" style="width:${pc}%;background:${i.color};color:${i.tc || '#fff'}" data-tip="${esc(i.name)}|${esc(fmt(i.v))}|${NF1.format(pc)}%"><span>${lab}</span></div>`; }).join('')}</div>`;
 }
 
-/* linhas suavizadas (Catmull-Rom -> Bézier) */
+/* linhas suaves SEM passar do ponto (cúbica monotônica, Fritsch–Carlson):
+   a curva nunca cria picos ou vales que não existem nos dados */
 function suave(pts) {
-    if (pts.length < 3) return 'M' + pts.map(p => p.join(',')).join('L');
+    const n = pts.length;
+    if (n < 3) return 'M' + pts.map(p => p.join(',')).join('L');
+    const dx = [], dy = [], m = [];
+    for (let i = 0; i < n - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; dy[i] = (pts[i + 1][1] - pts[i][1]) / (dx[i] || 1); }
+    m[0] = dy[0]; m[n - 1] = dy[n - 2];
+    for (let i = 1; i < n - 1; i++) m[i] = dy[i - 1] * dy[i] <= 0 ? 0 : (dy[i - 1] + dy[i]) / 2;
+    for (let i = 0; i < n - 1; i++) {
+        if (dy[i] === 0) { m[i] = 0; m[i + 1] = 0; continue; }
+        const a = m[i] / dy[i], b = m[i + 1] / dy[i], s = a * a + b * b;
+        if (s > 9) { const t = 3 / Math.sqrt(s); m[i] = t * a * dy[i]; m[i + 1] = t * b * dy[i]; }
+    }
     let d = `M${pts[0][0]},${pts[0][1]}`;
-    for (let i = 0; i < pts.length - 1; i++) {
-        const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, k = 0.18;
-        d += `C${p1[0] + (p2[0] - p0[0]) * k},${p1[1] + (p2[1] - p0[1]) * k} ${p2[0] - (p3[0] - p1[0]) * k},${p2[1] - (p3[1] - p1[1]) * k} ${p2[0]},${p2[1]}`;
+    for (let i = 0; i < n - 1; i++) {
+        const h = dx[i] / 3;
+        d += `C${pts[i][0] + h},${pts[i][1] + m[i] * h} ${pts[i + 1][0] - h},${pts[i + 1][1] - m[i + 1] * h} ${pts[i + 1][0]},${pts[i + 1][1]}`;
     }
     return d;
 }
@@ -3276,35 +3288,40 @@ function suavizarLinhas(root) {
         const pts = (pl.getAttribute('points') || '').trim().split(/\s+/).map(s => s.split(',').map(Number)).filter(p => p.length === 2 && isFinite(p[0]));
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', suave(pts)); path.setAttribute('class', 'ln'); path.setAttribute('style', pl.getAttribute('style') || '');
-        if (pl.dataset.lab) path.dataset.lab = pl.dataset.lab;
         pl.replaceWith(path);
     });
 }
+/* tira os números do eixo Y (sem grade eles ficam soltos e com valores quebrados); os rótulos de dados cumprem esse papel */
+/* rótulos do eixo X: abrevia para a inicial quando não cabem */
+function eixoXcompacto(svg) { const ts = $$('text.ax[text-anchor="middle"]', svg); if (ts.length < 6) return; const ymax = Math.max(...ts.map(t => +t.getAttribute('y'))); const xs = ts.filter(t => +t.getAttribute('y') === ymax); if (xs.length < 2) return; const passo = Math.abs(+xs[1].getAttribute('x') - +xs[0].getAttribute('x')); const larg = svg.viewBox.baseVal.width || 760, tela = svg.getBoundingClientRect().width || larg; if (passo * tela / larg < 34) xs.forEach(t => { const s = t.textContent.trim(); if (s.length > 1 && MES.includes(s.toLowerCase().slice(0, 3))) { t.textContent = s[0].toUpperCase(); } }); }
+function semEixoY(svg) { $$('text.ax[text-anchor="end"]', svg).forEach(t => { if (+t.getAttribute('x') < 80) t.remove(); }); }
 
-/* gráfico de linhas: rótulos discretos na série atual */
+/* gráfico de linhas: rótulos só nos pontos-chave (primeiro, maior, menor, último) da série atual */
 const _lineChartBase = lineChart;
 lineChart = function(host, o) {
     _lineChartBase(host, o);
     const svg = $('svg', host); if (!svg) return;
     try {
-    const f = v => { try { return o.yfmt(v); } catch (e) { return ""; } };
-    const segs = [];
-    o.series.forEach((s, si) => { let cur = []; s.pts.forEach(p => { if (p.y == null) { if (cur.length) segs.push({ si, pts: cur }); cur = []; } else cur.push(p); }); if (cur.length) segs.push({ si, pts: cur }); });
-    const lines = $$('polyline.ln', svg);
-    const alvo = o.series.length - 1;
-    let g = '';
-    lines.forEach((pl, i) => {
-        const sg = segs[i]; if (!sg || sg.si !== alvo) return;
-        const xy = pl.getAttribute('points').trim().split(/\s+/).map(s => s.split(',').map(Number));
-        xy.forEach((p, j) => { if (j === xy.length - 1) return; g += `<text class="dlab" x="${p[0]}" y="${p[1] - 9}" text-anchor="middle">${f(sg.pts[j].y)}</text>`; });
-    });
-    svg.insertAdjacentHTML('beforeend', g);
+        semEixoY(svg); requestAnimationFrame(() => eixoXcompacto(svg));
+        const f = v => { try { return o.yfmt(v); } catch (e) { return ''; } };
+        const segs = [];
+        o.series.forEach((s, si) => { let cur = []; s.pts.forEach(p => { if (p.y == null) { if (cur.length) segs.push({ si, pts: cur }); cur = []; } else cur.push(p); }); if (cur.length) segs.push({ si, pts: cur }); });
+        const lines = $$('polyline.ln', svg), alvo = o.series.length - 1;
+        const P = [];
+        lines.forEach((pl, i) => { const sg = segs[i]; if (!sg || sg.si !== alvo) return;
+            pl.getAttribute('points').trim().split(/\s+/).map(s => s.split(',').map(Number)).forEach((xy, j) => P.push({ x: xy[0], y: xy[1], v: sg.pts[j].y })); });
+        if (!P.length) return;
+        const iMax = P.reduce((a, p, i) => p.v > P[a].v ? i : a, 0), iMin = P.reduce((a, p, i) => p.v < P[a].v ? i : a, 0);
+        const chave = new Set([0, iMax, iMin]);                          // o último já tem o nome da série
+        let g = '';
+        chave.forEach(i => { const p = P[i]; if (i === P.length - 1) return; g += `<circle cx="${p.x}" cy="${p.y}" r="3.5" style="fill:var(--card);stroke:var(--tx2);stroke-width:1.5"/><text class="dlab" x="${p.x}" y="${i === iMin ? p.y + 18 : p.y - 10}" text-anchor="middle" style="font-weight:700">${f(p.v)}</text>`; });
+        svg.insertAdjacentHTML('beforeend', g);
     } catch (e) {}
 };
 
-/* barras agrupadas: rótulo em todas as barras (discreto) */
+/* barras agrupadas: rótulo em todas as barras e sem números soltos no eixo Y */
 const _groupedBarsBase = groupedBars;
-groupedBars = function(host, o) { return _groupedBarsBase(host, { ...o, label: 'all' }); };
+groupedBars = function(host, o) { let cats = o.cats; const tempo = cats.every(c => /^[0-9]{4}$/.test(String(c)) || MES.includes(String(c).toLowerCase().slice(0, 3))); if (!tempo && o.series.length) { const s = o.series[o.series.length - 1]; const v = c => { try { const x = o.val(c, s); return x == null ? -1e18 : x; } catch (e) { return -1e18; } }; cats = cats.slice().sort((a, b) => v(b) - v(a)); } const r = _groupedBarsBase(host, { ...o, cats, label: 'all' }); const svg = $('svg', host); if (svg) { semEixoY(svg); requestAnimationFrame(() => eixoXcompacto(svg)); } return r; };
 
 /* evolução mês a mês (timeline) e curva: rótulos discretos nos pontos da linha */
 function rotularTimeline() {
