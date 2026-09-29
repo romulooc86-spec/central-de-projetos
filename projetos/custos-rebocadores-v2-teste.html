@@ -267,6 +267,19 @@ body.present .tabs button[data-t="dados"]{display:none!important}
 .chips-k span{background:var(--card-soft);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;font-size:12.5px;color:var(--tx2)}
 .chips-k b{color:var(--tx);margin-left:4px}
 .t10-seg{flex-wrap:wrap}
+/* ===== mensagens-chave (destaque) ===== */
+.kms{background:linear-gradient(135deg,var(--navy),#0B3F55);color:#fff;border-radius:var(--r);padding:20px 22px 16px;margin-bottom:16px;box-shadow:var(--shadow);border-left:6px solid var(--teal)}
+.kms-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.kms-h b{font:800 17px var(--font-display);letter-spacing:.01em}.kms-h span{font-size:12.5px;color:#A9C3CB}
+.kms-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.km{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 14px}
+.km-l{display:flex;align-items:center;gap:8px;font:700 11px var(--font-display);letter-spacing:.09em;text-transform:uppercase;color:var(--teal)}
+.km-l span{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#04302B;display:inline-flex;align-items:center;justify-content:center;font:800 11px var(--font-display);letter-spacing:0}
+.km-v{font:800 28px/1.1 var(--font-display);margin:8px 0 6px;color:#fff;font-variant-numeric:tabular-nums}
+.km-t{font-size:13px;line-height:1.45;color:#CFE3EA}.km-t b{color:#fff}
+.kms-m{margin-top:14px;padding-top:11px;border-top:1px solid rgba(255,255,255,.15);font-size:12.5px;line-height:1.5;color:#A9C3CB}
+.kms-m b{color:#fff}.kms-m>b:first-child{font:700 10.5px var(--font-display);letter-spacing:.09em;text-transform:uppercase;color:var(--teal);margin-right:6px}
+@media (max-width:640px){.km-v{font-size:22px}}
 /* ===== v2: topo minimalista, filtros discretos, detalhe ao clicar ===== */
 .top-in{padding:16px 28px}
 .badge{background:none;box-shadow:none;padding:0}.badge img{height:40px}
@@ -383,6 +396,8 @@ td.ibc{white-space:nowrap}
 .ib{display:inline-block;width:64px;height:8px;background:var(--card-soft);border-radius:4px;margin-right:10px;vertical-align:1px;overflow:hidden}
 .ib i{display:block;height:100%;background:var(--teal);border-radius:4px}
 .ib{float:left;margin:6px 12px 0 0}td.ibc{min-width:190px}
+svg .cx{font-size:12.5px!important}
+svg .vl{font-size:11.5px!important}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -2861,7 +2876,7 @@ function hbars(host, items, { fmt = fMi, noPareto = false, total, total0, keepOr
     items = keepOrder ? items.slice() : items.slice().sort((a, b) => b.v - a.v);
     const tot = total || items.reduce((s, o) => s + o.v, 0) || 1;
     const cmp = !noPareto && total0 > 0 && items.some(o => o.v0 != null);     // compara com os 12 meses antes
-    const W = cmp ? 900 : 760, rh = 30, L = 220, R = noPareto ? 70 : (cmp ? 330 : 140), top = 8, H = top + items.length * rh + 4;
+    const W = Math.max(cmp ? 720 : 520, Math.round(host.clientWidth || (cmp ? 900 : 760))), rh = 30, L = 220, R = noPareto ? 70 : (cmp ? 330 : 140), top = 8, H = top + items.length * rh + 4;
     const vmax = Math.max(...items.map(o => Math.max(o.v, o.v0 || 0))) || 1;
     const X = v => L + (W - L - R - 70) * (v / vmax);
     const seta = (d, un, casas = 1) => d == null || !isFinite(d) ? '' : (Math.abs(d) < 0.05 ? `<tspan class="dz">■ 0${un}</tspan>` : `<tspan class="${d > 0 ? 'du' : 'dd'}">${d > 0 ? '▲' : '▼'} ${(casas ? NF1 : NF0).format(Math.abs(d))}${un}</tspan>`);
@@ -2900,9 +2915,9 @@ function hbars(host, items, { fmt = fMi, noPareto = false, total, total0, keepOr
 function dumbbell(host, rows, { fmt = fR, higherBetter = false, labelW = 170, keepOrder = false } = {}) {
     if (!host) return;
     rows = rows.filter(o => o.a != null || o.b != null);
-    if (!keepOrder) rows = rows.slice().sort((x, y) => ((y.b ?? y.a ?? -1e18) - (x.b ?? x.a ?? -1e18)));  // maior para o menor
+    if (!keepOrder) rows = rows.slice().sort((x, y) => (x.b == null) - (y.b == null) || ((y.b ?? y.a ?? -1e18) - (x.b ?? x.a ?? -1e18)));  // maior para o menor; quem saiu vai para o fim
     if (!rows.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
-    const W = 760, rh = 40, L = labelW, R = 90, H = rows.length * rh + 22;
+    const W = Math.max(480, Math.round(host.clientWidth || 760)), rh = 44, L = labelW, R = 90, H = rows.length * rh + 22;
     const vals = rows.flatMap(o => [o.a, o.b]).filter(v => v != null);
     const lo = Math.min(...vals) * 0.85, hi = Math.max(...vals) * 1.08;
     const X = v => L + 16 + (W - L - R - 36) * ((v - lo) / (hi - lo || 1));
@@ -2949,14 +2964,21 @@ function upgradeCards() { // troca as tabelas dos cards 1, 2 e 3 (ano × ano) po
         const ags = [...new Set(r0.concat(r1).map(r => r.a))].map(a => ({ label: a, a: agg(r0.filter(r => r.a === a)).eff, b: agg(r1.filter(r => r.a === a)).eff, h: agg(r1.filter(r => r.a === a)).h }))
             .sort((x, y) => (y.h || 0) - (x.h || 0));
         dumbbell(swap(c1, 'd1'), ags, { fmt: fR });
-        c1.querySelector('.card-head p').innerHTML = `Custo médio por hora de cada fornecedor · ○ ${prv} → ● ${cur}, no mesmo período. Tiffany: ficou mais barato.`;
+        const ambos = ags.filter(o => o.a && o.b), caiu = ambos.filter(o => o.b < o.a), top2 = caiu.slice(0, 2);
+        c1.querySelector('h3').textContent = `1 · Renegociação: custo por hora caiu em ${caiu.length} de ${ambos.length} fornecedores`;
+        c1.querySelector('.card-head p').innerHTML = `${top2.map(o => `<b>${esc(o.label)} ${fP(o.b / o.a - 1)}</b>`).join(' · ')} · ○ ${prv} → ● ${cur}, mesmo período`;
     }
     const c2 = cardOf('2 · ');
-    if (c2) dumbbell(swap(c2, 'd2'), TIER_ORDER.map(t => ({ label: TIER_LABEL[t], a: agg(r0.filter(r => r.tier === t)).eff, b: agg(r1.filter(r => r.tier === t)).eff })), { fmt: fR });
+    if (c2) {
+        dumbbell(swap(c2, 'd2'), TIER_ORDER.map(t => ({ label: TIER_LABEL[t], a: agg(r0.filter(r => r.tier === t)).eff, b: agg(r1.filter(r => r.tier === t)).eff })), { fmt: fR });
+        const sh = (w, t) => { const T = w.reduce((s, r) => s + r.h, 0); return T ? w.filter(r => r.tier === t).reduce((s, r) => s + r.h, 0) / T : null; };
+        c2.querySelector('h3').textContent = `2 · Porte certo: rebocador pequeno foi de ${pp(sh(r0, 'Pequeno'))} para ${pp(sh(r1, 'Pequeno'))} das horas`;
+    }
     const c3 = cardOf('3 · ');
     if (c3) {
         const A0 = atend(r0), A1 = atend(r1);
         const d = swap(c3, 'd3');
+        c3.querySelector('h3').textContent = `3 · Planejamento: ${pp(A1.fp)} das manobras no fundeio dentro da meta (eram ${pp(A0.fp)})`;
         dumbbell(d, [{ label: 'Fundeio · meta 5 h', a: A0.fp, b: A1.fp }, { label: 'Porto · meta 3 h', a: A0.pp, b: A1.pp }], { fmt: pp, higherBetter: true, labelW: 150 });
         if (d) d.insertAdjacentHTML('afterend', `<div class="chips-k"><span>Horas além da meta por atendimento <b>${A0.exMan == null ? '—' : NF1.format(A0.exMan)} → ${A1.exMan == null ? '—' : NF1.format(A1.exMan)} h</b></span><span>Custo das horas além da meta em ${cur} <b>${fMi(A1.exC)}</b></span></div>`);
     }
@@ -3029,6 +3051,39 @@ function timeline(host, pts, iniIdx) {
         if (p) p.innerHTML = 'Custo médio por hora de cada mês · barras claras: gasto do mês';
     }
 }
+
+/* ===================== v2: mensagens-chave para a diretoria (no lugar de "Destaques") ===================== */
+function mensagensChave() {
+    const cur = S.cur, prv = cur - 1, rs = rowsF(['H']);
+    const L = alavancas(rs, prv, cur); if (!L) return '';
+    const { t0, t1, A0, A1 } = L;
+    const r0 = rs.filter(r => r.y === prv), r1 = rs.filter(r => r.y === cur);
+    const sh = (w, t) => { const T = w.reduce((s, r) => s + r.h, 0); return T ? w.filter(r => r.tier === t).reduce((s, r) => s + r.h, 0) / T : null; };
+    const ags = L.ag.filter(o => o.e0 && o.e1 && o.h1 > 20 && o.e1 < o.e0).sort((a, b) => (a.e1 - a.e0) * a.h1 - (b.e1 - b.e0) * b.h1).slice(0, 2);
+    const dH = dlt(t1.h, t0.h), dC = dlt(t1.c, t0.c), dE = dlt(t1.eff, t0.eff);
+    const it = (n, lab, big, txt) => `<div class="km"><div class="km-l"><span>${n}</span>${lab}</div><div class="km-v">${big}</div><div class="km-t">${txt}</div></div>`;
+    return `<section class="kms">
+      <div class="kms-h"><b>Mensagens-chave para a diretoria</b><span>${prv} × ${cur} · ${perLabel()}</span></div>
+      <div class="kms-g">
+        ${it(1, 'Custo por hora', fP(dE), `de ${fR(t0.eff)} para <b>${fR(t1.eff)}/h</b> no mesmo período`)}
+        ${it(2, 'Renegociação', fMi(L.eco1), ags.length ? ags.map(o => `<b>${esc(o.a)}</b> ${fP(o.e1 / o.e0 - 1)}`).join(' · ') + ' no custo/h' : 'preço menor no mesmo porte')}
+        ${it(3, 'Porte certo', fMi(L.eco2), `rebocador pequeno de ${pp(sh(r0, 'Pequeno'))} para <b>${pp(sh(r1, 'Pequeno'))}</b> das horas`)}
+        ${it(4, 'Planejamento', pp(A1.fp), `fundeio na meta de 5 h (era ${pp(A0.fp)}); porto em ${pp(A1.pp)} — <b>próxima frente</b>`)}
+        ${it(5, 'Demanda', `${fP(dH)} horas`, dC <= 0 ? `mais operação e o gasto <b>caiu ${fP(Math.abs(dC), false)}</b>` : `mais operação e o gasto subiu só <b>${fP(dC)}</b>`)}
+      </div>
+      <div class="kms-m"><b>Metodologia</b> Comparamos ${cur} com ${prv} no mesmo período. A economia é quanto as horas de ${cur} custariam ao preço médio de ${prv}, menos o que foi pago — dividida em <b>renegociação</b> (mesmo porte, preço menor) e <b>porte certo</b> (rebocador menor em manobras simples). Diárias e afretamentos ficam fora.</div>
+    </section>`;
+}
+function tirarDestaques() {
+    const c = [...$$('#view .card')].find(x => ((x.querySelector('h3') || {}).textContent || '').startsWith('Destaques para a diretoria'));
+    if (!c) return; const par = c.parentElement; c.remove();
+    if (par && par.classList.contains('two') && par.children.length === 1) par.style.gridTemplateColumns = '1fr';
+}
+const _gestaoV2 = V.gestao;
+V.gestao = function() {
+    const b = _gestaoV2();
+    return { html: b.html.replace('<div class="kgrid ctxk">', mensagensChave() + '<div class="kgrid ctxk">'), after() { b.after(); tirarDestaques(); } };
+};
 
 /* ===================== v2: topo minimalista, logo negativo, filtros discretos, detalhe ao clicar ===================== */
 const ICO = {
