@@ -379,6 +379,10 @@ svg .axt{font:700 10.5px var(--font-display);letter-spacing:.09em;fill:var(--tx3
 @media (max-width:640px){.gestao-hero .mi-num{font-size:40px}.gestao-hero .milestone-item{padding:8px 0;border-left:0;min-width:45%}}
 svg .du{fill:var(--crit);font-weight:800}svg .dd{fill:var(--teal-deep);font-weight:800}svg .dz{fill:var(--tx3)}
 svg .pc{font-size:11.5px}
+td.ibc{white-space:nowrap}
+.ib{display:inline-block;width:64px;height:8px;background:var(--card-soft);border-radius:4px;margin-right:10px;vertical-align:1px;overflow:hidden}
+.ib i{display:block;height:100%;background:var(--teal);border-radius:4px}
+.ib{float:left;margin:6px 12px 0 0}td.ibc{min-width:190px}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -3221,10 +3225,12 @@ function analiticoTabela(t) {
     if (!rows.length) return;
     const metricas = !ths[0] || /^ano$/i.test(ths[0]);          // linhas = indicadores, colunas = anos
     const entidade = !metricas && ths[0] && !/^data$/i.test(ths[0]) && rows.length >= 2;
+    const temCel = td => td && td.classList.contains('n') && !td.classList.contains('bcell');
+    let ci = -1;
     // 1) ranking do maior para o menor
     if (entidade) {
         const cur = String(S.cur);
-        let ci = ths.findIndex(h => h === cur);
+        ci = ths.findIndex(h => h === cur);
         if (ci < 0) ci = ths.findIndex(h => /R\$\/h/.test(h) && h.endsWith(cur));
         if (ci < 0) ci = ths.findIndex(h => /^gasto$/i.test(h) || /^economia$/i.test(h) || /^valor$/i.test(h));
         if (ci > 0) {
@@ -3235,23 +3241,18 @@ function analiticoTabela(t) {
         }
         rows.forEach((r, i) => { const c = r.cells[0]; if (c && !c.querySelector('.rk')) c.insertAdjacentHTML('afterbegin', `<span class="rk">${i + 1}</span>`); });
     }
-    // 2) barras de dados e destaques
+    // 2) visual limpo: uma barra só (coluna do ranking), variação colorida e maior valor em negrito
     const ncol = Math.max(...rows.map(r => r.cells.length));
-    const barra = (td, v, max, cls) => { if (v == null || !max) return; const p = Math.max(0, Math.min(100, Math.abs(v) / max * 100)); td.classList.add('db', cls || 'db1'); td.style.setProperty('--p', p.toFixed(1) + '%'); };
-    const temCel = td => td && td.classList.contains('n') && !td.classList.contains('bcell');
-    if (metricas) {
-        rows.forEach(r => { const cs = [...r.cells].filter(temCel); const vs = cs.map(td => numBR(td.textContent)); const mx = Math.max(...vs.filter(v => v != null).map(Math.abs)); cs.forEach((td, i) => barra(td, vs[i], mx)); });
-    } else {
-        for (let ci = 1; ci < ncol; ci++) {
-            const cs = rows.map(r => r.cells[ci]).filter(temCel);
-            if (!cs.length) continue;
-            if (cs.some(td => isVar(ths[ci], td))) {
-                cs.forEach(td => { const t2 = td.textContent; td.classList.add('dv', /▼|−/.test(t2) ? 'dv-g' : (/▲|\+/.test(t2) ? 'dv-b' : 'dv-n')); });
-                continue;
-            }
-            const vs = cs.map(td => numBR(td.textContent)); const mx = Math.max(...vs.filter(v => v != null).map(Math.abs));
-            cs.forEach((td, i) => { barra(td, vs[i], mx); if (vs[i] != null && Math.abs(vs[i]) === mx && cs.length > 2) td.classList.add('dmax'); });
+    for (let c = 1; c < ncol; c++) {
+        const cs = rows.map(r => r.cells[c]).filter(temCel);
+        if (!cs.length) continue;
+        if (cs.some(td => isVar(ths[c], td))) {
+            cs.forEach(td => { const t2 = td.textContent; td.classList.add('dv', /▼|−/.test(t2) ? 'dv-g' : (/▲|\+/.test(t2) ? 'dv-b' : 'dv-n')); });
+            continue;
         }
+        const vs = cs.map(td => numBR(td.textContent)); const mx = Math.max(...vs.filter(v => v != null).map(Math.abs));
+        if (c === ci && mx > 0) cs.forEach((td, i) => { if (vs[i] == null) return; td.classList.add('ibc'); td.insertAdjacentHTML('afterbegin', `<span class="ib"><i style="width:${Math.max(2, Math.abs(vs[i]) / mx * 100).toFixed(1)}%"></i></span>`); });
+        else if (!metricas && cs.length > 2) cs.forEach((td, i) => { if (vs[i] != null && Math.abs(vs[i]) === mx) td.classList.add('dmax'); });
     }
 }
 
