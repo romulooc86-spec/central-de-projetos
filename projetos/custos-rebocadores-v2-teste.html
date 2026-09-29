@@ -345,6 +345,8 @@ svg .axt{font:700 10.5px var(--font-display);letter-spacing:.09em;fill:var(--tx3
 .mcs .mc.acc{background:var(--navy);border-left-color:var(--teal)}
 .mcs .mc.acc .mc-l{color:var(--teal)}.mcs .mc.acc .mc-v{color:#fff}.mcs .mc.acc .mc-s,.mcs .mc.acc .mc-s b{color:#CFE3EA}
 @media (max-width:640px){.gestao-hero .mi-num{font-size:40px}.gestao-hero .milestone-item{padding:8px 0;border-left:0;min-width:45%}}
+svg .du{fill:var(--crit);font-weight:800}svg .dd{fill:var(--teal-deep);font-weight:800}svg .dz{fill:var(--tx3)}
+svg .pc{font-size:11.5px}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -2705,7 +2707,7 @@ function gestaoExtra() {
         `<div id="cv"></div>`, 'mt')}
       ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e as ações de eficiência compensaram ${fMi(-(P.preco + P.porte))}`, `Do gasto dos 12 meses antes (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)}) ao gasto do programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Serviço por hora.`,
         `<div id="wf2"></div>`, 'mt')}
-      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto no programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra: gasto; traço: mesmo item nos 12 meses antes; à direita, participação e acumulado (Pareto).`,
+      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto no programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra cheia: gasto do período; barra clara ao fundo: o mesmo item nos 12 meses anteriores. À direita: participação no total, variação do gasto e acumulado (Pareto), com ▲ subida e ▼ queda frente ao período anterior.`,
         `<div class="seg2 t10-seg" style="margin-bottom:12px">${T10_DIM.map((d, i) => `<button data-k="${d.k}" class="${i ? '' : 'on'}">${d.l}</button>`).join('')}</div><div id="t10"></div>`, 'mt')}`;
 
     const shMax = Math.max(...F.map(o => Math.max(o.s0, o.s1))) || 1;
@@ -2805,28 +2807,45 @@ const T10_DIM = [
     { k: 'op', l: 'Operações', key: r => r.d + '|' + r.eN + '|' + r.od + '|' + r.ln, lab: r => `${r.d.split('-').reverse().slice(0, 2).join('/')} · ${r.eN} · ${r.od || r.l}` }
 ];
 
-function hbars(host, items, { fmt = fMi, noPareto = false, total, keepOrder = false } = {}) {
+function hbars(host, items, { fmt = fMi, noPareto = false, total, total0, keepOrder = false } = {}) {
     if (!host) return;
     if (!items.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
     items = keepOrder ? items.slice() : items.slice().sort((a, b) => b.v - a.v);
     const tot = total || items.reduce((s, o) => s + o.v, 0) || 1;
-    const W = 760, rh = 30, L = 220, R = noPareto ? 70 : 140, top = 8, H = top + items.length * rh + 4;
+    const cmp = !noPareto && total0 > 0 && items.some(o => o.v0 != null);     // compara com os 12 meses antes
+    const W = cmp ? 900 : 760, rh = 30, L = 220, R = noPareto ? 70 : (cmp ? 330 : 140), top = 8, H = top + items.length * rh + 4;
     const vmax = Math.max(...items.map(o => Math.max(o.v, o.v0 || 0))) || 1;
     const X = v => L + (W - L - R - 70) * (v / vmax);
-    let g = '', ac = 0;
-    if (!noPareto) g += `<text class="ax" x="${W - R + 30}" y="0" style="font-size:9.5px">do total</text><text class="ax" x="${W - 8}" y="0" text-anchor="end" style="font-size:9.5px">acumulado</text>`;
+    const seta = (d, un, casas = 1) => d == null || !isFinite(d) ? '' : (Math.abs(d) < 0.05 ? `<tspan class="dz">■ 0${un}</tspan>` : `<tspan class="${d > 0 ? 'du' : 'dd'}">${d > 0 ? '▲' : '▼'} ${(casas ? NF1 : NF0).format(Math.abs(d))}${un}</tspan>`);
+    const c1 = W - R + 14, c2 = W - R + 150, c3 = W - 8;
+    let g = '', ac = 0, ac0 = 0;
+    if (!noPareto) {
+        g += `<text class="axt" x="${c1}" y="0">DO TOTAL</text><text class="axt" x="${c3}" y="0" text-anchor="end">ACUMULADO</text>`;
+        if (cmp) g += `<text class="axt" x="${c2}" y="0">VS ANTES</text>`;
+    }
     items.forEach((o, i) => {
         const y = top + i * rh, lb = o.label.length > 32 ? o.label.slice(0, 31) + '…' : o.label;
-        ac += o.v;
-        g += `<text class="ax cx" x="${L - 10}" y="${y + 19}" text-anchor="end" style="font-size:12px"><title>${esc(o.label)}</title>${esc(lb)}</text>`;
-        g += `<rect class="bar hb" data-i="${i}" data-l="${esc(o.label)}" x="${L}" y="${y + 6}" width="${Math.max(2, X(o.v) - L)}" height="${rh - 12}" rx="3" style="fill:${o.color || 'var(--teal-deep)'}"/>`;
-        if (o.v0 != null && o.v0 > 0) g += `<line x1="${X(o.v0)}" x2="${X(o.v0)}" y1="${y + 3}" y2="${y + rh - 3}" style="stroke:var(--tx3);stroke-width:2.5"><title>12 meses antes: ${fmt(o.v0)}</title></line>`;
+        ac += o.v; ac0 += (o.v0 || 0);
+        g += `<text class="ax cx" x="${L - 10}" y="${y + 19}" text-anchor="end"><title>${esc(o.label)}</title>${esc(lb)}</text>`;
+        // barra clara ao fundo = 12 meses antes; barra cheia por cima = período atual
+        if (o.v0 != null && o.v0 > 0) g += `<rect x="${L}" y="${y + 4}" width="${Math.max(2, X(o.v0) - L)}" height="${rh - 8}" rx="3" style="fill:var(--bd2);opacity:.75"><title>12 meses antes: ${fmt(o.v0)}</title></rect>`;
+        g += `<rect class="bar hb" data-i="${i}" data-l="${esc(o.label)}" x="${L}" y="${y + 8}" width="${Math.max(2, X(o.v) - L)}" height="${rh - 16}" rx="3" style="fill:${o.color || 'var(--teal-deep)'}"/>`;
         g += `<text class="vl" x="${Math.max(X(o.v), o.v0 ? X(o.v0) : 0) + 8}" y="${y + 19}">${fmt(o.v)}</text>`;
-        if (!noPareto) g += `<text class="ax" x="${W - R + 30}" y="${y + 19}">${NF1.format(o.v / tot * 100)}%</text><text class="ax" x="${W - 8}" y="${y + 19}" text-anchor="end" style="font-weight:700">${NF0.format(ac / tot * 100)}%</text>`;
+        if (noPareto) return;
+        const sh = o.v / tot * 100, acs = ac / tot * 100;
+        if (cmp) {
+            const sh0 = (o.v0 || 0) / total0 * 100, acs0 = ac0 / total0 * 100;
+            const vr = o.v0 > 0 ? (o.v / o.v0 - 1) * 100 : null;
+            g += `<text class="ax pc" x="${c1}" y="${y + 19}">${NF1.format(sh)}% ${seta(sh - sh0, ' p.p.')}</text>`;
+            g += `<text class="ax pc" x="${c2}" y="${y + 19}">${vr == null ? '<tspan class="du">novo</tspan>' : seta(vr, '%', 0)}</text>`;
+            g += `<text class="ax pc" x="${c3}" y="${y + 19}" text-anchor="end"><tspan style="font-weight:800">${NF0.format(acs)}%</tspan> ${seta(acs - acs0, ' p.p.')}</text>`;
+        } else {
+            g += `<text class="ax" x="${c1}" y="${y + 19}">${NF1.format(sh)}%</text><text class="ax" x="${c3}" y="${y + 19}" text-anchor="end" style="font-weight:700">${NF0.format(acs)}%</text>`;
+        }
     });
-    host.innerHTML = `<svg viewBox="0 -10 ${W} ${H + 10}" role="img" aria-label="ranking">${g}</svg>`;
+    host.innerHTML = `<svg viewBox="0 -12 ${W} ${H + 12}" role="img" aria-label="ranking">${g}</svg>`;
     $$('.hb', host).forEach(el => { const o = items[+el.dataset.i];
-        el.addEventListener('mousemove', e => showTip(`<div class="th">${esc(o.label)}</div><div class="tr"><span>Gestão</span><b>${fmt(o.v)}</b></div>${o.v0 != null ? `<div class="tr"><span>12 meses antes</span><b>${fmt(o.v0)}</b></div>` : ''}${o.tip || ''}`, e));
+        el.addEventListener('mousemove', e => showTip(`<div class="th">${esc(o.label)}</div><div class="tr"><span>Programa</span><b>${fmt(o.v)}</b></div>${o.v0 != null ? `<div class="tr"><span>12 meses antes</span><b>${fmt(o.v0)}</b></div>` : ''}${o.tip || ''}`, e));
         el.addEventListener('mouseleave', hideTip); });
 }
 
@@ -2867,7 +2886,7 @@ function top10(host, w0, w1, k) {
         .sort((a, b) => b.v - a.v).slice(0, 10);
     const soma = it.reduce((s, o) => s + o.v, 0);
     $('#t10-t').textContent = `10 maiores linhas de custo · por ${D.l.toLowerCase()}: ${NF0.format(soma / tot * 100)}% do gasto do programa`;
-    hbars(host, it, { fmt: fMi, total: tot });
+    hbars(host, it, { fmt: fMi, total: tot, total0: k === 'op' ? 0 : w0.reduce((s, r) => s + r.vt, 0) });
     host._items = it; host._k = k;
 }
 
@@ -2891,6 +2910,73 @@ function upgradeCards() { // troca as tabelas dos cards 1, 2 e 3 (ano × ano) po
         const d = swap(c3, 'd3');
         dumbbell(d, [{ label: 'Fundeio · meta 5 h', a: A0.fp, b: A1.fp }, { label: 'Porto · meta 3 h', a: A0.pp, b: A1.pp }], { fmt: pp, higherBetter: true, labelW: 150 });
         if (d) d.insertAdjacentHTML('afterend', `<div class="chips-k"><span>Horas além da meta por atendimento <b>${A0.exMan == null ? '—' : NF1.format(A0.exMan)} → ${A1.exMan == null ? '—' : NF1.format(A1.exMan)} h</b></span><span>Custo das horas além da meta em ${cur} <b>${fMi(A1.exC)}</b></span></div>`);
+    }
+}
+
+/* Evolução mês a mês, versão limpa: uma mensagem (custo por hora), média de antes × programa,
+   poucos rótulos (primeiro, maior, menor, último) e o gasto como barras discretas na base. */
+function timeline(host, pts, iniIdx) {
+    if (!host) return;
+    if (!pts.length) { host.innerHTML = '<div class="empty">Sem dados para o filtro selecionado.</div>'; return; }
+    const W = 1100, H = 330, m = { l: 20, r: 150, t: 46, b: 40 }, iw = W - m.l - m.r;
+    const hL = 180, yL0 = m.t, baseB = H - m.b, hB = 46;               // área da linha | faixa do gasto
+    const ev = pts.filter(p => p.eff != null).map(p => p.eff);
+    const lo = Math.min(...ev) * 0.9, hi = Math.max(...ev) * 1.06;
+    const bw = iw / pts.length, X = i => m.l + bw * i + bw / 2, Y = v => yL0 + hL * (1 - (v - lo) / (hi - lo || 1));
+    const cMax = Math.max(...pts.map(p => p.c || 0)) || 1, Yb = v => baseB - (v / cMax) * hB;
+    const media = arr => { const h = arr.reduce((s, p) => s + (p.h || 0), 0); return h ? arr.reduce((s, p) => s + (p.c || 0), 0) / h : null; };
+    const ini = iniIdx >= 0 ? iniIdx : pts.length;
+    const antes = pts.slice(Math.max(0, ini - 12), ini), depois = pts.slice(ini);
+    const m0 = media(antes), m1 = media(depois);
+    let g = '';
+    // período do programa (o marco que o Romulo aprovou)
+    if (iniIdx >= 0) {
+        const x0 = m.l + bw * iniIdx;
+        g += `<rect x="${x0}" y="${m.t - 30}" width="${W - m.r - x0}" height="${H - m.t - m.b + 34}" style="fill:var(--teal-wash)" opacity=".75"/>`;
+        g += `<line x1="${x0}" x2="${x0}" y1="${m.t - 30}" y2="${baseB}" style="stroke:var(--teal-deep);stroke-width:1.5;stroke-dasharray:4 3"/>`;
+        g += `<text x="${x0 + 8}" y="${m.t - 14}" style="font:700 12px var(--font-display);fill:var(--teal-deep)">Início do programa de eficiência · ${GESTAO_LBL}</text>`;
+    }
+    // gasto do mês: barras discretas na base
+    pts.forEach((p, i) => { const y = Yb(p.c || 0); g += `<rect x="${X(i) - bw * .28}" y="${y}" width="${bw * .56}" height="${baseB - y}" rx="2" style="fill:var(--y-old);opacity:${i >= ini ? .55 : .35}"/>`; });
+    g += `<text class="axt" x="${W - m.r + 12}" y="${baseB - 4}">GASTO DO MÊS</text>`;
+    // médias de cada período (tracejado)
+    const linhaMedia = (arr, i0, v, lab, cor) => { if (v == null || !arr.length) return; const x1 = m.l + bw * i0, x2 = m.l + bw * (i0 + arr.length); const y = Y(v);
+        g += `<line x1="${x1 + 4}" x2="${x2 - 4}" y1="${y}" y2="${y}" style="stroke:${cor};stroke-width:1.6;stroke-dasharray:6 4;opacity:.9"/>`;
+        return y; };
+    const yA = linhaMedia(antes, Math.max(0, ini - 12), m0, 'antes', 'var(--tx3)');
+    const yD = linhaMedia(depois, ini, m1, 'programa', 'var(--teal-deep)');
+    // linha do custo por hora (suave), cinza antes e Tiffany no programa
+    const P = pts.map((p, i) => p.eff != null ? [X(i), Y(p.eff)] : null);
+    const seg = (a, b) => P.slice(a, b).filter(Boolean);
+    const sA = seg(0, ini + 1), sD = seg(ini, pts.length);
+    if (sA.length > 1) g += `<path d="${suave(sA)}" style="fill:none;stroke:var(--y-mid);stroke-width:2.6;opacity:.75"/>`;
+    if (sD.length > 1) g += `<path d="${suave(sD)}" style="fill:none;stroke:var(--teal-deep);stroke-width:3.2"/>`;
+    // rótulos só nos pontos-chave
+    const idx = pts.map((p, i) => p.eff != null ? i : -1).filter(i => i >= 0);
+    const iMax = idx.reduce((a, b) => pts[b].eff > pts[a].eff ? b : a, idx[0]), iMin = idx.reduce((a, b) => pts[b].eff < pts[a].eff ? b : a, idx[0]);
+    const chave = new Set([idx[0], iMax, iMin, idx[idx.length - 1]]);
+    idx.forEach(i => { const p = pts[i], k = chave.has(i); const cor = i >= ini ? 'var(--teal-deep)' : 'var(--y-mid)';
+        g += `<circle cx="${X(i)}" cy="${Y(p.eff)}" r="${k ? 4.5 : 2.6}" style="fill:${k ? cor : 'var(--card)'};stroke:${cor};stroke-width:1.6"/>`;
+        if (k) g += `<text class="dlab" x="${X(i)}" y="${i === iMin ? Y(p.eff) + 18 : Y(p.eff) - 10}" text-anchor="middle" style="font-weight:700;fill:var(--tx2)">${fR(p.eff)}</text>`; });
+    // legenda das médias à direita
+    if (yA != null) g += `<text x="${W - m.r + 12}" y="${yA + 4}" style="font:700 11.5px var(--font-display);fill:var(--tx3)">média antes ${fR(m0)}/h</text>`;
+    if (yD != null) g += `<text x="${W - m.r + 12}" y="${yD + (yA != null && Math.abs(yA - yD) < 16 ? 16 : 4)}" style="font:800 12px var(--font-display);fill:var(--teal-deep)">média programa ${fR(m1)}/h</text>`;
+    // eixo de meses
+    pts.forEach((p, i) => {
+        g += `<text class="ax" x="${X(i)}" y="${H - 22}" text-anchor="middle">${MES[p.m - 1].slice(0, 1).toUpperCase()}</text>`;
+        if (p.m === 1 || i === 0) g += `<text class="ax" x="${X(i)}" y="${H - 6}" text-anchor="middle" style="font-weight:800">${p.y}</text>`;
+        g += `<rect class="hit" data-i="${i}" x="${m.l + bw * i}" y="${m.t - 30}" width="${bw}" height="${H - m.t}" fill="transparent"/>`;
+    });
+    host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Custo por hora mês a mês, com a média antes e durante o programa">${g}</svg>`;
+    $$('.hit', host).forEach(el => { const p = pts[+el.dataset.i];
+        el.addEventListener('mousemove', e => showTip(`<div class="th">${MES[p.m - 1]}/${String(p.y).slice(2)}</div><div class="tr"><span>Custo médio</span><b>${fR(p.eff)}/h</b></div><div class="tr"><span>Gasto</span><b>${fMi(p.c)}</b></div><div class="tr"><span>Horas</span><b>${fH(p.h)}</b></div>`, e));
+        el.addEventListener('mouseleave', hideTip); });
+    // título com a conclusão
+    const card = host.closest('.card');
+    if (card && m0 && m1) {
+        const h3 = card.querySelector('h3'), p = card.querySelector('.card-head p');
+        if (h3) h3.firstChild.textContent = `Custo por hora: de ${fR(m0)} para ${fR(m1)} em média (${fP(m1 / m0 - 1)})`;
+        if (p) p.innerHTML = 'Linha: custo médio por hora de cada mês. Tracejado: média dos 12 meses antes e do período do programa. Barras claras na base: gasto do mês. Filtros de fornecedor e ativo aplicados.';
     }
 }
 
@@ -3051,8 +3137,8 @@ function drawerAlavanca(i) {
 const INFO = {
     'Economia acumulada': ['Quanto se deixou de gastar desde o início do programa, mês a mês e no acumulado, com os marcos que explicam a curva.', 'Resultado do mês = horas do mês × custo/h médio dos 12 meses anteriores − gasto real do mês. O acumulado soma os meses. Clique num mês ou num marco para ver o detalhe.'],
     'Ponte do custo': ['Como o gasto foi dos 12 meses anteriores ao período do programa: o que subiu pela demanda e o que as ações de eficiência reduziram.', 'Mais demanda = horas a mais × custo/h anterior. Renegociação = preço menor dentro do mesmo porte. Porte certo = troca para rebocadores menores. O eixo começa perto do menor valor para as variações aparecerem.'],
-    '10 maiores': ['Os 10 itens que mais pesam no gasto do programa, no agrupamento escolhido.', 'Soma de VALOR/TOTAL por item; o traço é o mesmo item nos 12 meses anteriores; à direita, participação e acumulado (Pareto). Clique numa barra para detalhar.'],
-    'Evolução mês a mês': ['Gasto mensal e custo médio por hora ao longo de 24 meses, com a faixa do período do programa.', 'Barras = gasto do mês; linha = gasto ÷ horas. Respeita os filtros de fornecedor e ativo.'],
+    '10 maiores': ['Os 10 itens que mais pesam no gasto do programa, no agrupamento escolhido.', 'Soma de VALOR/TOTAL por item. A barra clara é o mesmo item nos 12 meses anteriores. ▲/▼ em p.p. = mudança da participação; gasto vs antes = variação do valor. Clique numa barra para detalhar.'],
+    'Custo por hora:': ['Custo médio por hora de cada mês nos últimos 24 meses, com a média dos 12 meses antes e a média do período do programa de eficiência.', 'Custo/h = gasto ÷ horas do mês (serviço por hora). Média de cada período ponderada pelas horas. Barras claras: gasto do mês. Respeita os filtros de fornecedor e ativo.'],
     'Fornecedores': ['Quanto cada fornecedor pesa no gasto e como mudou a tarifa contratada.', 'Participação = gasto do fornecedor ÷ gasto total. Tarifa = mediana de VALOR/HR. Clique num fornecedor para detalhar.'],
     'Controle do gasto': ['Para onde foi o gasto, por centro de custo/contrato.', 'Soma de VALOR/TOTAL por CONTRATO; "Sem centro de custo" = coluna vazia.'],
     'Projeção': ['Quanto o ano deve fechar se o ritmo atual continuar.', 'Gasto e horas do ano até o último registro × (365 ÷ dias decorridos). Economia ao custo/h anterior ao programa.'],
