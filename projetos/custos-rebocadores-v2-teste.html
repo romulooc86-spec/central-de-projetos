@@ -2633,10 +2633,10 @@ function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes
 }
 
 function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo = resultado de cada mês; marcos escritos no gráfico
-    const W = 1100, H = 400, m = { l: 20, r: 20, t: 70, b: 30 }, iw = W - m.l - m.r;
+    const W = 1100, H = 500, m = { l: 20, r: 20, t: 112, b: 30 }, iw = W - m.l - m.r;
     if (!meses.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
     let ac = 0; meses.forEach(o => { ac += o.eco; o.ac = ac; });
-    const topA = m.t, hA = 190, baseM = topA + hA + 70, hM = 34;          // área acumulada | faixa mensal
+    const topA = m.t, hA = 200, baseM = topA + hA + 130, hM = 36;          // área acumulada | faixa mensal
     const amin = Math.min(0, ...meses.map(o => o.ac)), amax = Math.max(0, ...meses.map(o => o.ac)) * 1.12 || 1;
     const vmax = Math.max(...meses.map(o => Math.abs(o.eco))) || 1;
     const bw = iw / meses.length, X = i => m.l + bw * i + bw / 2;
@@ -2650,12 +2650,12 @@ function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo 
     meses.forEach((o, i) => { const y = Ya(o.ac); g += `<circle cx="${X(i)}" cy="${y}" r="3.5" style="fill:var(--teal-deep)"/><text class="dlab" x="${X(i)}" y="${o.ac >= 0 ? y - 10 : y + 18}" text-anchor="middle">${fMi(o.ac).replace('R$ ', '')}</text>`; });
     const li = meses.length - 1;
     g += `<circle cx="${X(li)}" cy="${Ya(meses[li].ac)}" r="7" style="fill:var(--teal-deep);stroke:var(--card);stroke-width:3"/>`;
-    g += `<text class="axt" x="${m.l}" y="${topA - 50}">ECONOMIA ACUMULADA</text>`;
+    g += `<text class="axt" x="${m.l}" y="14">ECONOMIA ACUMULADA</text>`;
     // marcos escritos no gráfico (alternando altura para não sobrepor)
     const idx = {}; meses.forEach((o, i) => idx[o.k] = i);
     let lv = 0, lastI = -9;
     ev.forEach((e, n) => { const i = idx[e.k]; if (i == null) return; lv = (i - lastI < 3) ? (lv + 1) % 3 : 0; lastI = i;
-        const ty = topA - 34 + lv * 16, anchor = i > meses.length * 0.7 ? 'end' : 'start';
+        const ty = 42 + lv * 19, anchor = i > meses.length * 0.7 ? 'end' : 'start';
         g += `<g class="cv-ev" data-n="${n}"><line x1="${X(i)}" x2="${X(i)}" y1="${ty + 4}" y2="${Ya(meses[i].ac)}" style="stroke:var(--navy);stroke-width:1;stroke-dasharray:2 3;opacity:.45"/>`;
         g += `<circle cx="${X(i)}" cy="${ty}" r="4" style="fill:var(--navy)"/><text x="${X(i) + (anchor === 'end' ? -8 : 8)}" y="${ty + 4}" text-anchor="${anchor}" style="font:700 11.5px var(--font-display);fill:var(--navy)">${esc(e.t)}</text></g>`; });
     // faixa mensal
@@ -3360,110 +3360,6 @@ window.addEventListener('load', () => {
     document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.body.classList.contains('present')) b.click(); });
     b.title = 'Modo apresentação (tela cheia) — Esc para sair';
 });
-
-/* ===================== v2: ao passar o mouse — tabela de dados + memória de cálculo ===================== */
-const hovEl = document.createElement('div'); hovEl.className = 'hovc'; hovEl.hidden = true; document.body.appendChild(hovEl);
-function hovPos(ev) {
-    const pad = 14, w = hovEl.offsetWidth, h = hovEl.offsetHeight, vw = innerWidth, vh = innerHeight;
-    let x = ev.clientX + pad, y = ev.clientY + pad;
-    if (x + w > vw - 8) x = Math.max(8, ev.clientX - w - pad);
-    if (y + h > vh - 8) y = Math.max(8, vh - h - 8);
-    hovEl.style.left = x + 'px'; hovEl.style.top = y + 'px';
-}
-function hovBind(el, build) {
-    if (!el || el.dataset.hov) return; el.dataset.hov = '1';
-    if (matchMedia('(hover: none)').matches) return;                     // celular: fica só o toque (painel de detalhe)
-    el.addEventListener('mouseenter', ev => { let html = ''; try { html = build(); } catch (e) {} if (!html) return; hovEl.innerHTML = html; hovEl.hidden = false; hovPos(ev); });
-    el.addEventListener('mousemove', ev => { if (!hovEl.hidden) hovPos(ev); });
-    el.addEventListener('mouseleave', () => { hovEl.hidden = true; });
-    el.addEventListener('click', () => { hovEl.hidden = true; });
-}
-const ht = (head, rows) => `<table class="ht"><thead><tr>${head.map((h, i) => `<th class="${i ? 'n' : ''}">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${i ? 'n' : ''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-const mem = linhas => `<div class="hmem"><b>Memória de cálculo</b>${linhas.map(l => `<div>${l}</div>`).join('')}</div>`;
-const hcab = (t, s) => `<div class="hcab"><b>${t}</b>${s ? `<span>${s}</span>` : ''}</div>`;
-const n0 = v => NF0.format(Math.round(v || 0));
-
-/* bases de cálculo */
-function baseAno() {
-    const cur = S.cur, prv = S.cur - 1, rs = rowsF(['H']);
-    const r0 = rs.filter(r => r.y === prv), r1 = rs.filter(r => r.y === cur);
-    return { cur, prv, rs, r0, r1, t0: agg(r0), t1: agg(r1), dT: decompose(prv, cur, rs, r => r.tier), A0: atend(r0), A1: atend(r1) };
-}
-
-function hovHero() {
-    const B = baseAno(), { t0, t1, dT, prv, cur } = B;
-    const semAcao = t1.h * t0.eff, eco = semAcao - t1.c;
-    return hcab('Programa de eficiência em custos', `${prv} × ${cur} · ${perLabel()}`) +
-        ht(['', prv, cur], [['Gasto (serviço por hora)', fMi(t0.c), `<b>${fMi(t1.c)}</b>`], ['Horas de rebocador', fH(t0.h), fH(t1.h)], ['Custo médio por hora', fR(t0.eff), `<b>${fR(t1.eff)}</b>`], ['Linhas da planilha', fN(t0.n), fN(t1.n)]]) +
-        mem([`Gasto sem as ações = horas ${cur} × custo/h ${prv}`, `= ${fH(t1.h)} × ${fR(t0.eff)} = <b>${fMi(semAcao)}</b>`, `Economia = ${fMi(semAcao)} − ${fMi(t1.c)} = <b>${fMi(eco)}</b> (${NF1.format(eco / semAcao * 100)}%)`,
-            dT ? `Renegociação (preço no mesmo porte) = <b>${fMi(-dT.priceTot)}</b> · Porte certo (troca de porte) = <b>${fMi(-dT.mixTot)}</b>` : '']);
-}
-
-function hovAlavanca(i) {
-    const B = baseAno(), { dT, t1, prv, cur, A0, A1 } = B;
-    if (i === 2) {
-        return hcab('Planejamento das manobras', 'Índice de atendimento (IA)') +
-            ht(['', prv, cur], [['Manobras no fundeio', fN(A0.fn), fN(A1.fn)], ['… dentro da meta de 5 h', `${fN(A0.fok)} (${pp(A0.fp)})`, `<b>${fN(A1.fok)} (${pp(A1.fp)})</b>`], ['Manobras no porto', fN(A0.pn), fN(A1.pn)], ['… dentro da meta de 3 h', `${fN(A0.pok)} (${pp(A0.pp)})`, `<b>${fN(A1.pok)} (${pp(A1.pp)})</b>`], ['Horas além da meta', fH(A0.ex), fH(A1.ex)], ['Custo das horas além da meta', fMi(A0.exC), fMi(A1.exC)]]) +
-            mem([`% na meta = manobras com TOTAL (h) ≤ meta ÷ manobras`, `Fundeio ${cur}: ${fN(A1.fok)} ÷ ${fN(A1.fn)} = <b>${pp(A1.fp)}</b>`, `Porto ${cur}: ${fN(A1.pok)} ÷ ${fN(A1.pn)} = <b>${pp(A1.pp)}</b>`, 'Manobra = serviço por hora de até 12 h; fundeio = ORIGEM E DESTINO com "FUNDEIO"']);
-    }
-    if (!dT) return '';
-    const per = TIER_ORDER.map(t => dT.per.find(p => p.a === t)).filter(Boolean);
-    if (i === 0) return hcab('Renegociação de tarifas', 'Efeito do preço dentro de cada porte') +
-        ht(['Porte', `R$/h ${prv}`, `R$/h ${cur}`, `Horas ${cur}`, 'Efeito'], per.map(p => [TIER_LABEL[p.a], fR(p.e0), fR(p.e1), fH(p.h1), `<b>${fEco(-(p.e1 - p.e0) * p.h1)}</b>`])) +
-        mem([`Efeito de cada porte = (R$/h ${prv} − R$/h ${cur}) × horas ${cur}`, ...per.slice(0, 3).map(p => `${TIER_LABEL[p.a]}: (${fR(p.e0)} − ${fR(p.e1)}) × ${fH(p.h1)} = ${fEco(-(p.e1 - p.e0) * p.h1)}`), `Total = <b>${fMi(-dT.priceTot)}</b>`]);
-    return hcab('Rebocador do porte certo', 'Efeito da troca de porte') +
-        ht(['Porte', `% horas ${prv}`, `% horas ${cur}`, `R$/h ${prv}`, 'Efeito'], per.map(p => [TIER_LABEL[p.a], pp(p.s0), `<b>${pp(p.s1)}</b>`, fR(p.e0), `<b>${fEco(-(p.s1 - p.s0) * p.e0 * t1.h)}</b>`])) +
-        mem([`Efeito de cada porte = (% horas ${cur} − % horas ${prv}) × R$/h ${prv} × horas ${cur} (${fH(t1.h)})`, 'Horas migrando para o porte mais barato reduzem o gasto', `Total = <b>${fMi(-dT.mixTot)}</b>`]);
-}
-
-function hovCtx(i) {
-    const B = baseAno(), { t0, t1, prv, cur, A0, A1 } = B;
-    const dl = (a, b) => b ? fP(a / b - 1) : '—';
-    if (i === 0) return hcab('Gasto com rebocadores', perLabel()) + ht(['', prv, cur, 'Var.'], [['Gasto', fMi(t0.c), `<b>${fMi(t1.c)}</b>`, dl(t1.c, t0.c)], ['Horas', fH(t0.h), fH(t1.h), dl(t1.h, t0.h)], ['Custo/h', fR(t0.eff), fR(t1.eff), dl(t1.eff, t0.eff)]]) +
-        mem(['Gasto = soma de VALOR/TOTAL das linhas de serviço por hora', `Variação = efeito do volume (horas) × efeito do preço (custo/h): (1 ${dl(t1.h, t0.h)}) × (1 ${dl(t1.eff, t0.eff)}) − 1 = ${dl(t1.c, t0.c)}`]);
-    if (i === 1) return hcab('Custo médio por hora', perLabel()) + ht(['', prv, cur], [['Gasto', fMi(t0.c), fMi(t1.c)], ['Horas', fH(t0.h), fH(t1.h)], ['Custo/h', fR(t0.eff), `<b>${fR(t1.eff)}</b>`]]) +
-        mem([`Custo/h = gasto ÷ horas`, `${cur}: ${fMi(t1.c)} ÷ ${fH(t1.h)} = <b>${fR(t1.eff)}</b>`, `${prv}: ${fMi(t0.c)} ÷ ${fH(t0.h)} = ${fR(t0.eff)}`, `Variação: ${dl(t1.eff, t0.eff)}`]);
-    if (i === 2) return hcab('Horas de rebocador', perLabel()) + ht(['', prv, cur], [['Horas', fH(t0.h), `<b>${fH(t1.h)}</b>`], ['Linhas', fN(t0.n), fN(t1.n)], ['Horas por linha', NF1.format(t0.h / t0.n), NF1.format(t1.h / t1.n)]]) +
-        mem(['Horas = soma de TOTAL (h) das linhas de serviço por hora', `Variação: ${dl(t1.h, t0.h)} — acompanha a demanda das operações`]);
-    return hcab('Atendimentos dentro da meta', perLabel()) + ht(['', prv, cur], [['Manobras', fN(A0.n), fN(A1.n)], ['Dentro da meta', fN(A0.ok), `<b>${fN(A1.ok)}</b>`], ['%', pp(A0.pct), `<b>${pp(A1.pct)}</b>`]]) +
-        mem([`% = manobras dentro da meta ÷ manobras`, `${cur}: ${fN(A1.ok)} ÷ ${fN(A1.n)} = <b>${pp(A1.pct)}</b>`, 'Meta: 5 h no fundeio, 3 h no porto']);
-}
-
-function hovMarco(i) {
-    const G = window._G; if (!G) return '';
-    const lab = ($$('.mcs .mc')[i]?.querySelector('.mc-l')?.textContent) || '';
-    const cab = `${mLbl(BASE_INI)}–${mLbl(BASE_FIM)} × ${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}`;
-    if (/Economia/i.test(lab)) {
-        const ult = G.meses.slice(-6);
-        return hcab('Economia acumulada', `base: ${fR(G.a0.eff)}/h (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)})`) +
-            ht(['Mês', 'Horas', 'Custo/h', 'Resultado'], ult.map(o => [mLbl(o.k), fH(o.h), fR(o.eff), `<b>${fEco(o.eco)}</b>`])) + (G.meses.length > 6 ? `<div class="hmu">últimos 6 de ${G.meses.length} meses</div>` : '') +
-            mem([`Resultado do mês = horas × ${fR(G.a0.eff)} − gasto do mês`, ult.length ? `Ex.: ${mLbl(ult[ult.length - 1].k)}: ${fH(ult[ult.length - 1].h)} × ${fR(G.a0.eff)} − ${fMi(ult[ult.length - 1].h * ult[ult.length - 1].eff)} = ${fEco(ult[ult.length - 1].eco)}` : '', `Acumulado = soma dos meses = <b>${fMi(G.ecoAc)}</b>`]);
-    }
-    if (/Custo médio por hora/i.test(lab)) return hcab('Custo médio por hora', cab) + ht(['', '12 meses antes', 'Programa'], [['Gasto', fMi(G.a0.c), fMi(G.a1.c)], ['Horas', fH(G.a0.h), fH(G.a1.h)], ['Custo/h', fR(G.a0.eff), `<b>${fR(G.a1.eff)}</b>`]]) +
-        mem([`Custo/h = gasto ÷ horas`, `Programa: ${fMi(G.a1.c)} ÷ ${fH(G.a1.h)} = <b>${fR(G.a1.eff)}</b>`, `Antes: ${fMi(G.a0.c)} ÷ ${fH(G.a0.h)} = ${fR(G.a0.eff)}`, `Variação: ${fP(dlt(G.a1.eff, G.a0.eff))}`]);
-    if (/renegocia/i.test(lab) && G.reneg) { const a = G.reneg.a, V0 = G.w0.filter(r => r.a === a), V1 = G.w1.filter(r => r.a === a);
-        return hcab('Maior renegociação: ' + a, cab) + ht(['', 'Antes', 'Programa'], [['Tarifa mediana (VALOR/HR)', fR(G.reneg.v0), `<b>${fR(G.reneg.v1)}</b>`], ['Linhas', fN(V0.length), fN(V1.length)], ['Horas', fH(agg(V0).h), fH(agg(V1).h)], ['Custo/h efetivo', fR(agg(V0).eff), fR(agg(V1).eff)]]) +
-        mem(['Tarifa = mediana da coluna VALOR/HR das linhas do fornecedor', `Variação = ${fR(G.reneg.v1)} ÷ ${fR(G.reneg.v0)} − 1 = <b>${fP(G.reneg.v1 / G.reneg.v0 - 1)}</b>`]); }
-    if (/Menor custo/i.test(lab) && G.melhor) { const rs = G.w1.filter(r => mk(r) === G.melhor.k), a = agg(rs);
-        return hcab('Menor custo por hora da série', mLbl(G.melhor.k)) + ht(['', mLbl(G.melhor.k), 'Média antes'], [['Gasto', fMi(a.c), '—'], ['Horas', fH(a.h), '—'], ['Custo/h', `<b>${fR(a.eff)}</b>`, fR(G.a0.eff)]]) +
-        mem([`${fMi(a.c)} ÷ ${fH(a.h)} = <b>${fR(a.eff)}</b>`, `${fP(a.eff / G.a0.eff - 1)} frente à média dos 12 meses antes`, 'Considera meses com mais de 60 h']); }
-    if (/manobra/i.test(lab)) { const mm = w => w.filter(isMan), m0 = mm(G.w0), m1 = mm(G.w1), c = w => w.reduce((s, r) => s + r.vt, 0);
-        return hcab('Custo por manobra', cab) + ht(['', 'Antes', 'Programa'], [['Gasto em manobras', fMi(c(m0)), fMi(c(m1))], ['Manobras', fN(m0.length), fN(m1.length)], ['Custo por manobra', fR(G.cm0), `<b>${fR(G.cm1)}</b>`]]) +
-        mem([`Custo por manobra = gasto ÷ nº de manobras (até 12 h)`, `Programa: ${fMi(c(m1))} ÷ ${fN(m1.length)} = <b>${fR(G.cm1)}</b>`]); }
-    if (/centro de custo/i.test(lab)) { const s = w => w.filter(r => !r.c).reduce((x, r) => x + r.vt, 0), T = w => w.reduce((x, r) => x + r.vt, 0);
-        return hcab('Gasto sem centro de custo', cab) + ht(['', 'Antes', 'Programa'], [['Sem CONTRATO', fMi(s(G.w0)), fMi(s(G.w1))], ['Gasto total', fMi(T(G.w0)), fMi(T(G.w1))], ['%', pp(G.cc0), `<b>${pp(G.cc1)}</b>`]]) +
-        mem([`% = gasto com CONTRATO vazio ÷ gasto total`, `Programa: ${fMi(s(G.w1))} ÷ ${fMi(T(G.w1))} = <b>${pp(G.cc1)}</b>`]); }
-    return '';
-}
-
-function bindHover() {
-    hovBind($('.gestao-hero'), hovHero);
-    $$('.mcs .mc').forEach((el, i) => hovBind(el, () => hovMarco(i)));
-    $$('.levs .lev').forEach((el, i) => hovBind(el, () => hovAlavanca(i)));
-    $$('.ctxk .kpi').forEach((el, i) => hovBind(el, () => hovCtx(i)));
-}
-const _bindDetalhesBase = bindDetalhes;
-bindDetalhes = function() { _bindDetalhesBase(); bindHover(); };
 /* ---------- shell ---------- */
 const TABS = [
     ['gestao', 'Eficiência em custos'],
