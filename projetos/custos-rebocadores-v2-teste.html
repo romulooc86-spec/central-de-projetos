@@ -2423,11 +2423,15 @@ V.gestao = function() {
 /* ===================== DADOS AO VIVO =====================
    O robô da Prime Ocean lê a aba DADOS da planilha da equipe a cada 10 min e publica
    dados/rebocadores.json. O painel lê esse arquivo ao abrir, a cada 5 min e ao voltar para a aba. */
-const LIVE = { url: 'dados/rebocadores.json', ok: false, lido: null, sig: '', err: null, modif: null };
+// dados direto do GitHub (atualiza sem publicar o site); reserva: cópia publicada junto do site
+const LIVE_URLS = ['https://raw.githubusercontent.com/romulooc86-spec/central-de-projetos/main/projetos/dados/rebocadores.json', 'dados/rebocadores.json'];
+const LIVE = { url: LIVE_URLS[0], ok: false, lido: null, sig: '', err: null, modif: null };
 const fDT = s => { if (!s) return ''; const d = new Date(s); return String(d.getDate()).padStart(2, '0') + ' ' + MES[d.getMonth()] + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 async function loadLive(manual) {
     try {
-        const r = await fetch(LIVE.url + '?t=' + Date.now(), { cache: 'no-store' });
+        let r = null;
+        for (const u of LIVE_URLS) { try { r = await fetch(u + '?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) break; } catch (e) { r = null; } }
+        if (!r) throw new Error('sem conexão');
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const j = await r.json();
         const p = parseRows(XLSX, j.linhas, 'DADOS');
