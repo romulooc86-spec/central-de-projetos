@@ -2636,34 +2636,46 @@ function marcosAuto(H) { // eventos detectados na planilha, desde 12 meses antes
     return ev.sort((x, y) => x.k.localeCompare(y.k));
 }
 
-function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo = resultado de cada mês; marcos escritos no gráfico
-    const W = 1100, H = 500, m = { l: 20, r: 20, t: 112, b: 30 }, iw = W - m.l - m.r;
+function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo = resultado de cada mês; marcos em etiquetas curtas
+    const W = 1100, H = 440, m = { l: 20, r: 20, t: 78, b: 30 }, iw = W - m.l - m.r;
     if (!meses.length) { host.innerHTML = '<div class="empty">Sem dados.</div>'; return; }
     let ac = 0; meses.forEach(o => { ac += o.eco; o.ac = ac; });
-    const topA = m.t, hA = 200, baseM = topA + hA + 130, hM = 36;          // área acumulada | faixa mensal
-    const amin = Math.min(0, ...meses.map(o => o.ac)), amax = Math.max(0, ...meses.map(o => o.ac)) * 1.12 || 1;
+    const topA = m.t, hA = 190, baseM = topA + hA + 110, hM = 34;
+    const amin = Math.min(0, ...meses.map(o => o.ac)), amax = Math.max(0, ...meses.map(o => o.ac)) * 1.1 || 1;
     const vmax = Math.max(...meses.map(o => Math.abs(o.eco))) || 1;
     const bw = iw / meses.length, X = i => m.l + bw * i + bw / 2;
     const Ya = v => topA + hA * (1 - (v - amin) / (amax - amin || 1)), Ym = v => baseM - (v / vmax) * hM;
+    const idx = {}; meses.forEach((o, i) => idx[o.k] = i);
+    const curto = t => t.replace(/^Início d[oa] (programa de eficiência|gestão)$/, 'Início do programa').replace('Menor custo por hora da série', 'Menor custo/h')
+        .replace(/^Entrada do /, 'Entrada: ').replace(/^Saída do /, 'Saída: ').replace(/^Nova tarifa /, 'Nova tarifa: ');
+    // marcos agrupados por mês
+    const porMes = new Map(); ev.forEach((e, n) => { const i = idx[e.k]; if (i == null) return; if (!porMes.has(i)) porMes.set(i, []); porMes.get(i).push({ e, n }); });
     let g = '';
-    // área e linha da economia acumulada
+    // área e linha
     const pts = meses.map((o, i) => [X(i), Ya(o.ac)]);
     g += `<line class="base" x1="${m.l}" x2="${W - m.r}" y1="${Ya(0)}" y2="${Ya(0)}"/><text class="ax" x="${m.l}" y="${Ya(0) - 6}">R$ 0</text>`;
-    g += `<path d="${suave(pts)} L${pts[pts.length - 1][0]},${Ya(0)} L${pts[0][0]},${Ya(0)} Z" style="fill:var(--teal);opacity:.14"/>`;
+    g += `<path d="${suave(pts)} L${pts[pts.length - 1][0]},${Ya(0)} L${pts[0][0]},${Ya(0)} Z" style="fill:var(--teal);opacity:.12"/>`;
     g += `<path class="ln" d="${suave(pts)}" style="stroke:var(--teal-deep);stroke-width:3.2;fill:none"/>`;
-    meses.forEach((o, i) => { const y = Ya(o.ac); g += `<circle cx="${X(i)}" cy="${y}" r="3.5" style="fill:var(--teal-deep)"/><text class="dlab" x="${X(i)}" y="${o.ac >= 0 ? y - 10 : y + 18}" text-anchor="middle">${fMi(o.ac).replace('R$ ', '')}</text>`; });
-    const li = meses.length - 1;
+    // rótulos só nos pontos que contam a história: fundo do vale, meses com marco e o valor final
+    const iMin = meses.reduce((a, o, i) => o.ac < meses[a].ac ? i : a, 0), li = meses.length - 1;
+    const rot = new Set([iMin, ...porMes.keys()]); rot.delete(li); rot.delete(li - 1);   // o valor final já aparece em destaque
+    meses.forEach((o, i) => { const y = Ya(o.ac); g += `<circle cx="${X(i)}" cy="${y}" r="${rot.has(i) ? 4 : 2.5}" style="fill:${rot.has(i) ? 'var(--teal-deep)' : 'var(--card)'};stroke:var(--teal-deep);stroke-width:1.5"/>`;
+        if (rot.has(i)) g += `<text class="dlab" x="${X(i)}" y="${o.ac >= 0 ? y - 11 : y + 19}" text-anchor="middle" style="font-weight:700;fill:var(--tx2)">${fMi(o.ac).replace('R$ ', '')}</text>`; });
     g += `<circle cx="${X(li)}" cy="${Ya(meses[li].ac)}" r="7" style="fill:var(--teal-deep);stroke:var(--card);stroke-width:3"/>`;
-    g += `<text class="axt" x="${m.l}" y="14">ECONOMIA ACUMULADA</text>`;
-    // marcos escritos no gráfico (alternando altura para não sobrepor)
-    const idx = {}; meses.forEach((o, i) => idx[o.k] = i);
-    let lv = 0, lastI = -9;
-    ev.forEach((e, n) => { const i = idx[e.k]; if (i == null) return; lv = (i - lastI < 3) ? (lv + 1) % 3 : 0; lastI = i;
-        const ty = 42 + lv * 19, anchor = i > meses.length * 0.7 ? 'end' : 'start';
-        g += `<g class="cv-ev" data-n="${n}"><line x1="${X(i)}" x2="${X(i)}" y1="${ty + 4}" y2="${Ya(meses[i].ac)}" style="stroke:var(--navy);stroke-width:1;stroke-dasharray:2 3;opacity:.45"/>`;
-        g += `<circle cx="${X(i)}" cy="${ty}" r="4" style="fill:var(--navy)"/><text x="${X(i) + (anchor === 'end' ? -8 : 8)}" y="${ty + 4}" text-anchor="${anchor}" style="font:700 11.5px var(--font-display);fill:var(--navy)">${esc(e.t)}</text></g>`; });
-    // faixa mensal
-    g += `<text class="axt" x="${m.l}" y="${baseM - hM - 14}">RESULTADO DE CADA MÊS</text><line class="base" x1="${m.l}" x2="${W - m.r}" y1="${baseM}" y2="${baseM}"/>`;
+    g += `<text x="${X(li) - 12}" y="${Ya(meses[li].ac) - 14}" text-anchor="end" style="font:800 15px var(--font-display);fill:var(--teal-deep)">${fMi(meses[li].ac)}</text>`;
+    // marcos: etiquetas curtas numa linha, com um traço curto até o ponto
+    let fimAnt = -1e9, linha = 0;
+    [...porMes.keys()].sort((a, b) => a - b).forEach(i => {
+        const itens = porMes.get(i), txt = itens.map(x => curto(x.e.t)).join(' · '), w = txt.length * 7.1 + 26;
+        let x = Math.min(Math.max(m.l, X(i) - 10), W - m.r - w);
+        linha = x < fimAnt + 8 ? (linha + 1) % 2 : 0; fimAnt = x + w;
+        const y = 18 + linha * 28;
+        g += `<g class="cv-ev" data-n="${itens[0].n}"><line x1="${X(i)}" x2="${X(i)}" y1="${y + 12}" y2="${Ya(meses[i].ac) - 6}" style="stroke:var(--navy);stroke-width:1;opacity:.25"/>`;
+        g += `<rect x="${x}" y="${y - 11}" width="${w}" height="22" rx="11" style="fill:var(--card-soft);stroke:var(--bd2)"/><circle cx="${x + 11}" cy="${y}" r="3.5" style="fill:var(--navy)"/>`;
+        g += `<text x="${x + 20}" y="${y + 4}" style="font:700 11.5px var(--font-display);fill:var(--navy)">${esc(txt)}</text></g>`;
+    });
+    // resultado de cada mês
+    g += `<text class="axt" x="${m.l}" y="${baseM - hM - 16}">RESULTADO DO MÊS</text><line class="base" x1="${m.l}" x2="${W - m.r}" y1="${baseM}" y2="${baseM}"/>`;
     meses.forEach((o, i) => {
         const y = o.eco >= 0 ? Ym(o.eco) : baseM, h = Math.abs(Ym(o.eco) - baseM);
         g += `<rect x="${X(i) - bw * .3}" y="${y}" width="${bw * .6}" height="${Math.max(1.5, h)}" rx="2" style="fill:${o.eco >= 0 ? 'var(--teal)' : 'var(--y-old)'}"/>`;
@@ -2673,7 +2685,7 @@ function curva(host, meses, ev) { // área = economia acumulada; faixa de baixo 
     });
     host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Economia acumulada e resultado de cada mês">${g}</svg>`;
     $$('.cv-b', host).forEach(el => { const o = meses[+el.dataset.i];
-        el.addEventListener('mousemove', e => showTip(`<div class="th">${mLbl(o.k)}</div><div class="tr"><span>Resultado do mês</span><b>${fEco(o.eco)}</b></div><div class="tr"><span>Acumulado</span><b>${fEco(o.ac)}</b></div><div class="tr"><span>Custo médio</span><b>${fR(o.eff)}/h</b></div><div class="tr mu">${fH(o.h)} × ${fR((window._G && window._G.a0.eff) || 0)} − ${fMi(o.h * o.eff)} = ${fEco(o.eco)}</div><div class="tr mu">clique para detalhar</div>`, e));
+        el.addEventListener('mousemove', e => showTip(`<div class="th">${mLbl(o.k)}</div><div class="tr"><span>Resultado do mês</span><b>${fEco(o.eco)}</b></div><div class="tr"><span>Acumulado</span><b>${fEco(o.ac)}</b></div><div class="tr"><span>Custo médio</span><b>${fR(o.eff)}/h</b></div>`, e));
         el.addEventListener('mouseleave', hideTip); });
     $$('.cv-ev', host).forEach(el => { el.style.cursor = 'pointer'; el.addEventListener('click', () => { const e = ev[+el.dataset.n]; const mm = /(?:do|da|tarifa) (.+)$/i.exec(e.t); if (mm && agencies().includes(mm[1].trim())) drawerItem('a', mm[1].trim(), mm[1].trim()); else drawerMes(e.k); }); });
 }
@@ -2739,11 +2751,11 @@ function gestaoExtra() {
     const evList = ev.map((e, i) => `<li><span class="evn">${i + 1}</span><b>${mLbl(e.k)} · ${esc(e.t)}</b> <span class="mu">${esc(e.s)}</span></li>`).join('');
     const tituloCurva = virada ? `A economia virou positiva em ${mLbl(virada.k)} e soma ${fMi(ecoAc)}` : `Economia acumulada: ${fEco(ecoAc)}`;
     const mid = `
-      ${card(`Economia acumulada: ${fMi(ecoAc)} desde ${GESTAO_LBL}`, `Quanto se deixou de gastar: o custo por hora de cada mês comparado à média dos 12 meses anteriores (<b>${fR(a0.eff)}/h</b>). Em cima, o total acumulado e os marcos; embaixo, o resultado de cada mês${virada ? ` — o acumulado ficou positivo em <b>${mLbl(virada.k)}</b>` : ''}. Clique num mês ou num marco para detalhar.`,
+      ${card(`Economia acumulada: ${fMi(ecoAc)} desde ${GESTAO_LBL}`, `Frente ao custo médio dos 12 meses anteriores (<b>${fR(a0.eff)}/h</b>)${virada ? ` · acumulado positivo desde <b>${mLbl(virada.k)}</b>` : ''}`,
         `<div id="cv"></div>`, 'mt')}
-      ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e as ações de eficiência compensaram ${fMi(-(P.preco + P.porte))}`, `Do gasto dos 12 meses antes (${mLbl(BASE_INI)}–${mLbl(BASE_FIM)}) ao gasto do programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Serviço por hora.`,
+      ${card(`Ponte do custo · a demanda subiu ${fP(dlt(a1.h, a0.h))} e as ações de eficiência compensaram ${fMi(-(P.preco + P.porte))}`, `${mLbl(BASE_INI)}–${mLbl(BASE_FIM)} × ${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))} · serviço por hora`,
         `<div id="wf2"></div>`, 'mt')}
-      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto no programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra cheia: gasto do período; barra clara ao fundo: o mesmo item nos 12 meses anteriores. À direita: participação no total, variação do gasto e acumulado (Pareto), com ▲ subida e ▼ queda frente ao período anterior.`,
+      ${card('<span id="t10-t">10 maiores linhas de custo</span>', `Gasto no programa (${mLbl(GESTAO_INI)}–${mLbl(S.maxDate.slice(0, 7))}). Barra cheia: período atual · barra clara: 12 meses antes · ▲▼ variação frente ao período anterior`,
         `<div class="seg2 t10-seg" style="margin-bottom:12px">${T10_DIM.map((d, i) => `<button data-k="${d.k}" class="${i ? '' : 'on'}">${d.l}</button>`).join('')}</div><div id="t10"></div>`, 'mt')}`;
 
     const shMax = Math.max(...F.map(o => Math.max(o.s0, o.s1))) || 1;
@@ -3014,7 +3026,7 @@ function timeline(host, pts, iniIdx) {
     if (card && m0 && m1) {
         const h3 = card.querySelector('h3'), p = card.querySelector('.card-head p');
         if (h3) h3.firstChild.textContent = `Custo por hora: de ${fR(m0)} para ${fR(m1)} em média (${fP(m1 / m0 - 1)})`;
-        if (p) p.innerHTML = 'Linha: custo médio por hora de cada mês. Tracejado: média dos 12 meses antes e do período do programa. Barras claras na base: gasto do mês. Filtros de fornecedor e ativo aplicados.';
+        if (p) p.innerHTML = 'Custo médio por hora de cada mês · barras claras: gasto do mês';
     }
 }
 
