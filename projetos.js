@@ -7,7 +7,7 @@ window.PROJETOS = [
   {titulo:"Gestão de Rebocadores", url:"projetos/custos-rebocadores.html", categoria:"Prime Ocean", descricao:"Painel executivo ao vivo: renegociação de tarifas, porte certo de rebocador e índice de atendimento, lido da planilha da equipe.", atualizado:"2026-09-30", origem:"site"},
   {titulo:"Painel Pessoal", url:"https://claude.ai/artifact/23BKQki1q3DNt4NN3rPaap", categoria:"Pessoal", atualizado:"2026-09-21", origem:"claude"},
   {titulo:"Indicadores Operacionais - TPS", url:"https://claude.ai/artifact/5RorDf5tPfsGYVya8AnGbK", categoria:"TPS", atualizado:"2026-09-19", origem:"claude"},
-  {titulo:"Painel Executivo Ocean I", url:"projetos/ocean-i-executivo.html", categoria:"Prime Ocean", descricao:"Andamento das obras Ocean I (docagem/readequação) e Rio Port II: curva S, cronograma da rampa e fotos de campo.", atualizado:"2026-09-16", origem:"site"},
+  {titulo:"Obras das Balsas · Ocean I e Rio Port II", url:"projetos/ocean-i-executivo.html", categoria:"Prime Ocean", descricao:"Painel executivo por balsa: Ocean I (curva S, reparo e readequação) e Rio Port II (pós-docagem e cronograma da rampa).", atualizado:"2026-09-30", origem:"site"},
   {titulo:"Alinhamento Operacional", url:"https://claude.ai/artifact/AyRxZRJDeVNqBSUQz6zxHu", categoria:"Operações", atualizado:"2026-09-15", origem:"claude"},
   {titulo:"Cenários de Atracação TPS", url:"https://claude.ai/artifact/7gMa7eGqRUMyPJiew6FSA6", categoria:"TPS", atualizado:"2026-09-14", origem:"claude"},
   {titulo:"Painel Operacional TPS", url:"https://claude.ai/artifact/EFP7MfRoBQtSxnMZtCqvnq", categoria:"TPS", atualizado:"2026-09-09", origem:"claude"},
