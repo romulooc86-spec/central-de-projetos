@@ -649,8 +649,41 @@
     .card{ break-inside:avoid; box-shadow:none; }
     body{ background:#fff; }
   }
+  .rp-link.prev{ background:none; height:0; border-top:2px dashed var(--series-plan); opacity:1; }
+  .rp-n{ position:absolute; top:50%; width:12px; height:12px; border-radius:50%; transform:translate(-50%,-50%); box-sizing:border-box; display:inline-block; border:2px dashed var(--status-warning); background: var(--surface-card); }
+  .rp-leg .rp-n{ position:static; transform:none; }
+  /* edição direta */
+  #rp-edit-btn{ position:fixed; right:22px; bottom:22px; z-index:40; background: var(--teal-deep); color:#fff; border:0; border-radius:999px; padding:12px 20px; font:700 14px var(--font-body); box-shadow:0 6px 20px rgba(2,22,32,.35); cursor:pointer; }
+  #rp-edit-btn:hover{ filter:brightness(1.08); }
+  #rp-ed{ position:fixed; inset:0; z-index:100; background:rgba(2,22,32,.62); display:flex; align-items:center; justify-content:center; padding:16px; }
+  .ed-panel{ background: var(--surface-card); color: var(--text-primary); width:min(1000px,100%); max-height:94vh; border-radius:14px; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.45); }
+  .ed-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+  .ed-head h3{ font-size:18px; font-weight:800; }
+  .ed-close{ all:unset; cursor:pointer; font-size:18px; padding:4px 10px; color: var(--text-secondary); }
+  .ed-body{ overflow:auto; padding:6px 20px 20px; }
+  .ed-body h4{ font-size:14px; font-weight:800; margin:20px 0 8px; color: var(--teal-deep); }
+  .ed-hint{ font-size:12.5px; color: var(--text-secondary); line-height:1.5; margin-bottom:10px; }
+  .ed-scroll{ overflow-x:auto; }
+  .ed-tbl{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .ed-tbl th{ text-align:left; font-size:11px; color: var(--text-muted); font-weight:700; padding:4px 6px; }
+  .ed-tbl td{ padding:4px 6px; vertical-align:middle; }
+  .ed-body input, .ed-body select, .ed-body textarea{ width:100%; box-sizing:border-box; font:13px var(--font-body); padding:7px 9px; border:1px solid var(--border-strong); border-radius:7px; background: var(--surface-card); color: var(--text-primary); }
+  .ed-body textarea{ resize:vertical; line-height:1.45; }
+  .ed-body label{ display:block; font-size:11.5px; font-weight:700; color: var(--text-secondary); margin-bottom:8px; }
+  .ed-body label small{ font-weight:400; color: var(--text-muted); }
+  .ed-box{ border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px; background: var(--surface-page, transparent); }
+  .ed-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ed-grid3{ display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:10px; }
+  .ed-x, .ed-add{ font:700 12px var(--font-body); background:none; border:1px dashed var(--border-strong); border-radius:7px; padding:6px 12px; color: var(--text-secondary); cursor:pointer; }
+  .ed-foot{ display:flex; align-items:center; gap:10px; padding:14px 20px; border-top:1px solid var(--border); }
+  #ed-msg{ flex:1; font-size:12.5px; font-weight:700; color: var(--text-primary); }
+  .ed-cancel{ font:700 13px var(--font-body); background:none; border:1px solid var(--border-strong); border-radius:8px; padding:9px 16px; color: var(--text-primary); cursor:pointer; }
+  .ed-save{ font:800 13px var(--font-body); background: var(--teal-deep); color:#fff; border:0; border-radius:8px; padding:10px 20px; cursor:pointer; }
+  .ed-save:disabled{ opacity:.6; cursor:wait; }
+  @media (max-width: 720px){ .ed-grid2, .ed-grid3{ grid-template-columns:1fr; } }
+  body.present-mode #rp-edit-btn{ display:none !important; }
+  @media print{ #rp-edit-btn, #rp-ed{ display:none !important; } }
 </style>
-
 
 <div class="panel">
   <div class="topbar">
@@ -1543,13 +1576,16 @@
 (function(){
   var RAW = 'https://raw.githubusercontent.com/romulooc86-spec/central-de-projetos/main/projetos/dados/rampa-rio-port-ii.json';
   var LOCAL = 'dados/rampa-rio-port-ii.json';
+  var EDIT = 'http://127.0.0.1:8787';
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function fmt(s){ return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
   function D(iso){ return iso ? new Date(iso + 'T00:00:00') : null; }
   function two(n){ return ('0' + n).slice(-2); }
   function dd(d){ return d ? two(d.getDate()) + '/' + two(d.getMonth() + 1) : ''; }
+  function iso(d){ return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()); }
   function dias(a, b){ return Math.round((b - a) / 86400000); }
   var agora = new Date(), hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+  var ultimo = '';
 
   function calc(e){
     var o = D(e.orig), r = D(e.real), i = D(e.ini), s, atr = 0;
@@ -1572,24 +1608,37 @@
     return '<div class="cron-summary cs-3">' +
       '<div class="cron-stat good"><p class="n">' + c.ok + '</p><p class="l">Concluídas</p></div>' +
       '<div class="cron-stat neutral"><p class="n">' + c.and + '</p><p class="l">Em andamento</p></div>' +
-      '<div class="cron-stat crit"><p class="n">' + (c.pend + c.plan) + '</p><p class="l">Pendentes, sem data</p></div></div>';
+      '<div class="cron-stat crit"><p class="n">' + (c.pend + c.plan) + '</p><p class="l">Pendentes</p></div></div>';
   }
 
   function linha(d){
-    var ini = D(d.eixo.ini), fim = D(d.eixo.fim), span = dias(ini, fim);
+    var ini = D(d.eixo.ini), fim = D(d.eixo.fim);
+    d.etapas.forEach(function(e){ [e.novo, e.real].forEach(function(x){ var v = D(x); if (v && v > fim) fim = v; }); });
+    if (hoje > fim) fim = hoje;
+    fim = new Date(fim.getTime() + 2 * 86400000);
+    var span = dias(ini, fim);
     function p(x){ return Math.max(0, Math.min(100, dias(ini, x) / span * 100)); }
     var ticks = '';
     for (var t = new Date(ini); t <= fim; t = new Date(t.getTime() + 7 * 86400000)) ticks += '<span class="rp-tick" style="left:' + p(t).toFixed(2) + '%">' + dd(t) + '</span>';
+    function lbl(b, txt){ return '<span class="rp-d" style="' + (b > 72 ? 'right:calc(' + (100 - b).toFixed(2) + '% + 12px)' : 'left:calc(' + b.toFixed(2) + '% + 12px)') + '">' + txt + '</span>'; }
     var rows = d.etapas.map(function(e){
-      var c = calc(e), tr = '';
+      var c = calc(e), tr = '', nv = D(e.novo);
       var lab = '<div class="rp-lab" title="' + esc(e.nome) + '"><b>' + e.n + '</b> ' + esc(e.curto || e.nome) + '</div>';
       if (c.o && (c.r || c.s === 'and')) {
         var fimd = c.r || hoje, late = c.atr > 0, a = p(c.o), b = p(fimd);
         if (b > a) tr += '<i class="rp-link ' + (late ? 'late' : 'ok') + '" style="left:' + a.toFixed(2) + '%;width:' + (b - a).toFixed(2) + '%"></i>';
         tr += '<i class="rp-o" style="left:' + a.toFixed(2) + '%"></i>';
         tr += '<i class="rp-r ' + (late ? 'late' : 'ok') + (c.r ? '' : ' run') + '" style="left:' + b.toFixed(2) + '%"></i>';
-        var txt = (late ? '+' + c.atr + ' d' : 'no prazo') + (c.r ? '' : ' · em curso');
-        tr += '<span class="rp-d" style="' + (b > 72 ? 'right:calc(' + (100 - b).toFixed(2) + '% + 12px)' : 'left:calc(' + b.toFixed(2) + '% + 12px)') + '">' + txt + '</span>';
+        if (!c.r && nv) {
+          var n = p(nv);
+          if (n > b) tr += '<i class="rp-link prev" style="left:' + b.toFixed(2) + '%;width:' + (n - b).toFixed(2) + '%"></i>';
+          tr += '<i class="rp-n" style="left:' + n.toFixed(2) + '%"></i>' + lbl(n, (late ? '+' + c.atr + ' d · ' : '') + 'previsto ' + dd(nv));
+        } else {
+          tr += lbl(b, (late ? '+' + c.atr + ' d' : 'no prazo') + (c.r ? '' : ' · em curso'));
+        }
+      } else if (nv && !c.r) {
+        var n2 = p(nv);
+        tr += '<i class="rp-n" style="left:' + n2.toFixed(2) + '%"></i>' + lbl(n2, 'previsto ' + dd(nv));
       } else if (c.s === 'pend') {
         tr += '<span class="rp-open">a definir</span>';
       }
@@ -1597,7 +1646,7 @@
     }).join('');
     return '<div class="rp-tl"><div class="rp-row rp-axis"><div></div><div class="rp-track">' + ticks + '</div></div>' + rows +
       '<i class="rp-hoje" style="--p:' + (p(hoje) / 100).toFixed(4) + '"><em>hoje ' + dd(hoje) + '</em></i></div>' +
-      '<div class="rp-leg"><span><i class="rp-o"></i>prazo original</span><span><i class="rp-r ok"></i>realizado no prazo</span><span><i class="rp-r late"></i>realizado ou em curso com atraso</span><span><i class="rp-hoje-k"></i>hoje</span></div>';
+      '<div class="rp-leg"><span><i class="rp-o"></i>prazo original</span><span><i class="rp-r ok"></i>realizado no prazo</span><span><i class="rp-r late"></i>realizado ou em curso com atraso</span><span><i class="rp-n"></i>nova data prevista</span><span><i class="rp-hoje-k"></i>hoje</span></div>';
   }
 
   function atrasos(d){
@@ -1610,8 +1659,8 @@
   function tabela(d){
     var h = '<table class="rp-tbl"><thead><tr><th>Etapa</th><th>Responsável</th><th>Prazo original</th><th>Realizado / nova data</th><th>Situação</th></tr></thead><tbody>';
     d.etapas.forEach(function(e){
-      var c = calc(e);
-      var real = c.r ? dd(c.r) : (c.s === 'and' ? 'em curso' : 'a definir');
+      var c = calc(e), nv = D(e.novo);
+      var real = c.r ? dd(c.r) : (nv ? 'previsto ' + dd(nv) : (c.s === 'and' ? 'em curso' : 'a definir'));
       h += '<tr class="cron-row" data-rp="' + e.n + '"><td><span class="cron-caret">▸</span><b>' + e.n + '</b> ' + esc(e.nome) + '</td><td>' + esc(e.resp) + '</td><td class="num" style="text-align:left;">' + (c.o ? dd(c.o) : '—') + '</td><td class="num" style="text-align:left;">' + real + '</td><td>' + pill(c) + '</td></tr>';
       h += '<tr class="cron-detail" id="rp-det-' + e.n + '"><td colspan="5"><ul class="cron-actions">' + (e.detalhes || []).map(function(x){ return '<li>' + fmt(x) + '</li>'; }).join('') + '</ul></td></tr>';
     });
@@ -1631,21 +1680,22 @@
 
   function put(id, html){ var el = document.getElementById(id); if (el) el.innerHTML = html; }
   function render(d){
+    ultimo = d._salvoEm || ultimo;
     put('rp-decisoes', decisoes(d));
     put('rp-sum', resumo(d));
     put('rp-tl', linha(d));
     put('rp-atrasos', atrasos(d));
     put('rp-tbl', tabela(d));
     put('rp-marcos', marcos(d));
-    var f = document.getElementById('rp-fonte');
-    if (f) f.textContent = 'Fonte: ' + d.fonte + ' · atualizado em ' + dd(D(d.atualizado)) + '/' + D(d.atualizado).getFullYear();
+    var f = document.getElementById('rp-fonte'), at = D(d.atualizado);
+    if (f && at) f.textContent = 'Fonte: ' + d.fonte + ' · atualizado em ' + dd(at) + '/' + at.getFullYear();
   }
   function valido(d){ return d && d.eixo && d.etapas && d.etapas.length && d.atrasos && d.marcos && d.decisoes; }
 
   var EMB = document.getElementById('rp-data');
   try { render(JSON.parse(EMB.textContent)); } catch (e) {}
   function buscar(u){ return fetch(u + (u.indexOf('?') < 0 ? '?t=' + Date.now() : ''), { cache: 'no-store' }).then(function(r){ if (!r.ok) throw 0; return r.json(); }); }
-  function atualizar(){ buscar(RAW).catch(function(){ return buscar(LOCAL); }).then(function(d){ if (valido(d)) render(d); }).catch(function(){}); }
+  function atualizar(){ buscar(RAW).catch(function(){ return buscar(LOCAL); }).then(function(d){ if (valido(d) && (d._salvoEm || '') >= ultimo) render(d); }).catch(function(){}); }
   atualizar(); setInterval(atualizar, 300000);
 
   document.addEventListener('click', function(ev){
@@ -1655,6 +1705,86 @@
   });
   window.addEventListener('beforeprint', function(){ [].forEach.call(document.querySelectorAll('details.rp-det'), function(x){ x.open = true; }); });
   var pb = document.getElementById('rpPrint'); if (pb) pb.addEventListener('click', function(){ window.print(); });
+
+  /* ---------- edição direta no painel (só aparece no computador com o editor local ligado) ---------- */
+  var podeEditar = false;
+  var btn = document.createElement('button');
+  btn.id = 'rp-edit-btn'; btn.type = 'button'; btn.textContent = '✎ Editar cronograma'; btn.style.display = 'none';
+  document.body.appendChild(btn);
+  function btnVis(){ btn.style.display = (podeEditar && document.body.dataset.balsa === 'rioport' && !document.body.classList.contains('present-mode')) ? 'block' : 'none'; }
+  function checar(){
+    var c = new AbortController(), t = setTimeout(function(){ c.abort(); }, 1500);
+    fetch(EDIT + '/ping', { signal: c.signal }).then(function(r){ clearTimeout(t); podeEditar = r.ok; btnVis(); }).catch(function(){ clearTimeout(t); podeEditar = false; btnVis(); });
+  }
+  setInterval(btnVis, 800); checar(); setInterval(checar, 30000);
+  btn.addEventListener('click', function(){
+    fetch(EDIT + '/rampa', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(abrir).catch(function(){ alert('Não consegui abrir o editor. Confira se o editor local está ligado neste computador.'); });
+  });
+
+  function inp(cls, val, tipo, extra){ return '<input class="' + cls + '" type="' + (tipo || 'text') + '" value="' + esc(val || '') + '"' + (extra || '') + '>'; }
+  function area(cls, val){ return '<textarea class="' + cls + '" rows="3">' + esc(val || '') + '</textarea>'; }
+  function blocoAtraso(a){
+    return '<div class="ed-box ed-atraso"><div class="ed-grid2"><label>Título<br>' + inp('a-tit', a.titulo) + '</label><label>Causa<br>' + inp('a-cau', a.causa) + '</label></div>' +
+      '<label>Por quê (justificativa)<br>' + area('a-por', a.porque) + '</label>' +
+      '<div class="ed-grid2"><label>Ação<br>' + area('a-aca', a.acao) + '</label><label>Nova data<br>' + inp('a-nov', a.nova) + '<small>Ex.: 05/10/2026 ou A definir</small></label></div>' +
+      '<button type="button" class="ed-x">Remover esta justificativa</button></div>';
+  }
+  function blocoMarco(m){
+    return '<div class="ed-box ed-marco"><div class="ed-grid3"><label>Data<br>' + inp('m-dat', m.data) + '</label><label>Etiqueta<br>' + inp('m-tag', m.tag) + '</label><label>Tipo<br><select class="m-tip"><option value="ok"' + (m.tipo === 'ok' ? ' selected' : '') + '>Concluído</option><option value="watch"' + (m.tipo === 'watch' ? ' selected' : '') + '>Atenção</option><option value="risk"' + (m.tipo === 'risk' ? ' selected' : '') + '>Risco</option></select></label></div>' +
+      '<label>Título<br>' + inp('m-tit', m.titulo) + '</label><label>Texto<br>' + area('m-tex', m.texto) + '</label><button type="button" class="ed-x">Remover este marco</button></div>';
+  }
+  function abrir(d){
+    var ov = document.createElement('div'); ov.id = 'rp-ed';
+    var linhas = d.etapas.map(function(e, i){
+      var c = calc(e), dt = c.s === 'ok' ? e.real : (c.s === 'and' ? (e.ini || '') : '');
+      return '<tr data-i="' + i + '"><td><b>' + e.n + '</b></td><td>' + esc(e.curto || e.nome) + '</td><td>' + inp('e-orig', e.orig, 'date') + '</td>' +
+        '<td><select class="e-sit"><option value="ok"' + (c.s === 'ok' ? ' selected' : '') + '>Concluída</option><option value="and"' + (c.s === 'and' ? ' selected' : '') + '>Em andamento</option><option value="plan"' + (c.s === 'plan' ? ' selected' : '') + '>Planejada</option><option value="pend"' + (c.s === 'pend' ? ' selected' : '') + '>A definir</option></select></td>' +
+        '<td>' + inp('e-dt', dt, 'date') + '</td><td>' + inp('e-nv', e.novo, 'date') + '</td></tr>';
+    }).join('');
+    ov.innerHTML = '<div class="ed-panel"><div class="ed-head"><h3>Editar cronograma da rampa</h3><button type="button" class="ed-close" aria-label="Fechar">✕</button></div>' +
+      '<div class="ed-body">' +
+      '<h4>1 · Etapas: datas e situação</h4><p class="ed-hint">Os dias de atraso são calculados sozinhos. Em <b>Concluída</b>, informe quando terminou; em <b>Em andamento</b>, desde quando; em <b>Nova data prevista</b>, a data que você está prometendo para as etapas que faltam.</p>' +
+      '<div class="ed-scroll"><table class="ed-tbl"><thead><tr><th>#</th><th>Etapa</th><th>Prazo original</th><th>Situação</th><th>Concluída em / desde</th><th>Nova data prevista</th></tr></thead><tbody>' + linhas + '</tbody></table></div>' +
+      '<h4>2 · Por que atrasou: justificativa, ação e nova data</h4><div id="ed-atrasos">' + d.atrasos.map(blocoAtraso).join('') + '</div><button type="button" class="ed-add" id="ed-add-at">+ Adicionar justificativa</button>' +
+      '<h4>3 · Decisões necessárias</h4>' + d.decisoes.map(function(x){ return '<div class="ed-box ed-dec"><div class="ed-grid2"><label>Decisão<br>' + inp('d-tit', x.titulo) + '</label><label>Responsável<br>' + inp('d-res', x.resp) + '</label></div><label>Por quê<br>' + inp('d-por', x.porque) + '</label></div>'; }).join('') +
+      '<h4>4 · Marcos críticos</h4><div id="ed-marcos">' + d.marcos.map(blocoMarco).join('') + '</div><button type="button" class="ed-add" id="ed-add-ma">+ Adicionar marco</button>' +
+      '</div><div class="ed-foot"><span id="ed-msg"></span><button type="button" class="ed-cancel">Cancelar</button><button type="button" class="ed-save">Salvar e publicar</button></div></div>';
+    document.body.appendChild(ov);
+    function fechar(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }
+    ov.querySelector('.ed-close').onclick = fechar; ov.querySelector('.ed-cancel').onclick = fechar;
+    ov.addEventListener('click', function(ev){ if (ev.target.classList.contains('ed-x')) { var b = ev.target.closest('.ed-box'); b.parentNode.removeChild(b); } });
+    ov.querySelector('#ed-add-at').onclick = function(){ ov.querySelector('#ed-atrasos').insertAdjacentHTML('beforeend', blocoAtraso({})); };
+    ov.querySelector('#ed-add-ma').onclick = function(){ ov.querySelector('#ed-marcos').insertAdjacentHTML('beforeend', blocoMarco({ tipo: 'ok' })); };
+    ov.querySelector('.ed-save').onclick = function(){
+      var msg = ov.querySelector('#ed-msg'), bt = ov.querySelector('.ed-save');
+      function v(el, c){ return (el.querySelector(c) || {}).value || ''; }
+      var novo = JSON.parse(JSON.stringify(d)), erro = null;
+      [].forEach.call(ov.querySelectorAll('.ed-tbl tbody tr'), function(tr){
+        var e = novo.etapas[+tr.getAttribute('data-i')], s = v(tr, '.e-sit'), dt = v(tr, '.e-dt'), o = v(tr, '.e-orig'), nv = v(tr, '.e-nv');
+        delete e.real; delete e.ini; delete e.status; delete e.orig; delete e.novo;
+        if (o) e.orig = o; if (nv) e.novo = nv;
+        if (s === 'ok') { if (!dt) erro = 'Informe a data de conclusão da etapa ' + e.n + '.'; else e.real = dt; }
+        else if (s === 'and') { if (dt) e.ini = dt; }
+        else if (s === 'pend') { e.status = 'pendente'; }
+      });
+      if (erro) { msg.textContent = erro; return; }
+      novo.atrasos = [].map.call(ov.querySelectorAll('.ed-atraso'), function(b){ return { titulo: v(b, '.a-tit'), causa: v(b, '.a-cau'), porque: v(b, '.a-por'), acao: v(b, '.a-aca'), nova: v(b, '.a-nov') }; }).filter(function(a){ return a.titulo || a.porque; });
+      var decs = [].slice.call(ov.querySelectorAll('.ed-dec'));
+      novo.decisoes = decs.map(function(b){ return { titulo: v(b, '.d-tit'), resp: v(b, '.d-res'), porque: v(b, '.d-por') }; }).filter(function(x){ return x.titulo; });
+      novo.marcos = [].map.call(ov.querySelectorAll('.ed-marco'), function(b){ return { data: v(b, '.m-dat'), tag: v(b, '.m-tag'), tipo: v(b, '.m-tip') || 'ok', titulo: v(b, '.m-tit'), texto: v(b, '.m-tex') }; }).filter(function(m){ return m.titulo; });
+      novo.atualizado = iso(hoje); novo._salvoEm = new Date().toISOString();
+      bt.disabled = true; msg.textContent = 'Publicando…';
+      fetch(EDIT + '/rampa', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(novo, null, 2) })
+        .then(function(r){ return r.json(); })
+        .then(function(r){
+          if (!r.ok) { msg.textContent = r.msg || 'Não consegui salvar.'; bt.disabled = false; return; }
+          render(novo);
+          msg.textContent = r.publicado ? 'Publicado. Os outros leitores veem em até 5 minutos.' : (r.msg || 'Salvo.');
+          setTimeout(fechar, 1800);
+        })
+        .catch(function(){ msg.textContent = 'Não consegui falar com o editor local.'; bt.disabled = false; });
+    };
+  }
 })();
 </script>
 </body></html>
