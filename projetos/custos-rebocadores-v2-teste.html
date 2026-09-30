@@ -1574,7 +1574,7 @@ V.resumo = function() {
         const shGrandeCur = gCur.filter(r => r.tier === 'Grande').reduce((s, r) => s + r.h, 0) / hCur * 100;
         const shGrandePrv = gPrv.filter(r => r.tier === 'Grande').reduce((s, r) => s + r.h, 0) / hPrv * 100;
         if (Math.abs(decT.mixTot) > Math.max(1000, a.c * 0.001)) {
-            msgs.push(`<b>Porte das embarcações:</b> as horas em rebocadores de <b>grande porte</b> foram de <b>${NF1.format(shGrandePrv)}%</b> (${prv}) para <b>${NF1.format(shGrandeCur)}%</b> (${cur}) do total; isso ${decT.mixTot<0?`sozinho evitou <b>${fMi(Math.abs(decT.mixTot))}</b>`:`sozinho custou <b>${fMi(Math.abs(decT.mixTot))}</b> a mais`} em ${cur}, além do efeito de renegociação de tarifa (aba <i>Resumo</i>, card “Renegociação de tarifa vs. porte”).`);
+            msgs.push(`<b>Porte das embarcações:</b> as horas em rebocadores de <b>grande porte</b> foram de <b>${NF1.format(shGrandePrv)}%</b> (${prv}) para <b>${NF1.format(shGrandeCur)}%</b> (${cur}) do total; isso ${decT.mixTot<0?`sozinho evitou <b>${fMi(Math.abs(decT.mixTot))}</b>`:`sozinho custou <b>${fMi(Math.abs(decT.mixTot))}</b> a mais`} em ${cur}, além do efeito de renegociação de tarifa (aba <i>Eficiência em custos</i>).`);
         }
     }
     // dispersão
@@ -3131,8 +3131,16 @@ function enxugarTopo() {
 const _gestaoV2 = V.gestao;
 V.gestao = function() {
     const b = _gestaoV2();
-    return { html: b.html, after() { b.after(); tirarDestaques(); enxugarTopo(); } };
+    return { html: b.html, after() { b.after(); tirarDestaques(); enxugarTopo(); trazerTotalPago(); } };
 };
+/* "Total pago segundo a planilha" (vinha da aba Resumo, que saiu) no fim da 1ª aba */
+function trazerTotalPago() {
+    try {
+        const tmp = document.createElement('div'); tmp.innerHTML = V.resumo().html;
+        const c = [...tmp.querySelectorAll('.card')].find(x => ((x.querySelector('h3') || {}).textContent || '').startsWith('Total pago'));
+        if (c) { c.classList.add('mt'); $('#view').appendChild(c); }
+    } catch (e) {}
+}
 
 /* ===================== v2: topo minimalista, logo negativo, filtros discretos, detalhe ao clicar ===================== */
 const ICO = {
@@ -3619,7 +3627,6 @@ function tabelaVisual(t) {
 /* ---------- shell ---------- */
 const TABS = [
     ['gestao', 'Eficiência em custos'],
-    ['resumo', 'Resumo executivo'],
     ['preco', 'Preço por hora'],
     ['volume', 'Volume × preço'],
     ['forn', 'Fornecedores'],
