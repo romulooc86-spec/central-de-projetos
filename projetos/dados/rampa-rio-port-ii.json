@@ -1,0 +1,152 @@
+{
+  "atualizado": "2026-09-30",
+  "fonte": "E-mails do projeto (MSE e Prime Ocean) e memorial descritivo Rev. 1",
+  "eixo": { "ini": "2026-09-01", "fim": "2026-10-09" },
+  "decisoes": [
+    {
+      "titulo": "Definir a data limite da análise das propostas",
+      "resp": "Prime Ocean",
+      "porque": "As propostas chegaram em 28/09 e a análise ainda não tem data limite."
+    },
+    {
+      "titulo": "Aprovar o fornecedor e contratar a adequação da rampa",
+      "resp": "Diretoria",
+      "porque": "É o único marco sem data e o que destrava a execução de olhais, estrutura e roletes."
+    },
+    {
+      "titulo": "Programar a janela de execução com a operação",
+      "resp": "Operações",
+      "porque": "A balsa já opera com o CSN: a parada para a obra precisa caber entre os carregamentos."
+    }
+  ],
+  "etapas": [
+    {
+      "n": 1, "curto": "Levantamento as built", "nome": "Levantamento as built dos olhais da rampa e da balsa",
+      "resp": "Prime Ocean / MSE", "orig": "2026-09-08", "real": "2026-09-08",
+      "detalhes": [
+        "Medição em campo dos olhais existentes e comparação com o projeto de referência de 2024.",
+        "Identificação de 2 olhais fora da posição projetada.",
+        "Registro fotográfico e memorial de medição consolidado e compartilhado com a Prime Ocean."
+      ]
+    },
+    {
+      "n": 2, "curto": "Correção do posicionamento", "nome": "Correção do posicionamento dos olhais conforme o levantamento realizado",
+      "resp": "MSE", "orig": "2026-09-09", "real": "2026-09-21",
+      "detalhes": [
+        "Visita técnica da MSE em 09/09 para conferência manual da posição dos olhais (ver evidência fotográfica).",
+        "Em 01/09 a MSE definiu a adequação: corte e preparação dos olhais do costado e fabricação de eixo, 2 vigas com travamento, 2 discos e 4 suportes.",
+        "A rampa está sem os 2 olhais centrais de projeto: o estudo anterior perdeu a validade e precisou ser revisado.",
+        "Concluída com a emissão do projeto atualizado em 21/09."
+      ]
+    },
+    {
+      "n": 3, "curto": "Projeto atualizado", "nome": "Envio do projeto atualizado com a nova locação dos olhais",
+      "resp": "MSE", "orig": "2026-09-09", "real": "2026-09-21",
+      "detalhes": [
+        "Desenhos de detalhe e análise estrutural da MSE (set/2026) anexados ao memorial.",
+        "Incorpora o conjunto de roletes pedido em 02/09 (4 roletes, cerca de 0,97 t); a análise considerou 74,1 t de carga operacional."
+      ]
+    },
+    {
+      "n": 4, "curto": "Análise e validação", "nome": "Análise e validação do projeto atualizado",
+      "resp": "Prime Ocean", "orig": "2026-09-10", "real": "2026-09-21",
+      "detalhes": [
+        "Conferência técnica do projeto revisado pela engenharia da Prime Ocean.",
+        "Validação de compatibilidade estrutural com a balsa Rio Port II.",
+        "Concluída em 21/09, junto com a emissão da Rev. 1."
+      ]
+    },
+    {
+      "n": 5, "curto": "Memorial descritivo", "nome": "Elaboração do memorial descritivo para execução dos serviços",
+      "resp": "Prime Ocean", "orig": "2026-09-11", "real": "2026-09-21",
+      "detalhes": [
+        "Memorial Rev. 1 (21/09) substitui integralmente a Rev. 0 e inclui o conjunto de roletes: fornecimento, fabricação, usinagem, montagem, soldagem, instalação, inspeções e critérios de aceitação.",
+        "Critério de liberação: projeto, soldas e END, teste funcional, prova de carga, pintura e documentação."
+      ]
+    },
+    {
+      "n": 6, "curto": "Envio aos fornecedores", "nome": "Envio do memorial e do projeto aos fornecedores",
+      "resp": "Prime Ocean", "orig": "2026-09-11", "real": "2026-09-22",
+      "detalhes": [
+        "Memorial Rev. 1 e desenhos enviados aos fornecedores em 22/09.",
+        "Prazo para a proposta: 28/09."
+      ]
+    },
+    {
+      "n": 7, "curto": "Propostas dos fornecedores", "nome": "Elaboração das propostas técnicas e comerciais",
+      "resp": "Fornecedores", "orig": "2026-09-18", "real": "2026-09-28",
+      "detalhes": [
+        "Propostas elaboradas para o escopo integral da Rev. 1.",
+        "Janela de 6 dias contada do envio do memorial (22 a 28/09)."
+      ]
+    },
+    {
+      "n": 8, "curto": "Recebimento dos orçamentos", "nome": "Recebimento dos orçamentos",
+      "resp": "Prime Ocean", "orig": "2026-09-18", "real": "2026-09-28",
+      "detalhes": [
+        "Propostas recebidas em 28/09/2026.",
+        "Próximo passo: análise comparativa de preço, prazo e escopo."
+      ]
+    },
+    {
+      "n": 9, "curto": "Análise das propostas", "nome": "Análise técnica e comercial das propostas",
+      "resp": "Prime Ocean", "orig": "2026-09-22", "ini": "2026-09-29",
+      "detalhes": [
+        "Comparação técnica e comercial entre os fornecedores (preço, prazo e aderência à Rev. 1).",
+        "Recomendação final para aprovação da diretoria.",
+        "Em andamento desde 29/09, sem data limite definida."
+      ]
+    },
+    {
+      "n": 10, "curto": "Contratação do fornecedor", "nome": "Definição do fornecedor e início da contratação",
+      "resp": "Prime Ocean", "status": "pendente",
+      "detalhes": [
+        "Aprovação do fornecedor recomendado pela diretoria.",
+        "Formalização do contrato ou pedido de compra.",
+        "Definição do cronograma de fabricação junto ao fornecedor contratado."
+      ]
+    },
+    {
+      "n": 11, "curto": "Programação da execução", "nome": "Programação da execução da adequação (olhais, estrutura e roletes)",
+      "resp": "Prime Ocean / Fornecedor", "status": "pendente",
+      "detalhes": [
+        "Agendamento da execução em campo (fabricação e instalação).",
+        "Coordenação com a operação da balsa: a Rio Port II já opera com o CSN, então a janela de parada precisa ser combinada com os carregamentos.",
+        "Definição de eventual janela de parada."
+      ]
+    }
+  ],
+  "atrasos": [
+    {
+      "titulo": "Projeto, análise e memorial (etapas 2 a 6)",
+      "dias": "",
+      "causa": "Escopo ampliado",
+      "porque": "Em 02/09 entrou o estudo de roletes na ponta da rampa (4 a 5 dias úteis) e a retirada dos olhais centrais exigiu revisar o estudo estrutural. A Rev. 1 do memorial substituiu integralmente a Rev. 0.",
+      "acao": "Rev. 1 emitida em 21/09 e enviada aos fornecedores em 22/09.",
+      "nova": "Concluído"
+    },
+    {
+      "titulo": "Propostas e recebimento (etapas 7 e 8)",
+      "dias": "",
+      "causa": "Efeito em cascata",
+      "porque": "O prazo de 6 dias dos fornecedores foi contado do envio da Rev. 1 (22/09), 11 dias depois do previsto.",
+      "acao": "Propostas recebidas em 28/09.",
+      "nova": "Concluído"
+    },
+    {
+      "titulo": "Análise técnica e comercial (etapa 9)",
+      "dias": "",
+      "causa": "Decisão pendente",
+      "porque": "Propostas em mãos desde 28/09, sem data limite definida para a análise e para a escolha do fornecedor.",
+      "acao": "Definir a data limite da análise e aprovar o fornecedor (decisões 1 e 2).",
+      "nova": "A definir"
+    }
+  ],
+  "marcos": [
+    { "data": "21 e 22/09", "tag": "CONCLUÍDO", "tipo": "ok", "titulo": "Memorial Rev. 1 emitido e enviado", "texto": "Projeto atualizado, análise e memorial com os roletes incorporados, prontos para cotação." },
+    { "data": "28/09", "tag": "CONCLUÍDO", "tipo": "ok", "titulo": "Propostas recebidas", "texto": "Fecha a fase de engenharia e abre a decisão de contratação." },
+    { "data": "Desde 29/09", "tag": "EM ANDAMENTO", "tipo": "watch", "titulo": "Análise técnica e comercial", "texto": "Comparação de preço, prazo e aderência à Rev. 1. Ainda sem data limite definida." },
+    { "data": "A definir", "tag": "RISCO", "tipo": "risk", "titulo": "Contratação do fornecedor", "texto": "Único marco sem data e maior risco isolado para a rampa. Não afeta a operação da balsa, já liberada pelo CSN." },
+    { "data": "A definir", "tag": "DEPENDE DA CONTRATAÇÃO", "tipo": "risk", "titulo": "Execução da adequação", "texto": "Olhais, estrutura e roletes. A janela de parada precisa ser combinada com os carregamentos da balsa." }
+  ]
+}
