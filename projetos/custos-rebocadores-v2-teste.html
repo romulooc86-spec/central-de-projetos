@@ -3494,6 +3494,7 @@ function aplicarAnalitico() {
     _anT = setTimeout(() => {
         [document.getElementById('view'), document.getElementById('drwBody')].forEach(root => {
             if (!root) return;
+            tirarRepetidos(root);
             totalPagoExecutivo(root);
             $$('table', root).forEach(t => { if (root.id === 'view' && tabelaVisual(t)) return; analiticoTabela(t); });
             suavizarLinhas(root);
@@ -3534,6 +3535,13 @@ function totalPagoExecutivo(root) {
           <span class="tp-v"><b>${fMi(T)}</b>${d == null ? '' : ` <em class="${d > 0 ? 'du' : 'dd'}">${d > 0 ? '▲' : '▼'} ${NF1.format(Math.abs(d) * 100)}%</em>`}</span>
           <span class="tp-s">diárias ${fMi(D)} · ${pp(T ? D / T : 0)}</span></div>`; }).join('');
     t.closest('.tw').outerHTML = `<div class="tp">${linhas}</div><div class="iab-leg"><span><i style="background:var(--teal-deep)"></i>serviço por hora (base do painel)</span><span><i style="background:var(--y-old)"></i>diárias, afretamentos e demais</span></div>`;
+}
+
+/* quadros repetidos: "Tarifa média por fornecedor" em barras (aba Preço) duplica o ranking logo abaixo — fica só o ranking */
+function tirarRepetidos(root) {
+    const ct = root.querySelector('#ch-tar'); if (!ct) return;
+    const c = ct.closest('.card'); if (!c) return; const par = c.parentElement; c.remove();
+    if (par && par.classList.contains('two') && par.children.length === 1) par.style.gridTemplateColumns = '1fr';
 }
 
 /* ===================== v2: tabelas das abas viram rankings visuais (executivo) =====================
