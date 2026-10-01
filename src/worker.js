@@ -80,7 +80,7 @@ function validar(e) {
     ids.add(id);
     categorias.push({
       id, nome, cor: /^#[0-9a-f]{6}$/i.test(c.cor) ? c.cor : "#8A8C91", nota: txt(c.nota, 120),
-      empresa: c.empresa === "primeocean" ? "primeocean" : "triunfo",
+      icone: txt(c.icone, 20),
     });
   }
   const vistos = new Set();

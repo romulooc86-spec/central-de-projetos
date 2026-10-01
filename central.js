@@ -28,6 +28,28 @@ const IC = {
 };
 const icone = (nome, extra) => el("span", { html: IC[nome], style: "display:inline-flex", ...(extra || {}) });
 
+/* ícones das pastas (traço simples, herdam a cor da pasta) */
+const tr = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICONES_CAT = {
+  navio: tr('<path d="M3 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M5 14 4 9h16l-1 5"/><path d="M8 9V5h8v4"/>'),
+  ancora: tr('<circle cx="12" cy="5" r="2"/><path d="M12 7v14M8 11h8"/><path d="M5 14a7 7 0 0 0 14 0"/>'),
+  guindaste: tr('<path d="M4 21h8M8 21V6l10 2M8 6 4 10"/><path d="M18 8v6"/><circle cx="18" cy="16" r="2"/>'),
+  engrenagem: tr('<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>'),
+  grafico: tr('<path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/>'),
+  documento: tr('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 13h5M10 17h5"/>'),
+  equipe: tr('<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.3"/><path d="M17 14.2c2.3.3 4 2.3 4 4.8"/>'),
+  pessoa: tr('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>'),
+  predio: tr('<path d="M5 21V4h9v17M14 9h5v12M3 21h18"/><path d="M8 8h3M8 12h3M8 16h3"/>'),
+  caminhao: tr('<path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>'),
+  pasta: tr('<path d="M3 6a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+};
+const ROTULOS_ICONE = { navio:"Navio", ancora:"Âncora (Prime Ocean)", guindaste:"Guindaste (terminal)", engrenagem:"Engrenagem (operações)", grafico:"Gráfico", documento:"Documento", equipe:"Equipe", pessoa:"Pessoal", predio:"Prédio", caminhao:"Caminhão", pasta:"Pasta" };
+const ICONE_AUTO = [[/prime|ocean|rebocador|balsa/i,"ancora"],[/navio|boletim|produ/i,"navio"],[/tps|terminal|cais|porto/i,"guindaste"],[/opera|abastec|docagem/i,"engrenagem"],[/equipe/i,"equipe"],[/pessoal/i,"pessoa"],[/indicador|custo|result/i,"grafico"],[/plane|document|relat/i,"documento"],[/log[ií]stic|transporte|carga/i,"caminhao"]];
+const iconeCat = c => {
+  const k = ICONES_CAT[c.icone] ? c.icone : (ICONE_AUTO.find(([re]) => re.test(c.nome)) || [0, "pasta"])[1];
+  return el("span", { class: "ico-cat", html: ICONES_CAT[k], "aria-hidden": "true" });
+};
+
 /* ---------- aparência ---------- */
 function aplicarTema(t){
   document.documentElement.dataset.tema = t;
@@ -45,13 +67,12 @@ let fechados = new Set(JSON.parse(ls.get("cp-fechados", "[]")));
 let favoritos = new Set(JSON.parse(ls.get("cp-favs", "[]")));
 let arrastando = null;
 
-const empresaDe = c => c.empresa || (/prime\s*ocean/i.test(c.nome) ? "primeocean" : "triunfo");
 
 function estadoDoArquivo(){
   const seed = (window.PROJETOS || []).slice().sort((a, b) => (b.atualizado || "").localeCompare(a.atualizado || "") || a.titulo.localeCompare(b.titulo));
   const ordemCat = ["Boletins de navio", "Área da equipe", "TPS", "Prime Ocean", "Operações", "Pessoal"];
   const nomes = [...new Set(seed.map(i => i.categoria))].sort((a, b) => (ordemCat.indexOf(a) + 1 || 99) - (ordemCat.indexOf(b) + 1 || 99));
-  const categorias = nomes.map((n, k) => ({ id: slug(n), nome: n, cor: COR_PADRAO[n] || CORES[k % CORES.length], nota: NOTA_PADRAO[n] || "", empresa: /prime\s*ocean/i.test(n) ? "primeocean" : "triunfo" }));
+  const categorias = nomes.map((n, k) => ({ id: slug(n), nome: n, cor: COR_PADRAO[n] || CORES[k % CORES.length], nota: NOTA_PADRAO[n] || "" }));
   const usados = new Set();
   const itens = seed.map(i => { let id = slug(i.titulo), n = 2; while (usados.has(id)) id = slug(i.titulo) + "-" + n++; usados.add(id);
     return { id, titulo: i.titulo, url: i.url, cat: slug(i.categoria), descricao: i.descricao || "", atualizado: i.atualizado || "" }; });
@@ -126,9 +147,9 @@ function render(){
   $("#sub").textContent = `${total} projetos · ${frentes} pastas · ${livres} abrem sem login`;
 
   const chips = $("#chips"); chips.replaceChildren();
-  [{ id: "Todos", nome: "Todos" }, ...cats.filter(c => qtdDe(c) || editando)].forEach(c => chips.append(el("button", { type: "button", class: "chip" + (c.id !== "Todos" && empresaDe(c) === "primeocean" ? " chip-po" : ""), style: c.id === "Todos" ? "" : `--cat:${empresaDe(c) === "primeocean" ? "#06BEAE" : c.cor}`, "aria-pressed": String(c.id === filtroCat),
+  [{ id: "Todos", nome: "Todos" }, ...cats.filter(c => qtdDe(c) || editando)].forEach(c => chips.append(el("button", { type: "button", class: "chip", style: c.id === "Todos" ? "" : `--cat:${c.cor}`, "aria-pressed": String(c.id === filtroCat),
     onclick: () => { filtroCat = c.id; ls.set("cp-filtro", c.id); render(); } },
-    c.id === "Todos" ? null : el("i"), c.bloqueada ? icone("cadeado", { style: "display:inline-flex;width:12px;height:12px" }) : null, c.nome, el("span", { class: "n", text: c.id === "Todos" ? total : qtdDe(c) }))));
+    c.id === "Todos" ? null : iconeCat(c), c.bloqueada ? icone("cadeado", { style: "display:inline-flex;width:12px;height:12px" }) : null, c.nome, el("span", { class: "n", text: c.id === "Todos" ? total : qtdDe(c) }))));
   $("#ordem").value = ordem;
   $("#vGrade").setAttribute("aria-pressed", String(visao !== "lista"));
   $("#vLista").setAttribute("aria-pressed", String(visao === "lista"));
@@ -138,10 +159,10 @@ function render(){
 
   const q = norm($("#busca").value.trim());
   const ord = ordenadores[ordem];
-  const lista = $("#lista"), fav = $("#fav"), poBox = $("#po");
-  lista.replaceChildren(); fav.replaceChildren(); poBox.replaceChildren();
+  const lista = $("#lista"), fav = $("#fav");
+  lista.replaceChildren(); fav.replaceChildren();
   let achou = 0, k = 0;
-  const secTriunfo = [], secPO = [];
+  const secTriunfo = [];
 
   /* favoritos (só na visão geral, sem busca) */
   if (!q && filtroCat === "Todos") {
@@ -158,14 +179,13 @@ function render(){
     if (c.bloqueada ? q : (!vis.length && (q || !editando))) return;
     achou += c.bloqueada ? 1 : vis.length;
     const fechado = fechados.has(c.id) && !q;
-    const po = empresaDe(c) === "primeocean";
-    const cor = po ? "#06BEAE" : c.cor;
+    const cor = c.cor;
     const corpo = c.bloqueada
       ? el("div", { class: "trava" }, icone("cadeado"), el("p", {}, el("b", { text: "Pasta protegida. " }), `${c.qtd || 0} projeto(s) aqui. Digite a senha para ver.`),
           el("button", { type: "button", class: "btn primario", onclick: () => dialogoDesbloquear(c) }, "Digitar senha"))
       : vis.length ? el("div", { class: "grade" }, vis.map(i => card(i, k++))) : el("div", { class: "grade-vazia", text: "Pasta vazia. Arraste um projeto para cá ou crie um novo." });
     const sec = el("section", { class: "grupo" + (fechado ? " fechado" : ""), style: `--cat:${cor}`, "data-cat": c.id },
-      el("div", { class: "grupo-cab" }, el("span", { class: "ponto" }), el("h2", { text: c.nome }), el("span", { class: "qtd", text: String(c.bloqueada ? (c.qtd || 0) : vis.length) }),
+      el("div", { class: "grupo-cab" }, iconeCat(c), el("h2", { text: c.nome }), el("span", { class: "qtd", text: String(c.bloqueada ? (c.qtd || 0) : vis.length) }),
         c.restrita && !c.bloqueada ? el("span", { class: "nota", title: "Pasta com senha (você já liberou)" }, "🔓 protegida") : null,
         (c.nota ? el("span", { class: "nota", text: c.nota }) : null),
         el("div", { class: "fim" },
@@ -177,13 +197,10 @@ function render(){
       sec.addEventListener("dragleave", e => { if (!sec.contains(e.relatedTarget)) sec.classList.remove("alvo-grupo"); });
       sec.addEventListener("drop", e => { e.preventDefault(); sec.classList.remove("alvo-grupo"); soltar(c.id, null); });
     }
-    (po ? secPO : secTriunfo).push(sec);
+    secTriunfo.push(sec);
   });
 
   if (secTriunfo.length) lista.append(el("div", { class: "bloco" }, secTriunfo));
-  if (secPO.length) poBox.append(el("section", { class: "po", "aria-label": "Prime Ocean Navegação" }, el("div", { class: "po-in" },
-    el("div", { class: "po-cab" }, el("img", { class: "po-logo", src: "projetos/img/logo-primeocean-neg.png", alt: "Prime Ocean Navegação" }), el("span", { class: "po-lema", text: "O futuro vem pelo mar" })),
-    secPO)));
   $("#vazio").hidden = achou > 0 || (editando && !q);
 
   const algumaLiberada = cats.some(c => c.restrita && !c.bloqueada) && !editando;
@@ -198,7 +215,7 @@ function card(i, n){
   const abs = new URL(i.url, location.href).href;
   const novo = i.atualizado && diasDesde(i.atualizado) <= 7;
   const fav = favoritos.has(i.id);
-  const art = el("article", { class: "card", "data-id": i.id, style: `--i:${Math.min(n || 0, 14)}` + (empresaDe(c) === "primeocean" ? "" : (c.cor ? `;--cat:${c.cor}` : "")) },
+  const art = el("article", { class: "card", "data-id": i.id, style: `--i:${Math.min(n || 0, 14)}` + (c.cor ? `;--cat:${c.cor}` : "") },
     editando ? el("span", { class: "card-alca", title: "Arraste para mover ou reordenar", "aria-hidden": "true", text: "⋮⋮" }) : null,
     el("a", { class: "card-corpo", href: i.url, target: "_blank", rel: "noopener" },
       el("div", { class: "card-topo" }, el("span", { class: "card-tipo", text: tipoDe(i) }), novo ? el("span", { class: "tag", text: "Novo" }) : null,
@@ -296,7 +313,7 @@ function dialogoProjeto(it){
 function criarCategoria(nome){
   const ja = estado.categorias.find(c => norm(c.nome) === norm(nome)); if (ja) return ja.id;
   let id = slug(nome), n = 2; while (catDe(id)) id = slug(nome) + "-" + n++;
-  estado.categorias.push({ id, nome, cor: CORES[estado.categorias.length % CORES.length], nota: "", empresa: "triunfo" });
+  estado.categorias.push({ id, nome, cor: CORES[estado.categorias.length % CORES.length], nota: "" });
   return id;
 }
 
@@ -306,8 +323,8 @@ function dialogoCategorias(){
     caixa.replaceChildren();
     const n = {}; estado.itens.forEach(i => n[i.cat] = (n[i.cat] || 0) + 1);
     estado.categorias.forEach((c, k) => caixa.append(el("div", { class: "linha-cat" },
-      el("span", { class: "ponto", style: `background:${empresaDe(c) === "primeocean" ? "#06BEAE" : c.cor}` }),
-      el("div", {}, el("b", { text: c.nome }), el("small", { text: `${n[c.id] || 0} projeto(s) · ${empresaDe(c) === "primeocean" ? "Prime Ocean" : "Triunfo"}${c.restrita ? " · 🔒 com senha" : " · aberta"}` })),
+      iconeCat(c),
+      el("div", {}, el("b", { text: c.nome }), el("small", { text: `${n[c.id] || 0} projeto(s)${c.restrita ? " · 🔒 com senha" : " · aberta"}` })),
       el("div", { class: "btns" },
         el("button", { type: "button", class: "btn", title: "Subir", disabled: k === 0 ? "disabled" : false, onclick: () => { [estado.categorias[k - 1], estado.categorias[k]] = [estado.categorias[k], estado.categorias[k - 1]]; mudou(); desenhar(); } }, "↑"),
         el("button", { type: "button", class: "btn", title: "Descer", disabled: k === estado.categorias.length - 1 ? "disabled" : false, onclick: () => { [estado.categorias[k + 1], estado.categorias[k]] = [estado.categorias[k], estado.categorias[k + 1]]; mudou(); desenhar(); } }, "↓"),
@@ -315,16 +332,16 @@ function dialogoCategorias(){
     caixa.append(el("button", { type: "button", class: "btn", onclick: () => dialogoUmaCategoria(null).then(desenhar) }, "+ Nova pasta"));
   };
   desenhar();
-  return abrirDialogo("Pastas e acessos", "Renomeie, escolha a empresa, a cor, a ordem e quem pode abrir cada pasta.", caixa, dlg => [el("button", { type: "button", class: "btn primario", onclick: () => dlg.close() }, "Fechar")]);
+  return abrirDialogo("Pastas e acessos", "Renomeie, escolha o ícone, a cor, a ordem e quem pode abrir cada pasta.", caixa, dlg => [el("button", { type: "button", class: "btn primario", onclick: () => dlg.close() }, "Fechar")]);
 }
 
 function dialogoUmaCategoria(c){
   const novo = !c;
-  const base = c || { nome: "", cor: CORES[estado.categorias.length % CORES.length], nota: "", empresa: "triunfo", restrita: false };
+  const base = c || { nome: "", cor: CORES[estado.categorias.length % CORES.length], nota: "", icone: "", restrita: false };
   let cor = base.cor;
   const fNome = el("input", { value: base.nome, maxlength: "60", autocomplete: "off" });
   const fNota = el("input", { value: base.nota, maxlength: "120", placeholder: "Ex.: Uso interno da equipe" });
-  const fEmp = el("select", {}, el("option", { value: "triunfo", text: "Triunfo Logística" }), el("option", { value: "primeocean", text: "Prime Ocean Navegação (faixa azul-marinho)" })); fEmp.value = empresaDe(base);
+  const fIcone = el("select", {}, el("option", { value: "", text: "Automático (pelo nome)" }), ...Object.keys(ICONES_CAT).map(k => el("option", { value: k, text: ROTULOS_ICONE[k] }))); fIcone.value = base.icone || "";
   const fAcesso = el("select", {}, el("option", { value: "aberto", text: "Aberta: qualquer pessoa com o link da Central" }), el("option", { value: "senha", text: "Protegida: só com a senha desta pasta" })); fAcesso.value = base.restrita ? "senha" : "aberto";
   const fSenha = el("input", { type: "password", autocomplete: "new-password", maxlength: "80", placeholder: base.restrita ? "Deixe em branco para manter a senha atual" : "Defina a senha desta pasta (mín. 4 caracteres)" });
   const caixaSenha = campo("Senha da pasta", fSenha, "Quem souber a senha vê os projetos e abre os painéis da pasta. Você, logado na edição, vê tudo.");
@@ -333,7 +350,7 @@ function dialogoUmaCategoria(c){
   const pintar = () => { paleta.replaceChildren(...CORES.map(h => el("button", { type: "button", style: `background:${h}`, "aria-label": h, "aria-pressed": String(h.toLowerCase() === cor.toLowerCase()), onclick: () => { cor = h; pintar(); } }))); };
   pintar();
   const erro = el("div", { class: "dlg-erro", role: "alert" });
-  return abrirDialogo(novo ? "Nova pasta" : "Configurar pasta", null, [campo("Nome", fNome), campo("Descrição curta (opcional)", fNota), campo("Empresa", fEmp), campo("Acesso", fAcesso), caixaSenha, campo("Cor (pastas da Triunfo)", paleta), erro], dlg => {
+  return abrirDialogo(novo ? "Nova pasta" : "Configurar pasta", null, [campo("Nome", fNome), campo("Descrição curta (opcional)", fNota), campo("Ícone", fIcone), campo("Acesso", fAcesso), caixaSenha, campo("Cor", paleta), erro], dlg => {
     const usados = estado.itens.filter(i => c && i.cat === c.id).length;
     return [
       novo ? null : el("button", { type: "button", class: "btn perigo esq", disabled: usados ? "disabled" : false, title: usados ? "Mova os projetos para outra pasta antes de excluir." : "", onclick: () => { if (confirm(`Excluir a pasta "${c.nome}"?`)) { estado.categorias = estado.categorias.filter(x => x.id !== c.id); dlg.close(); mudou(); } } }, "Excluir"),
@@ -345,8 +362,8 @@ function dialogoUmaCategoria(c){
         if (quer && !base.restrita && nova.length < 4) return erro.textContent = "Defina uma senha de pelo menos 4 caracteres.";
         if (quer && nova && nova.length < 4) return erro.textContent = "A senha deve ter pelo menos 4 caracteres.";
         let alvo = c;
-        if (novo) { let id = slug(nome), n = 2; while (catDe(id)) id = slug(nome) + "-" + n++; alvo = { id, nome, cor, nota: fNota.value.trim(), empresa: fEmp.value }; estado.categorias.push(alvo); }
-        else Object.assign(c, { nome, cor, nota: fNota.value.trim(), empresa: fEmp.value });
+        if (novo) { let id = slug(nome), n = 2; while (catDe(id)) id = slug(nome) + "-" + n++; alvo = { id, nome, cor, nota: fNota.value.trim(), icone: fIcone.value }; estado.categorias.push(alvo); }
+        else Object.assign(c, { nome, cor, nota: fNota.value.trim(), icone: fIcone.value });
         const mexerAcesso = (quer && nova) || (!quer && base.restrita);
         dlg.close(); mudou();
         if (mexerAcesso) {
