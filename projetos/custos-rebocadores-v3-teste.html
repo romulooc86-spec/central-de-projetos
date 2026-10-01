@@ -731,6 +731,13 @@ body[data-tab="v3res"] #fbar,body[data-tab="v3res"] #filters{display:none!import
 .cp-pos .cp-it > b i{color:#06BEAE}
 .cp-opp h3 span{background:#0A0A0A}.cp-pos h3 span{background:#06BEAE}
 .cp-opp{border-top-color:#0A0A0A!important}.cp-pos{border-top-color:#06BEAE!important}
+
+/* ===== ajustes de acabamento da capa ===== */
+.v3-capa .cp-big{text-shadow:none!important}
+.cp-pos .cp-it > b,.cp-opp .cp-it > b{color:#048C80!important}
+.cp-pos .cp-it > b i{color:#048C80}
+.cp-opp h3 em{color:#5C676C!important;font:500 11.5px var(--font-body)!important;text-transform:none;letter-spacing:0}
+.v3-pm-seg{flex-wrap:wrap}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -4146,6 +4153,7 @@ V3.oper = function () {
     const aviso = `<p class="v3-nota">Cada linha da planilha é um rebocador numa operação (“acionamento”). O <b>tipo de operação</b> e o <b>local</b> são lidos das colunas <i>Observação</i> e <i>Origem e destino</i>; ${semObs ? `${v3Pct(semObs / Math.max(1, rCur.length))} das linhas de ${cur} estão sem observação` : 'todas as linhas têm observação'}${semCli ? ` e ${v3Pct(semCli / Math.max(1, rCur.length))} sem cliente` : ''}. Para precisão total, a planilha precisa das colunas <b>Tipo de operação</b> e <b>Tipo de carga</b> (lista suspensa).</p>`;
 
     const html = `${head}
+    ${(() => { try { return v3OpsCustosas(rCur, rs); } catch (e) { console.warn("ops custosas", e); return ""; } })()}
     ${card(`O que mais fazemos: <b>${esc((tp[0] || { k: '—' }).k)}</b> lidera com ${tp[0] && tCur ? v3Pct(tp[0].v / tCur) : '—'} do gasto`, `${cur} × ${prv} · barra clara = ${prv} · tipo inferido das observações`, v3Rank(tp, { dot: (g, i) => V3_COR[i % V3_COR.length], total: tCur }) )}
     ${card('Gasto mensal por tipo de operação', `R$ mil por mês em ${cur}`, v3Stack(rs, v3Tipo, top(tipos, 5).map(g => g.k), mx))}
     ${card(`Onde acontece: <b>${esc((lid || { k: '—' }).k)}</b> é o ponto mais movimentado`, `Berços, fundeio, pátio e portos · origem e destino contam um acionamento em cada ponta; o valor é dividido entre elas`, v3Rank(locais, { max: 10, dot: g => nCol[v3Natureza(g.k)], sub: g => v3Natureza(g.k) }) + `<div class="pn-leg" style="margin-top:8px">${Object.entries(nCol).map(([k, c]) => `<span><i style="background:${c}"></i><b>${k}</b></span>`).join('')}</div>`)}
@@ -4224,7 +4232,7 @@ V3.capa = function (tc, tp, H, Hp, stand, lid) {
       <section class="cp-pos"><h3><span>✔</span>Destaques positivos</h3>
         ${pos.map(o => `<div class="cp-it"><b>${o.b}</b><div><strong>${o.t}</strong><small>${o.s}</small></div></div>`).join('')}
       </section>
-      <section class="cp-opp"><h3><span>↗</span>Oportunidades de melhoria<em>${fMi(opTot)}</em></h3>
+      <section class="cp-opp"><h3><span>↗</span>Oportunidades de melhoria<em>potencial mapeado · itens podem se sobrepor</em></h3>
         ${ops.map(o => `<div class="cp-it"><b>${fMi(o.v)}</b><div><strong>${o.t}</strong><small>${o.s}</small></div></div>`).join('')}
       </section>
     </div>
@@ -4548,6 +4556,29 @@ function v3MixTarifa(G, MX) {
         `<div class="pn-leg"><span><i style="background:var(--teal)"></i><b>Pequeno</b></span><span><i style="background:#5F8793"></i><b>Médio</b></span><span><i style="background:var(--navy)"></i><b>Grande</b></span></div>${svg}${chips}<p class="v3-nota" style="margin:10px 0 0">O porte é escolhido pela exigência de cada manobra e sempre dentro da margem de segurança.${forn}</p>`);
 }
 
+/* ===== operações mais custosas: por operação, embarcação atendida (balsa), tipo de operação ou rebocador ===== */
+function v3OpsCustosas(rCur, rs) {
+    if (!rCur.length) return '';
+    const tot = v3Soma(rCur), cur = S.cur;
+    const dm = d => d.slice(8, 10) + '/' + d.slice(5, 7);
+    const tc = s => s.trim().toLowerCase().replace(/(^|\s|\/)\S/g, c => c.toUpperCase());
+    const agrupa = (keyFn) => { const m = new Map(); rCur.forEach(r => { const k = keyFn(r); if (!k) return; const g = m.get(k) || { k, n: 0, h: 0, v: 0, p: 0 }; g.n += 1; g.h += r.h || 0; g.v += r.vt || 0; m.set(k, g); }); return [...m.values()].sort((a, b) => b.v - a.v); };
+    const ops = agrupa(r => `${r.d}|${v3Balsa(r.l)}|${(r.od || '').trim() || 'trajeto não informado'}`).map(g => { const [d, b, od] = g.k.split('|'); return { ...g, k: `${dm(d)} · ${b} · ${tc(od).replace(/ De /g, ' de ').replace(/ X /g, ' × ')}` }; });
+    const bal = agrupa(r => v3Balsa(r.l)), tip = agrupa(v3Tipo), reb = agrupa(r => (r.e || '').trim().toUpperCase());
+    /* eixo de comparação com o ano anterior só onde a chave se repete (balsa, tipo, rebocador) */
+    const comPrv = (arr, keyFn) => { const p = {}; rs.filter(r => r.y === cur - 1).forEach(r => { const k = keyFn(r); if (k) p[k] = (p[k] || 0) + r.vt; }); arr.forEach(g => { g.p = p[g.k] || 0; }); return arr; };
+    comPrv(bal, r => v3Balsa(r.l)); comPrv(tip, v3Tipo); comPrv(reb, r => (r.e || '').trim().toUpperCase());
+    const top10 = ops.slice(0, 10).reduce((s, g) => s + g.v, 0);
+    const t0 = ops[0];
+    const nOps = ops.length;
+    const tabela = (arr, un) => v3Rank(arr, { max: 8, total: tot, unid: un });
+    const grade = `<div class="v3-pm"><div class="v3-pm-seg"><button type="button" data-k="op" aria-pressed="true" onclick="v3Tog(this)">Por operação</button><button type="button" data-k="bal" aria-pressed="false" onclick="v3Tog(this)">Por embarcação atendida</button><button type="button" data-k="tip" aria-pressed="false" onclick="v3Tog(this)">Por tipo de operação</button><button type="button" data-k="reb" aria-pressed="false" onclick="v3Tog(this)">Por rebocador</button></div>
+      <div data-vw="op">${tabela(ops, 'rebocadores')}</div><div data-vw="bal" hidden>${tabela(bal, 'acionamentos')}</div><div data-vw="tip" hidden>${tabela(tip, 'acionamentos')}</div><div data-vw="reb" hidden>${tabela(reb, 'acionamentos')}</div>
+      <p class="v3-nota" style="margin:8px 0 0">Operação = rebocadores acionados no mesmo dia, para a mesma embarcação e trajeto. Barra clara = ${cur - 1} (onde o item se repete). ${nOps} operações em ${cur}.</p></div>`;
+    return card(`Operações mais custosas: a maior custou <b>${fMi(t0.v)}</b> (${esc(t0.k.split(' · ').slice(0, 2).join(' · '))}); as 10 maiores somam <b>${v3Pct(top10 / tot)}</b> do gasto`,
+        `${cur} · alterne entre operação, embarcação atendida, tipo de operação e rebocador`, grade);
+}
+
 /* ===== v3 final: marcos mais limpos, filtros fora do Resumo e ícone do modo apresentação ===== */
 function v3Timeline(G) {
     const evs = G.ev || [];
@@ -4562,6 +4593,7 @@ render = function (keepScroll) { document.body.dataset.tab = S.tab; const r = v3
 
 /* unidade de medida, discreta, no canto de cada card com gráfico (a primeira regra que bater vale) */
 const V3_UNID = [
+    [/OPERACOES MAIS CUSTOSAS/, 'R$ · horas · rebocadores'],
     [/MIX DE PORTE|MAIS REBOCADOR DE MENOR|TARIFA MEDIA EM QUEDA/, 'linha: R$/h · barras: % das horas'],
     [/DEPENDENCIA DE FORNECEDORES/, 'índice HHI (0 a 10.000)'],
     [/FAZ \d+% DAS MANOBRAS/, '% das manobras do mês'],
