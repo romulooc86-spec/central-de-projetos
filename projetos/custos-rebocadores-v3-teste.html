@@ -552,30 +552,6 @@ svg .vl{font-size:11.5px!important}
 .cp-marcos li b{font:800 13px var(--font-display);color:var(--navy)}.cp-marcos li span{font-size:12px;color:var(--tx2);line-height:1.3}
 @media(max-width:860px){.v3-capa{grid-template-columns:1fr}.cp-cols{grid-template-columns:1fr}.cp-side{flex-direction:row;flex-wrap:wrap;gap:18px 26px}}
 @media(max-width:560px){.cp-main{padding:20px 18px}.cp-it{grid-template-columns:1fr;gap:2px}}
-/* ===== linha do tempo dos marcos ===== */
-.cp-tl{background:linear-gradient(135deg,var(--navy),#0B3F55);color:#fff;border-radius:var(--r);padding:20px 24px 18px;margin-bottom:16px;box-shadow:var(--shadow);border-left:6px solid var(--teal);overflow:hidden}
-.tl-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
-.tl-h h3{font:800 15px var(--font-display);text-transform:uppercase;letter-spacing:.08em;margin:0}.tl-h span{font-size:12px;opacity:.7}
-.tl-wrap{position:relative;height:350px;margin:0 56px 0 56px}
-.tl-area{position:absolute;left:0;width:100%;overflow:visible}
-.tl-axis{position:absolute;left:0;right:0;height:16px;border-top:1px solid rgba(255,255,255,.25)}
-.tl-axis span{position:absolute;transform:translateX(-50%);top:3px;font:600 10.5px var(--font-body);opacity:.65;white-space:nowrap}
-.tl-end{position:absolute;right:-50px;text-align:right;line-height:1.1}.tl-end small{display:block;font:700 9.5px var(--font-display);letter-spacing:.08em;text-transform:uppercase;opacity:.7}.tl-end b{font:800 18px var(--font-display);color:#9FE3DA}
-.tl-ev{position:absolute;top:0;bottom:0;width:0}
-.tl-stem{position:absolute;left:0;width:0;border-left:1.5px dashed rgba(255,255,255,.4)}
-.tl-dot{position:absolute;left:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 11px var(--font-display);color:var(--navy);background:#fff;box-shadow:0 0 0 5px rgba(6,190,174,.28),0 4px 12px rgba(0,0,0,.35)}
-.tl-dot.t-tarifa{background:#06BEAE;color:#fff}.tl-dot.t-melhor{background:#FFD76A;color:var(--navy)}.tl-dot.t-ini{background:#fff}.tl-dot.t-entra{background:#9FE3DA}.tl-dot.t-sai{background:rgba(255,255,255,.55)}
-.tl-card{position:absolute;left:0;transform:translateX(-50%);width:176px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 11px;display:flex;flex-direction:column;gap:1px;backdrop-filter:blur(2px)}
-.tl-l .tl-card{transform:none;left:-30px}.tl-r .tl-card{transform:none;left:auto;right:-30px}
-.tl-card b{font:800 11px var(--font-display);letter-spacing:.06em;text-transform:uppercase;color:#9FE3DA}
-.tl-card strong{font:700 13px/1.25 var(--font-display)}.tl-card small{font-size:11px;opacity:.75;line-height:1.3}
-@media(max-width:760px){
-  .tl-wrap{height:auto;margin:10px 0 0 6px;padding-left:18px;border-left:2px solid rgba(255,255,255,.3);display:flex;flex-direction:column;gap:10px}
-  .tl-area,.tl-axis,.tl-stem{display:none}.tl-end{position:static;order:-1;text-align:left;margin-bottom:4px}
-  .tl-ev{position:relative;width:auto;top:auto;bottom:auto}
-  .tl-dot{position:absolute;top:12px!important;left:-34px;width:22px;height:22px;margin:0;font-size:9px}
-  .tl-card,.tl-l .tl-card,.tl-r .tl-card{position:static;transform:none;width:auto}
-}
 /* ===== topo: marca e título ===== */
 .top-in{align-items:center;padding:20px 28px 16px}
 .brand{align-items:center;gap:20px}
@@ -585,33 +561,6 @@ svg .vl{font-size:11.5px!important}
 .htit{font:800 30px/1.05 var(--font-display)!important;letter-spacing:-.01em!important}
 .hsub{font:600 11.5px var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:#9FE3DA}
 @media(max-width:640px){.htit{font-size:20px!important}.badge img{height:34px!important}.hsep{height:34px!important}.hsub{font-size:9.5px;letter-spacing:.1em}.brand{gap:12px}}
-/* linha do tempo no celular: sem deslocamento lateral */
-@media(max-width:760px){.tl-ev{left:auto!important}}
-/* ===== contracapa em tela cheia ===== */
-#v3-cover{position:fixed;inset:0;z-index:200;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#042738;transition:transform .85s cubic-bezier(.7,0,.2,1),opacity .5s .4s}
-#v3-cover.saindo{transform:translateY(-100%);opacity:.0;pointer-events:none}
-#v3-cover .cv-foto{position:absolute;inset:-3%;background:url(img/capa-rebocadores.jpg) 55% 58%/cover no-repeat;animation:cvzoom 18s ease-out both}
-@keyframes cvzoom{from{transform:scale(1.08)}to{transform:scale(1)}}
-#v3-cover::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(4,39,56,.55) 0%,rgba(4,39,56,0) 24%,rgba(4,39,56,0) 40%,rgba(4,39,56,.82) 82%,rgba(4,39,56,.96) 100%),linear-gradient(90deg,rgba(4,39,56,.55) 0%,rgba(4,39,56,0) 55%)}
-#v3-cover > *:not(.cv-foto){position:relative;z-index:2}
-.cv-top{display:flex;align-items:center;justify-content:space-between;padding:28px clamp(22px,5vw,64px)}
-.cv-top img{height:54px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
-.cv-top span{font:700 11px var(--font-display);letter-spacing:.18em;text-transform:uppercase;opacity:.85;text-shadow:0 1px 6px rgba(0,0,0,.5)}
-.cv-base{padding:0 clamp(22px,5vw,64px) clamp(28px,6vh,60px);max-width:1100px}
-.cv-eyebrow{font:700 12px var(--font-display);letter-spacing:.2em;text-transform:uppercase;color:#9FE3DA;margin-bottom:12px;animation:cvup .9s .15s both}
-.cv-titulo{font:800 clamp(40px,8vw,104px)/.98 var(--font-display);letter-spacing:-.02em;text-shadow:0 4px 30px rgba(0,0,0,.45);animation:cvup .9s .3s both}
-.cv-sub{font-size:clamp(15px,2vw,20px);margin-top:14px;opacity:.92;max-width:680px;text-shadow:0 1px 10px rgba(0,0,0,.5);animation:cvup .9s .45s both}
-.cv-sub b{color:#9FE3DA}
-.cv-acao{margin-top:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;animation:cvup .9s .6s both}
-.cv-btn{border:0;border-radius:99px;padding:14px 28px;background:#06BEAE;color:#042738;font:800 14px var(--font-display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(6,190,174,.4);transition:transform .2s,box-shadow .2s}
-.cv-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(6,190,174,.55)}
-.cv-dica{font-size:12px;opacity:.7}
-@keyframes cvup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-body.cv-aberta{overflow:hidden}
-@media(prefers-reduced-motion:reduce){#v3-cover .cv-foto,.cv-eyebrow,.cv-titulo,.cv-sub,.cv-acao{animation:none}#v3-cover{transition:none}}
-@media(max-width:640px){.cv-top img{height:40px}.cv-top span{display:none}.cv-dica{display:none}}
-@media print{#v3-cover{display:none!important}}
-@media(max-width:640px){#v3-cover .cv-foto{background-position:70% 50%}}
 /* participação nas manobras */
 .v3-pm .pn-heat{overflow-x:auto;padding-bottom:4px}
 .v3-pm-seg{display:inline-flex;border:1px solid var(--bd);border-radius:99px;padding:3px;gap:2px;background:var(--card-soft);margin-bottom:12px}
@@ -632,6 +581,69 @@ body.cv-aberta{overflow:hidden}
 .al-f{font:700 13px var(--font-display)}.al-d{font:800 13px var(--font-display);color:var(--navy)}.v3-alert li.up .al-d{color:var(--teal-deep)}
 .v3-alert li small{grid-column:1/-1;font-size:11.5px;color:var(--tx2)}
 .al-ok{margin:0;font-size:13px;color:var(--tx2)}
+
+/* ===== contracapa: foto no tamanho original, sem distorção ===== */
+#v3-cover{position:fixed;inset:0;z-index:200;color:#fff;overflow:hidden;background:#042738;transition:transform .85s cubic-bezier(.7,0,.2,1),opacity .5s .4s}
+#v3-cover.saindo{transform:translateY(-100%);opacity:0;pointer-events:none}
+.cv-ambient{position:absolute;inset:-6%;background:url(img/capa-rebocadores.jpg) center/cover no-repeat;filter:blur(34px) brightness(.42) saturate(1.15)}
+.cv-stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,1280px,calc(100vh*16/9));aspect-ratio:16/9;background:url(img/capa-rebocadores.jpg) center/100% 100% no-repeat;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 0 100px rgba(0,0,0,.6);overflow:hidden}
+.cv-stage::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,39,56,.5) 0%,rgba(4,39,56,0) 22%,rgba(4,39,56,0) 40%,rgba(4,39,56,.84) 84%,rgba(4,39,56,.95) 100%),linear-gradient(90deg,rgba(4,39,56,.5) 0%,rgba(4,39,56,0) 55%)}
+.cv-stage > *{position:relative}
+.cv-top{padding:clamp(14px,3vw,34px) clamp(18px,4vw,48px)}
+.cv-top img{height:clamp(34px,5vw,54px);width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
+.cv-base{padding:0 clamp(18px,4vw,48px) clamp(18px,4vw,44px);max-width:900px}
+.cv-eyebrow{font:700 clamp(10px,1.1vw,12px) var(--font-display);letter-spacing:.2em;text-transform:uppercase;color:#9FE3DA;margin-bottom:10px;animation:cvup .9s .15s both}
+.cv-titulo{font:800 clamp(34px,6.2vw,80px)/.98 var(--font-display);letter-spacing:-.02em;text-shadow:0 4px 30px rgba(0,0,0,.45);animation:cvup .9s .3s both}
+.cv-sub{font:600 clamp(14px,1.7vw,19px)/1.4 var(--font-body);margin-top:14px;text-shadow:0 1px 10px rgba(0,0,0,.5);animation:cvup .9s .45s both}
+.cv-sub span{font-weight:400;opacity:.88}.cv-sub b{color:#9FE3DA}
+.cv-acao{margin-top:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;animation:cvup .9s .6s both}
+.cv-btn{border:0;border-radius:99px;padding:13px 26px;background:#06BEAE;color:#042738;font:800 13px var(--font-display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px rgba(6,190,174,.4);transition:transform .2s,box-shadow .2s}
+.cv-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(6,190,174,.55)}
+.cv-dica{font-size:12px;opacity:.7}
+@keyframes cvup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+body.cv-aberta{overflow:hidden}
+@media(prefers-reduced-motion:reduce){.cv-eyebrow,.cv-titulo,.cv-sub,.cv-acao{animation:none}#v3-cover{transition:none}}
+@media(max-aspect-ratio:1/1){.cv-ambient{display:none}.cv-stage{width:100vw;height:100vh;aspect-ratio:auto;background-size:cover;background-position:70% 50%;box-shadow:none}.cv-dica{display:none}}
+@media print{#v3-cover{display:none!important}}
+
+/* ===== marcos: faixa navy limpa ===== */
+.cp-tl2{background:linear-gradient(135deg,#06293B,#0B3F55);color:#fff;border-radius:var(--r);padding:20px 26px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cp-tl2 h3{font:800 12.5px var(--font-display);letter-spacing:.16em;text-transform:uppercase;margin:0 0 22px;color:#9FE3DA}
+.cp-tl2 ol{list-style:none;margin:0;padding:0;display:flex;position:relative}
+.cp-tl2 ol::before{content:'';position:absolute;left:5px;right:0;top:5px;height:1px;background:rgba(255,255,255,.22)}
+.cp-tl2 li{position:relative;flex:1 1 0;min-width:0;padding:22px 16px 0 0}
+.cp-tl2 li i{position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;background:#06BEAE;box-shadow:0 0 0 4px #0A3A50}
+.cp-tl2 li:first-child i{background:#fff}
+.cp-tl2 li b{display:block;font:700 11px var(--font-display);letter-spacing:.09em;text-transform:uppercase;color:#9FE3DA;margin-bottom:3px}
+.cp-tl2 li strong{display:block;font:700 14px/1.3 var(--font-display)}
+.cp-tl2 li small{display:block;font-size:11.5px;opacity:.6;margin-top:3px;line-height:1.35}
+@media(max-width:760px){.cp-tl2 ol{flex-direction:column;gap:16px;padding-left:22px}.cp-tl2 ol::before{left:5px;right:auto;top:6px;bottom:6px;width:1px;height:auto}.cp-tl2 li{padding:0}.cp-tl2 li i{left:-22px;top:2px}}
+
+/* ===== topo centralizado ===== */
+.top-in{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px 20px;padding:18px 28px 14px}
+.brand{display:contents!important}
+.badge{grid-column:1;justify-self:start;margin:0}
+.hsep{display:none!important}
+.htb{grid-column:2;align-items:center;text-align:center}
+.htit,.hsub{text-align:center}
+.acts{grid-column:3;justify-self:end}
+.tabs{justify-content:center}
+@media(max-width:900px){.top-in{grid-template-columns:auto 1fr}.htb{grid-column:1/-1;grid-row:2}.acts{grid-column:2;grid-row:1}}
+
+/* ===== filtros fora do Resumo ===== */
+body[data-tab="v3res"] #fbar,body[data-tab="v3res"] #filters{display:none!important}
+
+/* ===== botão do modo apresentação ===== */
+.top #present{width:auto!important;height:38px;padding:0 15px 0 12px!important;gap:8px;border-radius:99px!important;font:700 11px var(--font-display);letter-spacing:.1em;text-transform:uppercase}
+.top #present svg{width:19px;height:19px}
+.top #present .lbl .l-on,.top #present.on .lbl .l-off{display:none}
+.top #present.on .lbl .l-on{display:inline}
+@media(max-width:900px){.top #present .lbl{display:none}.top #present{width:38px!important;padding:0!important;border-radius:10px!important}}
+.acts{flex-wrap:nowrap!important;gap:8px!important}
+.top-in{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+@media(max-width:1280px){.top #present .lbl{display:none}.top #present{width:38px!important;padding:0!important;border-radius:10px!important}}
+@media(max-width:640px){#live{padding:0 10px!important}#live span{display:none}.top-in{padding:14px 14px 10px}}
+@media(max-width:640px){#live{display:none!important}}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -2555,8 +2567,8 @@ V.dados = function() {
   ${card((flag.length?'⚠ ':'✓ ')+'Inconsistências da planilha'+(flag.length?' ('+fN(flag.length)+')':''),'Linhas que caem fora do padrão esperado (horas implausíveis, tarifa atípica, sem valor/horas) — “Linha” é o número da linha na aba DADOS',incBody,flag.length?'alert':'ok')}
   ${card('Como as linhas da planilha foram classificadas','Todas as linhas entram no total pago; apenas “serviço por hora” entra nos indicadores de R$/h. Nº de linhas e valor por ano.',tbl([{t:'Tipo'},...S.years.map(y=>({t:y,c:'n'}))],[rows]),'mt')}
   <div class="two mt">
-   ${card('Como o painel se atualiza','Automático — ninguém precisa enviar arquivo',`<ol class="steps"><li>A equipe preenche a planilha <b>Controle de Rebocadores</b> (aba <b>DADOS</b>) como já faz.</li><li>O robô da Prime Ocean lê a aba DADOS a cada 10 minutos e publica os dados quando algo muda.</li><li>O painel relê os dados ao abrir, a cada 5 minutos e ao voltar para a aba. O selo <b>Ao vivo</b> no topo mostra a hora da planilha e da última leitura.</li></ol><p class="note">Mantenha o cabeçalho da aba DADOS (DATA, EMBARCAÇÃO UTILIZADA, REBOCADORES, ORIGEM E DESTINO, TOTAL (h), VALOR/HR, VALOR/TOTAL…) com esses nomes; colunas novas à direita não atrapalham. Para testar outra planilha só neste navegador, arraste o .xlsx aqui (vale até a próxima leitura ao vivo).</p><div class="drop" id="drop2"><b>Arraste o .xlsx aqui</b> ou <button class="btn" id="pick2">escolher arquivo</button></div>`)}
-   ${card('Base carregada','',`<div class="tw"><table><tbody><tr><td>Arquivo</td><td>${esc(S.src.name)}</td></tr><tr><td>Aba lida</td><td>${esc(S.src.sheet||'DADOS')}</td></tr><tr><td>Carregado em</td><td>${esc(S.src.at||'')}</td></tr><tr><td>Linhas lidas</td><td>${fN(S.all.length)}</td></tr><tr><td>Último registro</td><td>${S.maxDate.split('-').reverse().join('/')}</td></tr><tr><td>Anos</td><td>${S.years.join(', ')}</td></tr></tbody></table></div><p><button class="btn ghost" id="reset">Voltar aos dados ao vivo</button></p>`)}
+   ${card('Como o painel se atualiza','Automático — ninguém precisa enviar arquivo',`<ol class="steps"><li>A equipe preenche a planilha <b>Controle de Rebocadores</b> (aba <b>DADOS</b>) como já faz.</li><li>O robô da Prime Ocean lê a aba DADOS a cada 2 minutos (a planilha vem do OneDrive/SharePoint da equipe) e publica os dados quando algo muda. Entre salvar a planilha e aparecer aqui costuma levar de 5 a 8 minutos.</li><li>O painel relê os dados ao abrir, a cada 5 minutos e ao voltar para a aba. O selo <b>Ao vivo</b> no topo mostra a hora da planilha e da última leitura.</li></ol><p class="note">Mantenha o cabeçalho da aba DADOS (DATA, EMBARCAÇÃO UTILIZADA, REBOCADORES, ORIGEM E DESTINO, TOTAL (h), VALOR/HR, VALOR/TOTAL…) com esses nomes; colunas novas à direita não atrapalham. Para testar outra planilha só neste navegador, arraste o .xlsx aqui (vale até a próxima leitura ao vivo).</p><div class="drop" id="drop2"><b>Arraste o .xlsx aqui</b> ou <button class="btn" id="pick2">escolher arquivo</button></div>`)}
+   ${card('Base carregada','',`<div class="tw"><table><tbody><tr><td>Arquivo</td><td>${esc(S.src.name)}</td></tr><tr><td>Aba lida</td><td>${esc(S.src.sheet||'DADOS')}</td></tr><tr><td>Planilha salva em</td><td>${(typeof LIVE!=='undefined'&&LIVE.modif)?fDT(LIVE.modif):'—'}</td></tr><tr><td>Publicado pelo robô em</td><td>${esc(S.src.at||'')}</td></tr><tr><td>Linhas lidas</td><td>${fN(S.all.length)}</td></tr><tr><td>Último registro</td><td>${S.maxDate.split('-').reverse().join('/')}</td></tr><tr><td>Anos</td><td>${S.years.join(', ')}</td></tr></tbody></table></div><p><button class="btn ghost" id="reset">Voltar aos dados ao vivo</button></p>`)}
   </div>`;
     return {
         html,
@@ -4163,36 +4175,6 @@ V.v3ctl = v3Compor(['efic'], [], () => {
 });
 
 
-/* ---------- linha do tempo dos marcos: eventos sobre a curva da economia acumulada ---------- */
-function v3Timeline(G) {
-    const ms = G.meses, evs = G.ev || [];
-    if (!ms || ms.length < 2 || !evs.length) return '';
-    let c = 0; const cum = ms.map(o => (c += o.eco));
-    const lo = Math.min(0, ...cum), hi = Math.max(...cum), span = (hi - lo) || 1, N = ms.length;
-    const X = i => i / (N - 1) * 100, Yp = v => 1 - (v - lo) / span;
-    const TOP = 118, CH = 92;                       /* faixa do gráfico: topo e altura (px) */
-    const px = v => TOP + Yp(v) * CH;
-    const pts = cum.map((v, i) => `${(X(i) * 10).toFixed(1)},${(Yp(v) * 100).toFixed(1)}`);
-    const zero = (Yp(0) * 100).toFixed(1);
-    const tipo = e => /Nova tarifa/.test(e.t) ? ['t-tarifa', 'R$'] : /Entrada/.test(e.t) ? ['t-entra', '+'] : /Saída/.test(e.t) ? ['t-sai', '–'] : /Menor custo/.test(e.t) ? ['t-melhor', '★'] : ['t-ini', '⚑'];
-    const idx = k => { const i = ms.findIndex(o => o.k === k); return i < 0 ? (k < ms[0].k ? 0 : N - 1) : i; };
-    const ev = evs.map((e, n) => {
-        const i = idx(e.k), x = X(i), [cls, ico] = tipo(e), up = n % 2 === 0, dot = px(cum[i]);
-        const pos = x < 9 ? 'tl-l' : x > 91 ? 'tl-r' : '';
-        const stem = up ? `top:84px;height:${Math.max(6, dot - 84)}px` : `top:${dot}px;height:${Math.max(6, 258 - dot)}px`;
-        return `<div class="tl-ev ${up ? 'up' : 'dn'} ${pos}" style="left:${x.toFixed(2)}%"><i class="tl-stem" style="${stem}"></i><span class="tl-dot ${cls}" style="top:${dot.toFixed(1)}px">${ico}</span>
-          <div class="tl-card" style="${up ? 'top:0' : 'top:258px'}"><b>${mLbl(e.k)}</b><strong>${esc(e.t)}</strong><small>${esc(e.s)}</small></div></div>`;
-    }).join('');
-    const eixo = ms.map((o, i) => `<span style="left:${X(i).toFixed(2)}%">${mLbl(o.k)}</span>`).join('');
-    const fim = `<div class="tl-end" style="top:${(px(cum[N - 1]) - 40).toFixed(1)}px"><small>economia acumulada</small><b>${fMi(cum[N - 1])}</b></div>`;
-    return `<section class="cp-tl"><div class="tl-h"><h3>Marcos desde ${GESTAO_LBL}</h3><span>cada marco aparece sobre a curva da economia acumulada</span></div>
-      <div class="tl-wrap"><svg class="tl-area" viewBox="0 0 1000 100" preserveAspectRatio="none" style="top:${TOP}px;height:${CH}px" aria-hidden="true">
-        <defs><linearGradient id="tlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06BEAE" stop-opacity=".55"/><stop offset="1" stop-color="#06BEAE" stop-opacity=".04"/></linearGradient></defs>
-        <line x1="0" x2="1000" y1="${zero}" y2="${zero}" stroke="rgba(255,255,255,.28)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
-        <path d="M0,100 L${pts.join(' L')} L1000,100 Z" fill="url(#tlg)"/><path d="M${pts.join(' L')}" fill="none" stroke="#7FE3D8" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
-        <div class="tl-axis" style="top:${TOP + CH + 6}px">${eixo}</div>${fim}${ev}</div></section>`;
-}
-
 /* ---------- participação de cada fornecedor nas manobras, mês a mês (mapa de calor + variação) ---------- */
 function v3Tog(btn) {
     const box = btn.closest('.v3-pm'); if (!box) return;
@@ -4257,33 +4239,27 @@ V.v3for = function () {
     return { html: i >= 0 && v.html.startsWith('<div class="v3-head">') ? v.html.slice(0, i + 6) + card + v.html.slice(i + 6) : card + v.html, after: v.after };
 };
 
-/* ---------- contracapa em tela cheia (foto) ---------- */
+/* ---------- contracapa em tela cheia (foto sem distorção, no tamanho original) ---------- */
 (function () {
-    function textoSub() {
-        let eco = '';
-        try { gestaoExtra(); if (window._G && window._G.ecoAc > 0) eco = `<b>${fMi(window._G.ecoAc)}</b> de economia acumulada desde ${GESTAO_LBL} · `; } catch (e) { }
-        return `${eco}dados até ${S.maxDate.split('-').reverse().join('/')}`;
-    }
     function montar() {
         if (!S.all || !S.all.length) { setTimeout(montar, 150); return; }
         if (document.getElementById('v3-cover') || /[#&]painel\b/.test(location.hash)) return;
         const logo = (document.querySelector('.badge img') || {}).src || '';
         const c = document.createElement('div'); c.id = 'v3-cover'; c.setAttribute('role', 'dialog'); c.setAttribute('aria-label', 'Capa do painel');
-        c.innerHTML = `<div class="cv-foto"></div>
-          <div class="cv-top">${logo ? `<img alt="Prime Ocean Navegação" src="${logo}">` : '<span></span>'}<span>Relatório à diretoria</span></div>
-          <div class="cv-base"><div class="cv-eyebrow">Prime Ocean Navegação · Custos e operação</div>
-            <h1 class="cv-titulo">Gestão de<br>Rebocadores</h1>
-            <p class="cv-sub">${textoSub()}</p>
-            <div class="cv-acao"><button type="button" class="cv-btn" id="cv-abrir">Abrir o painel ↓</button><span class="cv-dica">ou pressione Enter · role a página</span></div></div>`;
+        c.innerHTML = `<div class="cv-ambient"></div>
+          <div class="cv-stage">
+            <div class="cv-top">${logo ? `<img alt="Prime Ocean Navegação" src="${logo}">` : ''}</div>
+            <div class="cv-base"><div class="cv-eyebrow">Prime Ocean Navegação · Custos e operação</div>
+              <h1 class="cv-titulo">Gestão de<br>Rebocadores</h1>
+              <p class="cv-sub">Melhoria na gestão de controle desde 2025<br><span>marco em <b>out/25</b>, com a troca de gestão</span></p>
+              <div class="cv-acao"><button type="button" class="cv-btn" id="cv-abrir">Abrir o painel ↓</button><span class="cv-dica">ou pressione Enter · role a página</span></div></div>
+          </div>`;
         document.body.appendChild(c); document.body.classList.add('cv-aberta');
-        /* os dados ao vivo chegam depois da abertura: atualiza o texto e a logo enquanto a capa estiver aberta */
-        let chave = S.maxDate + '|' + S.all.length;
+        /* a logo em versão para fundo escuro chega um instante depois: acompanha enquanto a capa estiver aberta */
         const tic = setInterval(() => {
             if (!c.isConnected) { clearInterval(tic); return; }
             const i = document.querySelector('.badge img'), j = c.querySelector('.cv-top img');
             if (i && j && i.src && j.src !== i.src) j.src = i.src;
-            const k = S.maxDate + '|' + S.all.length;
-            if (k !== chave) { chave = k; const s = c.querySelector('.cv-sub'); if (s) s.innerHTML = textoSub(); }
         }, 700);
         let ok = false;
         const fechar = () => {
@@ -4301,7 +4277,7 @@ V.v3for = function () {
         ['keydown', 'wheel', 'touchstart', 'touchmove'].forEach(ev => window.addEventListener(ev, h, { capture: true, passive: false }));
         c.querySelector('#cv-abrir').onclick = fechar;
         /* clicar na marca do topo reabre a capa */
-        const marca = document.querySelector('.brand');
+        const marca = document.querySelector('.badge');
         if (marca) { marca.style.cursor = 'pointer'; marca.title = 'Voltar à capa'; marca.addEventListener('click', () => { location.hash = ''; location.reload(); }); }
     }
     setTimeout(montar, 0);
@@ -4397,6 +4373,23 @@ V.v3for = function () {
     const i = v.html.indexOf('</section>');
     return { html: i >= 0 ? v.html.slice(0, i + 10) + c + v.html.slice(i + 10) : v.html + c, after: v.after };
 };
+
+/* ===== v3 final: marcos mais limpos, filtros fora do Resumo e ícone do modo apresentação ===== */
+function v3Timeline(G) {
+    const evs = G.ev || [];
+    if (!evs.length) return '';
+    const troca = e => /^Reorganiza/.test(e.t);
+    return `<section class="cp-tl2"><h3>Marcos</h3><ol>${evs.map(e => `<li><i></i><b>${mLbl(e.k)}</b><strong>${esc(troca(e) ? 'Troca de gestão e reorganização dos controles' : e.t)}</strong>${troca(e) ? '' : `<small>${esc(e.s)}</small>`}</li>`).join('')}</ol></section>`;
+}
+
+/* guarda a aba aberta no <body> para o CSS esconder os filtros no Resumo */
+const v3render0 = render;
+render = function (keepScroll) { document.body.dataset.tab = S.tab; return v3render0(keepScroll); };
+
+/* ícone do modo apresentação: tela com "play" e rótulo */
+try {
+    ICO.present = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12.5" rx="2.6"/><path d="M10.2 8.3v4.1l3.5-2.05z" fill="currentColor" stroke="none"/><path d="M8.5 20.2h7M12 16.5v3.7"/></svg><span class="lbl"><span class="l-off">Apresentar</span><span class="l-on">Sair</span></span>';
+} catch (e) { }
 /* ---------- shell ---------- */
 const TABS = [
     ['v3res', 'Resumo'],
