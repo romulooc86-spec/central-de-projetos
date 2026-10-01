@@ -689,6 +689,27 @@ body[data-tab="v3res"] #fbar,body[data-tab="v3res"] #filters{display:none!import
 .cv-ambient{display:none!important}
 .cv-stage{left:0!important;top:0!important;transform:none!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;background-size:cover!important;background-position:62% 55%!important;box-shadow:none!important}
 @media(max-aspect-ratio:1/1){.cv-stage{background-position:70% 50%!important}}
+
+/* ===== topo maior + botão início ===== */
+.badge{height:52px}
+.badge img{height:46px!important}
+.htit{font:700 29px/1.1 var(--font-display)!important}
+.acts{grid-template-columns:repeat(4,32px)!important}
+@media(max-width:640px){.htit{font-size:20px!important}.badge{height:38px}.badge img{height:32px!important}.acts{grid-template-columns:repeat(4,30px)!important}}
+
+/* ===== capa do Resumo: gradiente com Tiffany e números em verde-água claro ===== */
+.v3-capa{background:radial-gradient(900px 360px at 88% -20%,rgba(6,190,174,.42),transparent 62%),radial-gradient(700px 300px at 0% 120%,rgba(6,190,174,.18),transparent 60%),linear-gradient(135deg,#042738 0%,#07445A 55%,#0A6670 100%)!important}
+.cp-eyebrow{color:#8FF0E4!important}
+.cp-big{color:#6EEBDC!important;text-shadow:0 2px 24px rgba(6,190,174,.35)}
+.cp-sub{color:#EAF8F6}.cp-sub b{color:#6EEBDC}
+.cp-split b,.cp-side b{color:#6EEBDC!important}
+.cp-side{background:rgba(255,255,255,.09)!important}
+.cp-side small{color:#BFEFE9;opacity:1}
+.cp-side em{color:#CFEDE9!important;opacity:1}
+.cp-side em.dn{color:#8FF0E4!important}
+.cp-pos .cp-it > b,.cp-opp .cp-it > b{color:#06BEAE!important}
+.cp-opp{border-top-color:#06BEAE!important}
+.cp-opp h3 em{color:#06BEAE!important}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -4427,7 +4448,7 @@ function v3MixStats(G) {
     const hs = w => w.reduce((s, r) => s + (r.h || 0), 0);
     const share = (w, t) => { const T = hs(w); return T ? w.filter(r => r.tier === t).reduce((s, r) => s + (r.h || 0), 0) / T : null; };
     const by = {};
-    G.w1.forEach(r => { const o = by[r.a] || (by[r.a] = { a: r.a, h: 0, c: 0, g: 0 }); o.h += r.h || 0; o.c += r.vt || 0; if (r.tier === 'Grande') o.g += r.h || 0; });
+    rowsF(["H"]).filter(r => r.y === S.cur).forEach(r => { const o = by[r.a] || (by[r.a] = { a: r.a, h: 0, c: 0, g: 0 }); o.h += r.h || 0; o.c += r.vt || 0; if (r.tier === 'Grande') o.g += r.h || 0; });
     const L = Object.values(by).filter(o => o.h >= 150).map(o => ({ ...o, eff: o.c / o.h, gs: o.g / o.h })).sort((a, b) => b.eff - a.eff);
     const maior = L[0], menor = L[L.length - 1];
     /* porte: mesmo período de cada ano (jan até o último mês com dados), como no card "Porte certo" da aba Eficiência */
@@ -4479,7 +4500,7 @@ function v3MixTarifa(G, MX) {
     /* marco: troca de gestão */
     svg += `<line x1="${X(iOut) - bw / 2}" x2="${X(iOut) - bw / 2}" y1="${y0 - 22}" y2="${b1}" stroke="var(--navy)" stroke-width="1.5" stroke-dasharray="3 4" opacity=".7"/><text x="${X(iOut) - bw / 2 - 6}" y="${y0 - 10}" text-anchor="end" class="pn-ax pn-b">Out/25 · troca de gestão</text>`;
     /* horas por porte (100%) */
-    svg += `<text x="${ml}" y="${b0 - 10}" class="pn-ax pn-b">Horas por porte de rebocador</text>`;
+    svg += `<text x="${ml}" y="${b0 - 22}" class="pn-ax pn-b">Horas por porte de rebocador · <tspan fill="var(--teal-deep)">número = % em pequeno porte</tspan></text>`;
     meses.forEach((k, i) => {
         const o = pm[k]; if (!o || !o.h) return;
         let acc = 0; const x = X(i) - bw * .36, w = bw * .72;
@@ -4488,7 +4509,7 @@ function v3MixTarifa(G, MX) {
             if (hgt > 0.2) svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${COR[t]}"><title>${mLbl(k)} · ${t}: ${NF0.format(s * 100)}% das horas</title></rect>`;
         });
         const sp = o.Pequeno / o.h;
-        if ((i === 0 || i === iOut || i === N - 1) && sp > .06) svg += `<text x="${X(i)}" y="${b0 + (sp * (b1 - b0)) / 2 + 4}" text-anchor="middle" style="font:800 10.5px var(--font-display);fill:#06293B">${NF0.format(sp * 100)}%</text>`;
+        if (sp > 0) svg += `<text x="${X(i)}" y="${b0 - 5}" text-anchor="middle" style="font:800 10px var(--font-display);fill:var(--teal-deep)">${NF0.format(sp * 100)}%</text>`;
         if (i % 2 === 0 || i === N - 1) svg += `<text x="${X(i)}" y="${Hh - 8}" text-anchor="middle" class="pn-ax ${i >= iOut ? 'pn-b' : ''}">${mLbl(k)}</text>`;
     });
     svg += '</svg>';
@@ -4579,6 +4600,15 @@ function v3Redesenha() {
     const cur = S.cur, prv = cur - 1, rs = rowsF(['H']), A0 = atend(rs.filter(r => r.y === prv)), A1 = atend(rs.filter(r => r.y === cur));
     hbars(d, [{ label: 'Fundeio · meta 5 h', v: A1.fp || 0, v0: A0.fp, color: 'var(--teal-deep)' }, { label: 'Porto · meta 3 h', v: A1.pp || 0, v0: A0.pp, color: 'var(--navy)' }].sort((a, b) => b.v - a.v), { fmt: v => pp(v), noPareto: true, keepOrder: true });
 }
+
+/* botão "início": volta ao Resumo de qualquer aba (a logo reabre a capa) */
+window.addEventListener('load', () => {
+    const acts = document.querySelector('.acts'); if (!acts || document.querySelector('#homeBtn')) return;
+    const b = document.createElement('button'); b.id = 'homeBtn'; b.type = 'button'; b.className = 'btn ghost ibtn'; b.title = 'Início · voltar ao Resumo'; b.setAttribute('aria-label', 'Início, voltar ao Resumo');
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.6 9.8V19a1 1 0 0 0 1 1h3.8v-5.2h3.2V20h3.8a1 1 0 0 0 1-1V9.8"/></svg>';
+    b.onclick = () => { S.tab = 'v3res'; try { hideTip(); } catch (e) { } render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    acts.insertBefore(b, document.querySelector('#upd') || acts.firstChild);
+});
 /* ---------- shell ---------- */
 const TABS = [
     ['v3res', 'Resumo'],
