@@ -284,6 +284,33 @@ body.present .tabs button[data-t="dados"]{display:none!important}
 .gh-met{margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);font-size:12.5px;line-height:1.5;color:#A9C3CB;max-width:980px}
 .gh-met b{color:#fff}.gh-met>b:first-child{font:700 10.5px var(--font-display);letter-spacing:.09em;text-transform:uppercase;color:var(--teal);margin-right:6px}
 .ccg{margin:0 0 4px}.ccg .kpi{padding:12px 14px}.ccg .kv{font-size:24px}
+/* ===== Panorama do ano ===== */
+.pn-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.pn-k{background:var(--card);border:1px solid var(--bd);border-top:3px solid var(--teal);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
+.pn-k:first-child{background:var(--navy);color:#fff;border-color:var(--navy);border-top-color:var(--teal)}
+.pn-kl{font:700 11px var(--font-display);letter-spacing:.07em;text-transform:uppercase;opacity:.75}
+.pn-kv{font:800 28px/1.15 var(--font-display);margin:4px 0 2px}
+.pn-ks{font-size:12.5px;opacity:.85}
+.pn-d{font-weight:700;font-size:12px;white-space:nowrap}.pn-d.up{color:var(--tx)}.pn-d.dn{color:var(--teal-deep)}
+.pn-k:first-child .pn-d.dn{color:#7FE3D8}.pn-k:first-child .pn-d.up{color:#fff}
+.pn-svg{width:100%;height:auto;display:block}
+.pn-ax{font:500 11.5px var(--font-body);fill:var(--tx2)}.pn-b{font-weight:700;fill:var(--tx)}.pn-t{fill:var(--teal-deep);font-size:13px}
+.pn-leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--tx2);margin:2px 0 8px}
+.pn-leg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.pn-leg i.pn-tr{border-radius:0;height:0;border-top:2px dashed var(--tx);vertical-align:3px}
+.pn-heat{display:grid;gap:3px;font-size:12.5px;overflow-x:auto}
+.pn-h{font:700 11px var(--font-display);text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);text-align:center;padding:4px 0}
+.pn-fn{display:flex;align-items:center;gap:8px;font-weight:600;min-width:0}.pn-fn i{width:10px;height:10px;border-radius:3px;flex:none}
+.pn-c{display:flex;align-items:center;justify-content:center;min-height:34px;border-radius:5px;background:var(--card-soft);font-variant-numeric:tabular-nums}
+.pn-tt{font-weight:800}.pn-tot{font-weight:800;border-top:2px solid var(--bd);border-radius:0;background:none;padding-top:4px}
+.pn-ann{display:flex;flex-direction:column;gap:10px}
+.pn-ar{display:grid;grid-template-columns:minmax(120px,1.2fr) minmax(0,3fr) 86px 78px;gap:12px;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.pn-ar.pn-tot{border-top:2px solid var(--bd);border-bottom:0;padding-top:8px}
+.pn-bars{display:flex;flex-direction:column;gap:3px}
+.pn-bl{display:flex;align-items:center;gap:8px;min-height:15px}.pn-bl span{display:block;height:12px;border-radius:3px;min-width:2px}.pn-bl b{font-size:12px;white-space:nowrap}.pn-bl small{color:var(--tx2)}
+.pn-sh{text-align:right;line-height:1.2}.pn-sh b{font-size:15px}.pn-sh small{display:block;font-size:10.5px;color:var(--tx2)}
+.pn-vr{text-align:right}
+@media(max-width:760px){.pn-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.pn-ar{grid-template-columns:1fr 70px;}.pn-ar .pn-bars{grid-column:1/-1;order:3}.pn-kv{font-size:23px}}
 /* ===== v2: topo minimalista, filtros discretos, detalhe ao clicar ===== */
 .top-in{padding:16px 28px}
 .badge{background:none;box-shadow:none;padding:0}.badge img{height:40px}
@@ -3141,6 +3168,107 @@ function trazerTotalPago() {
         if (c) { c.classList.add('mt'); $('#view').appendChild(c); }
     } catch (e) {}
 }
+/* ===== Panorama do ano: total acumulado, evolução mensal e fornecedores (por mês e por ano) ===== */
+V.pano = function () {
+    const rs = rowsF(['H', 'D', 'A', 'S']);
+    const cur = S.cur, prv = S.cur - 1, mx = S.cut.m;
+    const anos = S.years.filter(y => rs.some(r => r.y === y));
+    const fK = v => v ? NF0.format(Math.round(v / 1000)) : '–';
+    const add = (o, k, v) => { o[k] = (o[k] || 0) + v; };
+
+    /* fornecedores: os 5 maiores do ano atual e "Demais" */
+    const tA = {};
+    rs.forEach(r => add(tA, r.a, (r.y === cur ? 2 : 1) * (r.vt || 0) * (r.y >= prv ? 1 : 0)));
+    const nomes = Object.keys(tA).sort((a, b) => tA[b] - tA[a]);
+    const top = nomes.slice(0, 5), DEM = 'Demais fornecedores';
+    const grp = a => top.includes(a) ? a : DEM;
+    const forn = nomes.length > 5 ? [...top, DEM] : top;
+    const tm = {}, fm = {}, fy = {};
+    rs.forEach(r => { const v = r.vt || 0, g = grp(r.a); add(tm, r.y + '|' + r.m, v); add(fm, g + '|' + r.y + '|' + r.m, v); add(fy, g + '|' + r.y, v); });
+    forn.sort((a, b) => ((fy[b + '|' + cur] || 0) - (fy[a + '|' + cur] || 0)) || ((fy[b + '|' + prv] || 0) - (fy[a + '|' + prv] || 0)));
+    if (forn.includes(DEM) && !fy[DEM + '|' + cur] && !fy[DEM + '|' + prv]) forn.splice(forn.indexOf(DEM), 1);
+    if (forn.includes(DEM)) { forn.splice(forn.indexOf(DEM), 1); forn.push(DEM); }
+    const cor = i => forn[i] === DEM ? 'var(--c-other)' : 'var(--c' + (i + 1) + ')';
+    const tY = y => anos.includes(y) ? Array.from({ length: 12 }, (_, i) => tm[y + '|' + (i + 1)] || 0).reduce((s, v) => s + v, 0) : 0;
+    const tCur = tY(cur), tPrv = tY(prv);
+    const meses = Array.from({ length: 12 }, (_, i) => i + 1);
+    const mCur = meses.map(m => tm[cur + '|' + m] || 0);
+    const iMax = mCur.indexOf(Math.max(...mCur));
+    const H = agg(rowsF(['H']).filter(r => r.y === cur)), Hp = agg(rowsF(['H']).filter(r => r.y === prv));
+    const nMes = Math.max(1, mx);
+    const lastP = meses.filter(m => (tm[prv + '|' + m] || 0) > 0).pop() || 0;
+    const chip = d => d == null ? '' : `<span class="pn-d ${d > 0 ? 'up' : 'dn'}">${d > 0 ? '▲' : '▼'} ${NF1.format(Math.abs(d) * 100)}%</span>`;
+
+    /* 1) acumulado no ano: ano atual × anterior */
+    const acum = y => { let s = 0; return meses.map(m => (s += tm[y + '|' + m] || 0)); };
+    const aC = acum(cur), aP = acum(prv);
+    const W = 760, Hh = 300, mg = { l: 56, r: 96, t: 22, b: 30 }, iw = W - mg.l - mg.r, ih = Hh - mg.t - mg.b;
+    const ymax = niceMax(Math.max(aC[mx - 1] || 0, aP[Math.max(lastP, 1) - 1] || 0, 1));
+    const X = m => mg.l + (m - 1) / 11 * iw, Y = v => mg.t + ih - v / ymax * ih;
+    const linha = (a, ate) => a.slice(0, ate).map((v, i) => (i ? 'L' : 'M') + X(i + 1).toFixed(1) + ' ' + Y(v).toFixed(1)).join('');
+    let svgA = `<svg viewBox="0 0 ${W} ${Hh}" class="pn-svg" role="img" aria-label="Gasto acumulado no ano">`;
+    for (let g = 0; g <= 4; g++) { const v = ymax * g / 4, y = Y(v); svgA += `<line x1="${mg.l}" x2="${W - mg.r}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width="1"/><text x="${mg.l - 8}" y="${y + 4}" text-anchor="end" class="pn-ax">${fMi(v).replace('R$ ', '')}</text>`; }
+    meses.forEach(m => { svgA += `<text x="${X(m)}" y="${Hh - 8}" text-anchor="middle" class="pn-ax">${MES[m - 1]}</text>`; });
+    if (lastP) svgA += `<path d="${linha(aP, lastP)}" fill="none" stroke="var(--c4)" stroke-width="2.2" stroke-dasharray="6 5"/><text x="${X(lastP) + 8}" y="${Y(aP[lastP - 1]) + 4}" class="pn-ax pn-b">${fMi(aP[lastP - 1])}</text>`;
+    svgA += `<path d="${linha(aC, mx)} L${X(mx)} ${Y(0)} L${X(1)} ${Y(0)}Z" fill="var(--teal)" opacity=".13"/><path d="${linha(aC, mx)}" fill="none" stroke="var(--teal-deep)" stroke-width="3.4" stroke-linejoin="round"/>`;
+    aC.slice(0, mx).forEach((v, i) => { svgA += `<circle cx="${X(i + 1)}" cy="${Y(v)}" r="3.6" fill="var(--teal-deep)"><title>${MES[i]}/${cur}: ${fMi(v)} acumulado</title></circle>`; });
+    svgA += `<text x="${X(mx) + 8}" y="${Y(aC[mx - 1]) + 5}" class="pn-ax pn-b pn-t">${fMi(aC[mx - 1])}</text></svg>`;
+    const dAc = dlt(aC[mx - 1], aP[Math.max(mx, 1) - 1] || null);
+
+    /* 2) evolução mensal: barras empilhadas por fornecedor */
+    const vmax = niceMax(Math.max(...mCur, ...meses.map(m => tm[prv + '|' + m] || 0), 1));
+    const bw = iw / 12, Yb = v => mg.t + ih - v / vmax * ih;
+    let svgM = `<svg viewBox="0 0 ${W} ${Hh}" class="pn-svg" role="img" aria-label="Gasto por mês">`;
+    for (let g = 0; g <= 4; g++) { const v = vmax * g / 4, y = Yb(v); svgM += `<line x1="${mg.l}" x2="${W - 12}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width="1"/><text x="${mg.l - 8}" y="${y + 4}" text-anchor="end" class="pn-ax">${fMi(v).replace('R$ ', '')}</text>`; }
+    meses.forEach(m => {
+        const x = mg.l + (m - 1) * bw + bw * .17, w = bw * .66;
+        let base = 0;
+        forn.forEach((f, i) => { const v = fm[f + '|' + cur + '|' + m] || 0; if (!v) return; svgM += `<rect x="${x.toFixed(1)}" y="${Yb(base + v).toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(.5, v / vmax * ih).toFixed(1)}" fill="${cor(i)}"><title>${f} · ${MES[m - 1]}/${cur}: ${fR(v)}</title></rect>`; base += v; });
+        if (base) svgM += `<text x="${x + w / 2}" y="${Yb(base) - 6}" text-anchor="middle" class="pn-ax pn-b">${fK(base)}</text>`;
+        const p = tm[prv + '|' + m] || 0;
+        if (p) svgM += `<line x1="${x - 3}" x2="${x + w + 3}" y1="${Yb(p)}" y2="${Yb(p)}" stroke="var(--tx)" stroke-width="2" stroke-dasharray="4 3"><title>${MES[m - 1]}/${prv}: ${fR(p)}</title></line>`;
+        svgM += `<text x="${x + w / 2}" y="${Hh - 8}" text-anchor="middle" class="pn-ax">${MES[m - 1]}</text>`;
+    });
+    svgM += '</svg>';
+    const leg = `<div class="pn-leg">${forn.map((f, i) => `<span><i style="background:${cor(i)}"></i>${esc(f)}</span>`).join('')}<span><i class="pn-tr"></i>mesmo mês de ${prv}</span></div>`;
+
+    /* 3) fornecedor × mês (mapa de calor, R$ mil) */
+    const cols = meses.filter(m => m <= mx);
+    const vmaxCell = Math.max(1, ...forn.flatMap(f => cols.map(m => fm[f + '|' + cur + '|' + m] || 0)));
+    const gt = `grid-template-columns:minmax(120px,1.5fr) repeat(${cols.length},minmax(44px,1fr)) minmax(70px,.9fr)`;
+    let heat = `<div class="pn-heat" style="${gt}"><div class="pn-h"></div>${cols.map(m => `<div class="pn-h">${MES[m - 1]}</div>`).join('')}<div class="pn-h pn-tt">Total ${cur}</div>`;
+    forn.forEach((f, i) => {
+        heat += `<div class="pn-fn"><i style="background:${cor(i)}"></i>${esc(f)}</div>`;
+        cols.forEach(m => { const v = fm[f + '|' + cur + '|' + m] || 0, t = v / vmaxCell; heat += `<div class="pn-c" style="background:rgba(4,140,128,${v ? (.07 + .78 * t).toFixed(2) : 0});color:${t > .5 ? '#fff' : 'inherit'}" title="${esc(f)} · ${MES[m - 1]}/${cur}: ${fR(v)}">${fK(v)}</div>`; });
+        heat += `<div class="pn-c pn-tt">${fK(fy[f + '|' + cur])}</div>`;
+    });
+    heat += `<div class="pn-fn pn-tot">Total</div>${cols.map(m => `<div class="pn-c pn-tot">${fK(tm[cur + '|' + m])}</div>`).join('')}<div class="pn-c pn-tot pn-tt">${fK(tCur)}</div></div>`;
+
+    /* 4) fornecedor × ano (mesmo período de cada ano) */
+    const ymaxF = Math.max(1, ...forn.flatMap(f => anos.map(y => fy[f + '|' + y] || 0)));
+    const tint = ['#C9D3D6', '#8FA7B0', 'var(--teal-deep)', 'var(--navy)'];
+    const cy = y => y === cur ? 'var(--teal-deep)' : tint[Math.min(anos.indexOf(y), 1)];
+    let anual = `<div class="pn-leg">${anos.map(y => `<span><i style="background:${cy(y)}"></i>${y}</span>`).join('')}</div><div class="pn-ann">`;
+    forn.forEach((f, i) => {
+        const vc = fy[f + '|' + cur] || 0, vp = fy[f + '|' + prv] || 0;
+        anual += `<div class="pn-ar"><div class="pn-fn"><i style="background:${cor(i)}"></i>${esc(f)}</div><div class="pn-bars">${anos.map(y => { const v = fy[f + '|' + y] || 0; return `<div class="pn-bl"><span style="width:${(v / ymaxF * 100).toFixed(1)}%;background:${cy(y)}"></span><b>${fMi(v)}</b></div>`; }).join('')}</div><div class="pn-sh"><b>${tCur ? NF0.format(vc / tCur * 100) : 0}%</b><small>do total ${cur}</small></div><div class="pn-vr">${chip(dlt(vc, vp))}</div></div>`;
+    });
+    anual += `<div class="pn-ar pn-tot"><div class="pn-fn">Total</div><div class="pn-bars">${anos.map(y => `<div class="pn-bl"><b>${fMi(tY(y))}</b><small>${y}</small></div>`).join('')}</div><div class="pn-sh"></div><div class="pn-vr">${chip(dlt(tCur, tPrv))}</div></div></div>`;
+
+    const kp = (l, v, s, ex) => `<div class="pn-k"><div class="pn-kl">${l}</div><div class="pn-kv">${v}</div><div class="pn-ks">${s}</div>${ex || ''}</div>`;
+    const per = S.f.per === 'ytd' ? `jan–${MES[mx - 1]}` : 'ano';
+    const html = `<div class="pn-kpis">
+      ${kp(`Total pago em ${cur}`, fMi(tCur), `${per} · vs ${prv}: ${chip(dlt(tCur, tPrv)) || '—'}`)}
+      ${kp('Média por mês', fMi(tCur / nMes), `${nMes} ${nMes === 1 ? 'mês' : 'meses'} com dados`)}
+      ${kp('Mês de maior gasto', mCur[iMax] ? MES[iMax].toUpperCase() : '—', mCur[iMax] ? fMi(mCur[iMax]) : '')}
+      ${kp('Custo por hora (serviço)', fR(H.eff), `${fH(H.h)} em ${cur} · ${chip(dlt(H.eff, Hp.eff)) || '—'} vs ${prv}`)}
+    </div>
+    ${card(`Total acumulado: ${fMi(aC[mx - 1])} em ${cur}`, `Gasto somado mês a mês, ${cur} × ${prv}${dAc != null ? ' · ' + (dAc > 0 ? 'acima' : 'abaixo') + ' de ' + prv + ' em ' + NF1.format(Math.abs(dAc) * 100) + '% no mesmo ponto' : ''} · todas as linhas pagas`, `<div class="pn-leg"><span><i style="background:var(--teal-deep)"></i>${cur}</span><span><i style="background:var(--c4)"></i>${prv}</span></div>${svgA}`)}
+    ${card(`Evolução mensal de ${cur}`, `Gasto de cada mês, por fornecedor · valores em R$ mil acima das barras`, leg + svgM)}
+    ${card(`Fornecedores mês a mês · ${cur}`, 'R$ mil pagos por fornecedor em cada mês · quanto mais escuro, maior o valor', heat)}
+    ${card('Fornecedores ano a ano', `Mesmo período de cada ano (${per}) · participação e variação sobre ${prv}`, anual)}`;
+    return { html, after() { } };
+};
 
 /* ===================== v2: topo minimalista, logo negativo, filtros discretos, detalhe ao clicar ===================== */
 const ICO = {
@@ -3627,6 +3755,7 @@ function tabelaVisual(t) {
 /* ---------- shell ---------- */
 const TABS = [
     ['gestao', 'Eficiência em custos'],
+    ['pano', 'Panorama do ano'],
     ['preco', 'Preço por hora'],
     ['volume', 'Volume × preço'],
     ['forn', 'Fornecedores'],
