@@ -140,6 +140,7 @@ main { flex:1; padding:6px var(--gutter) 28px; display:flex; flex-direction:colu
   .cab { border-bottom-color:var(--trl-accent); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
 </style>
+<link rel="stylesheet" href="central.css">
 </head>
 <body>
 <div class="doc">
@@ -161,20 +162,38 @@ main { flex:1; padding:6px var(--gutter) 28px; display:flex; flex-direction:colu
 
   <section class="resumo" aria-label="Resumo">
     <div class="kpi"><span class="rot">Projetos</span><b id="r-total">0</b><span>na central</span></div>
-    <div class="kpi"><span class="rot">Frentes</span><b id="r-cat">0</b><span>de trabalho</span></div>
+    <div class="kpi"><span class="rot">Categorias</span><b id="r-cat">0</b><span>de trabalho</span></div>
     <div class="kpi"><span class="rot">Abrem sem login</span><b id="r-livre">0</b><span id="r-livre-pct">links diretos</span><span class="barra" aria-hidden="true"><i id="r-livre-barra" style="width:0%"></i></span></div>
     <div class="kpi destaque"><span class="rot">Última atualização</span><b id="r-ult">—</b><span id="r-ult-nome">&nbsp;</span></div>
   </section>
 
   <div class="filtros">
     <input id="busca" class="busca" type="search" placeholder="Buscar projeto…" autocomplete="off" aria-label="Buscar projeto">
-    <div class="chips" id="chips" role="group" aria-label="Filtrar por frente"></div>
-    <div class="tema" role="group" aria-label="Aparência">
-      <button type="button" id="temaClaro" aria-pressed="true">Clean</button>
-      <button type="button" id="temaEscuro" aria-pressed="false">Dark</button>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="fim">
+      <select id="ordem" aria-label="Ordenar">
+        <option value="manual">Ordem da Central</option>
+        <option value="recentes">Mais recentes</option>
+        <option value="az">A–Z</option>
+      </select>
+      <div class="grupo-btn" role="group" aria-label="Visualização">
+        <button type="button" id="vGrade" aria-pressed="true">Grade</button>
+        <button type="button" id="vLista" aria-pressed="false">Lista</button>
+      </div>
+      <div class="tema" role="group" aria-label="Aparência">
+        <button type="button" id="temaClaro" aria-pressed="true">Clean</button>
+        <button type="button" id="temaEscuro" aria-pressed="false">Dark</button>
+      </div>
+      <button type="button" class="btn" id="btnEditar">Editar</button>
     </div>
   </div>
 
+  <div class="faixa-edicao" id="faixa-edicao" hidden>
+    <button type="button" class="btn primario" id="btnNovo">+ Novo projeto</button>
+    <button type="button" class="btn" id="btnCats">Categorias</button>
+    <span class="dica">Arraste os quadros para mudar de categoria ou de posição.</span>
+    <span class="estado" id="estado-salvo">Conectado</span>
+  </div>
   <main>
     <div id="lista"></div>
     <div class="vazio" id="vazio" hidden>Nenhum projeto com esse filtro. Limpe a busca ou escolha “Todos”.</div>
@@ -182,93 +201,11 @@ main { flex:1; padding:6px var(--gutter) 28px; display:flex; flex-direction:colu
 
   <footer class="rodape">
     <span>© Triunfo Logística · Central de Projetos</span>
-    <span>Projetos marcados “Requer login” abrem só para quem tem acesso no Claude.</span>
+    <span>Quadros “Requer login” abrem só para quem tem acesso no Claude.</span>
   </footer>
 </div>
 
 <script src="projetos.js"></script>
-<script>
-const ORIGEM = { site:["Abre sem login","livre"], claude:["Requer login","login"] };
-const FRENTES = ["Boletins de navio", "Área da equipe", "TPS", "Prime Ocean", "Operações", "Pessoal"];
-const NOTAS = { "Boletins de navio":"Dados ao vivo da planilha da equipe", "Área da equipe":"Uso interno: configurar e gerar envios" };
-const ordemDe = c => { const i = FRENTES.indexOf(c); return i < 0 ? 99 : i; };
-const TIPOS = [[/painel da equipe/i,"Editor"],[/boletim/i,"Boletim"],[/painel/i,"Painel"],[/planejamento/i,"Planejamento"],[/cen[aá]rio/i,"Cenários"],
-  [/indicador/i,"Indicadores"],[/controle/i,"Controle"],[/central/i,"Central"],[/alinhamento/i,"Alinhamento"],[/docagem/i,"Docagem"]];
-const tipoDe = i => (TIPOS.find(([re]) => re.test(i.titulo)) || [0, "Projeto"])[1];
-const MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-const dataCurta = s => { if (!s) return ''; const [a, m, d] = s.split('-').map(Number); return `${d} ${MES[m - 1]} ${a}`; };
-const haQuanto = s => { const [a, m, d] = s.split('-').map(Number); const dias = Math.round((new Date().setHours(0,0,0,0) - new Date(a, m - 1, d)) / 864e5);
-  return dias <= 0 ? 'atualizado hoje' : dias === 1 ? 'há 1 dia' : dias < 30 ? `há ${dias} dias` : `há ${Math.round(dias / 30)} ${Math.round(dias / 30) === 1 ? 'mês' : 'meses'}`; };
-/* aparência Clean / Dark: guarda a escolha; na primeira visita segue o tema do aparelho */
-function aplicarTema(t){
-  document.documentElement.dataset.tema = t;
-  $("#temaClaro").setAttribute("aria-pressed", String(t !== "escuro"));
-  $("#temaEscuro").setAttribute("aria-pressed", String(t === "escuro"));
-  try { localStorage.setItem("cp-tema", t); } catch (e) {}
-}
-const itens = (window.PROJETOS || []).slice();
-let filtroCat = "Todos";
-try { filtroCat = localStorage.getItem("cp-filtro") || "Todos"; } catch (e) {}
-
-const $ = s => document.querySelector(s);
-const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-function el(tag, attrs, ...kids){ const e = document.createElement(tag); for (const k in attrs || {}){ if (k === "text") e.textContent = attrs[k]; else if (k.startsWith("on")) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } kids.flat().forEach(c => c && e.append(c)); return e; }
-const ordenar = (a, b) => (b.atualizado || "").localeCompare(a.atualizado || "") || a.titulo.localeCompare(b.titulo);
-
-function render(){
-  const cats = {}; itens.forEach(i => cats[i.categoria] = (cats[i.categoria] || 0) + 1);
-  const nomesCat = Object.keys(cats).sort((a, b) => ordemDe(a) - ordemDe(b) || a.localeCompare(b));
-  if (filtroCat !== "Todos" && !cats[filtroCat]) filtroCat = "Todos";
-  $("#r-total").textContent = itens.length;
-  $("#r-cat").textContent = nomesCat.length;
-  const livres = itens.filter(i => i.origem === "site").length, pctLivre = itens.length ? livres / itens.length * 100 : 0;
-  $("#r-livre").textContent = livres;
-  $("#r-livre-pct").textContent = `${Math.round(pctLivre)}% dos projetos`;
-  $("#r-livre-barra").style.width = pctLivre + "%";
-  const recente = itens.filter(i => i.atualizado).sort(ordenar)[0];
-  $("#r-ult").textContent = recente ? dataCurta(recente.atualizado).replace(/ \d{4}$/, '') : "—";
-  $("#r-ult-nome").textContent = recente ? recente.titulo : "";
-  $("#sub").textContent = `Triunfo Logística · ${itens.length} projetos em ${nomesCat.length} frentes`;
-
-  const chips = $("#chips"); chips.replaceChildren();
-  ["Todos", ...nomesCat].forEach(c => chips.append(el("button", { type:"button", class:"chip", "aria-pressed":String(c === filtroCat),
-    onclick:() => { filtroCat = c; try { localStorage.setItem("cp-filtro", c); } catch (e) {} render(); } }, c, el("span", { class:"n", text:c === "Todos" ? itens.length : cats[c] }))));
-
-  const q = norm($("#busca").value.trim());
-  const vis = itens.filter(i => (filtroCat === "Todos" || i.categoria === filtroCat) && (!q || norm(i.titulo + " " + (i.descricao || "") + " " + i.categoria).includes(q))).sort(ordenar);
-  const lista = $("#lista"); lista.replaceChildren();
-  $("#vazio").hidden = vis.length > 0;
-  const grupos = {}; vis.forEach(i => (grupos[i.categoria] ||= []).push(i));
-  nomesCat.filter(c => grupos[c]).forEach(c => lista.append(el("section", { class:"grupo" },
-    el("div", { class:"grupo-cab" }, el("h2", { text:c }), el("span", { class:"qtd", text:String(grupos[c].length) }), NOTAS[c] ? el("span", { class:"nota", text:NOTAS[c] }) : null),
-    el("div", { class:"grade" }, grupos[c].map(card)))));
-}
-
-function card(i){
-  const abs = new URL(i.url, location.href).href;
-  const o = ORIGEM[i.origem];
-  return el("article", { class:"card" },
-    el("a", { class:"card-corpo", href:i.url, target:"_blank", rel:"noopener" },
-      el("div", { class:"card-topo" }, el("span", { class:"card-tipo", text:tipoDe(i) }), o ? el("span", { class:"badge " + o[1], text:o[0] }) : null),
-      el("h3", { text:i.titulo }),
-      i.descricao ? el("p", { class:"desc", text:i.descricao }) : null,
-      el("div", { class:"card-meta" }, el("span", { text:i.categoria }), i.atualizado ? el("span", { text:haQuanto(i.atualizado) }) : null)),
-    el("div", { class:"card-rodape" }, el("span", { text:i.atualizado ? "Atualizado em " + dataCurta(i.atualizado) : "Sem data" }),
-      el("div", { class:"acoes" },
-        el("button", { type:"button", class:"icone", onclick:e => copiar(abs, e.currentTarget) }, "Copiar link"),
-        el("a", { class:"abrir", href:i.url, target:"_blank", rel:"noopener", "aria-hidden":"true", tabindex:"-1" }, "Abrir →"))));
-}
-
-async function copiar(url, btn){
-  try { await navigator.clipboard.writeText(url); btn.textContent = "Copiado"; setTimeout(() => btn.textContent = "Copiar link", 1600); }
-  catch (e) { const inp = el("input", { value:url, "aria-label":"Link" }); inp.style.width = "100%"; btn.replaceWith(inp); inp.select(); }
-}
-
-$("#busca").addEventListener("input", render);
-$("#temaClaro").onclick = () => aplicarTema("claro");
-$("#temaEscuro").onclick = () => aplicarTema("escuro");
-aplicarTema(document.documentElement.dataset.tema || "claro");
-render();
-</script>
+<script src="central.js"></script>
 </body>
 </html>

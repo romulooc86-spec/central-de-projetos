@@ -1,6 +1,13 @@
-// Publicação na Cloudflare (Workers com arquivos estáticos): o site é esta pasta, sem build.
+// Publicação na Cloudflare: o site é esta pasta (sem build) e o Worker em src/worker.js guarda a lista editável no KV.
+// Segredo necessário (painel Cloudflare > Worker > Settings > Variables and Secrets): EDIT_PASSWORD
 {
   "name": "central-de-projetos",
+  "main": "src/worker.js",
   "compatibility_date": "2026-09-01",
-  "assets": { "directory": "./" }
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "kv_namespaces": [{ "binding": "CENTRAL_KV" }]
 }

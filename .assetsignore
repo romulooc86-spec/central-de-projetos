@@ -1,5 +1,7 @@
 .git
 .github
+.claude
+src
 wrangler.jsonc
 .assetsignore
 README.md
