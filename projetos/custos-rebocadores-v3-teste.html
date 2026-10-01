@@ -587,6 +587,15 @@ svg .vl{font-size:11.5px!important}
 @media(max-width:640px){.htit{font-size:20px!important}.badge img{height:34px!important}.hsep{height:34px!important}.hsub{font-size:9.5px;letter-spacing:.1em}.brand{gap:12px}}
 /* linha do tempo no celular: sem deslocamento lateral */
 @media(max-width:760px){.tl-ev{left:auto!important}}
+/* ===== capa com foto (baía de Guanabara ao amanhecer) ===== */
+.v3-capa{position:relative;display:block;min-height:400px;background:linear-gradient(90deg,rgba(4,39,56,.93) 0%,rgba(4,39,56,.72) 30%,rgba(4,39,56,.08) 58%,rgba(4,39,56,0) 100%),linear-gradient(0deg,rgba(4,39,56,.85) 0%,rgba(4,39,56,0) 38%),url(img/capa-rebocadores.jpg) center 62%/cover no-repeat,var(--navy)}
+.v3-capa .cp-main{max-width:60%;padding:28px 30px 96px}
+.v3-capa .cp-big{text-shadow:0 2px 18px rgba(0,0,0,.45)}
+.v3-capa .cp-sub{text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.v3-capa .cp-side{position:absolute;left:0;right:0;bottom:0;flex-direction:row;justify-content:flex-start;gap:0;padding:0;background:rgba(4,39,56,.62);backdrop-filter:blur(6px);border-top:1px solid rgba(255,255,255,.16)}
+.v3-capa .cp-side div{flex:1;padding:12px 24px;border-left:1px solid rgba(255,255,255,.14)}
+.v3-capa .cp-side div:first-child{border-left:0}
+@media(max-width:860px){.v3-capa .cp-main{max-width:none;padding:22px 20px 20px}.v3-capa{background:linear-gradient(180deg,rgba(4,39,56,.92) 0%,rgba(4,39,56,.7) 55%,rgba(4,39,56,.88) 100%),url(img/capa-rebocadores.jpg) 62% 50%/cover no-repeat,var(--navy)}.v3-capa .cp-side{position:static;flex-wrap:wrap;margin-top:6px}.v3-capa .cp-side div{flex:1 1 150px;padding:10px 16px}}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
