@@ -311,6 +311,15 @@ body.present .tabs button[data-t="dados"]{display:none!important}
 .pn-sh{text-align:right;line-height:1.2}.pn-sh b{font-size:15px}.pn-sh small{display:block;font-size:10.5px;color:var(--tx2)}
 .pn-vr{text-align:right}
 @media(max-width:760px){.pn-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.pn-ar{grid-template-columns:1fr 70px;}.pn-ar .pn-bars{grid-column:1/-1;order:3}.pn-kv{font-size:23px}}
+/* padrão analítico: nomes em negrito, rótulos discretos, sem grade */
+.pn-fn{font:700 11.5px var(--font-display);letter-spacing:.01em}
+.pn-leg b{font:700 11.5px var(--font-display)}
+.pn-v{font:700 10.5px var(--font-body)}.pn-v.up{fill:var(--navy)}.pn-v.dn{fill:var(--teal-deep)}
+:root[data-theme="dark"] .pn-v.up,body.dark .pn-v.up{fill:#CFE0E6}
+.pn-pill{display:inline-block;margin:0 0 6px;padding:4px 12px;border-radius:99px;font:700 12px var(--font-body);background:var(--teal-wash);color:var(--navy)}
+.pn-pill.up{background:var(--navy);color:#fff}
+.pn-bl b.pn-cur{color:var(--teal-deep);font-weight:800}
+.pn-card-svg svg{max-width:100%}
 /* ===== v2: topo minimalista, filtros discretos, detalhe ao clicar ===== */
 .top-in{padding:16px 28px}
 .badge{background:none;box-shadow:none;padding:0}.badge img{height:40px}
@@ -3168,13 +3177,18 @@ function trazerTotalPago() {
         if (c) { c.classList.add('mt'); $('#view').appendChild(c); }
     } catch (e) {}
 }
-/* ===== Panorama do ano: total acumulado, evolução mensal e fornecedores (por mês e por ano) ===== */
+/* ===== Panorama do ano: total acumulado, evolução mensal e fornecedores (por mês e por ano) =====
+   Segue o padrão analítico do painel: sem grade nem eixo Y, curvas suaves (cúbica monotônica), rótulos só nos pontos-chave,
+   período anterior em barra clara ao fundo, categorias do maior para o menor, nomes em negrito, largura real do quadro. */
 V.pano = function () {
     const rs = rowsF(['H', 'D', 'A', 'S']);
     const cur = S.cur, prv = S.cur - 1, mx = S.cut.m;
     const anos = S.years.filter(y => rs.some(r => r.y === y));
     const fK = v => v ? NF0.format(Math.round(v / 1000)) : '–';
     const add = (o, k, v) => { o[k] = (o[k] || 0) + v; };
+    const host = document.querySelector('#view');
+    const VW = Math.max(520, Math.min(1100, Math.round(((host && host.clientWidth) || 900) - 56)));
+    const mlab = m => VW < 640 ? MES[m - 1].charAt(0).toUpperCase() : MES[m - 1];
 
     /* fornecedores: os 5 maiores do ano atual e "Demais" */
     const tA = {};
@@ -3197,76 +3211,91 @@ V.pano = function () {
     const H = agg(rowsF(['H']).filter(r => r.y === cur)), Hp = agg(rowsF(['H']).filter(r => r.y === prv));
     const nMes = Math.max(1, mx);
     const lastP = meses.filter(m => (tm[prv + '|' + m] || 0) > 0).pop() || 0;
+    /* custo caiu = bom (Tiffany ▼); subiu = atenção (marinho ▲) */
     const chip = d => d == null ? '' : `<span class="pn-d ${d > 0 ? 'up' : 'dn'}">${d > 0 ? '▲' : '▼'} ${NF1.format(Math.abs(d) * 100)}%</span>`;
 
-    /* 1) acumulado no ano: ano atual × anterior */
+    /* 1) total acumulado, ano atual × anterior */
     const acum = y => { let s = 0; return meses.map(m => (s += tm[y + '|' + m] || 0)); };
     const aC = acum(cur), aP = acum(prv);
-    const W = 760, Hh = 300, mg = { l: 56, r: 96, t: 22, b: 30 }, iw = W - mg.l - mg.r, ih = Hh - mg.t - mg.b;
-    const ymax = niceMax(Math.max(aC[mx - 1] || 0, aP[Math.max(lastP, 1) - 1] || 0, 1));
+    const Hh = 280, mg = { l: 14, r: 120, t: 40, b: 28 }, iw = VW - mg.l - mg.r, ih = Hh - mg.t - mg.b;
+    const ymax = Math.max(aC[mx - 1] || 0, aP[Math.max(lastP, 1) - 1] || 0, 1) * 1.04;
     const X = m => mg.l + (m - 1) / 11 * iw, Y = v => mg.t + ih - v / ymax * ih;
-    const linha = (a, ate) => a.slice(0, ate).map((v, i) => (i ? 'L' : 'M') + X(i + 1).toFixed(1) + ' ' + Y(v).toFixed(1)).join('');
-    let svgA = `<svg viewBox="0 0 ${W} ${Hh}" class="pn-svg" role="img" aria-label="Gasto acumulado no ano">`;
-    for (let g = 0; g <= 4; g++) { const v = ymax * g / 4, y = Y(v); svgA += `<line x1="${mg.l}" x2="${W - mg.r}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width="1"/><text x="${mg.l - 8}" y="${y + 4}" text-anchor="end" class="pn-ax">${fMi(v).replace('R$ ', '')}</text>`; }
-    meses.forEach(m => { svgA += `<text x="${X(m)}" y="${Hh - 8}" text-anchor="middle" class="pn-ax">${MES[m - 1]}</text>`; });
-    if (lastP) svgA += `<path d="${linha(aP, lastP)}" fill="none" stroke="var(--c4)" stroke-width="2.2" stroke-dasharray="6 5"/><text x="${X(lastP) + 8}" y="${Y(aP[lastP - 1]) + 4}" class="pn-ax pn-b">${fMi(aP[lastP - 1])}</text>`;
-    svgA += `<path d="${linha(aC, mx)} L${X(mx)} ${Y(0)} L${X(1)} ${Y(0)}Z" fill="var(--teal)" opacity=".13"/><path d="${linha(aC, mx)}" fill="none" stroke="var(--teal-deep)" stroke-width="3.4" stroke-linejoin="round"/>`;
-    aC.slice(0, mx).forEach((v, i) => { svgA += `<circle cx="${X(i + 1)}" cy="${Y(v)}" r="3.6" fill="var(--teal-deep)"><title>${MES[i]}/${cur}: ${fMi(v)} acumulado</title></circle>`; });
-    svgA += `<text x="${X(mx) + 8}" y="${Y(aC[mx - 1]) + 5}" class="pn-ax pn-b pn-t">${fMi(aC[mx - 1])}</text></svg>`;
+    const pts = (a, ate) => a.slice(0, ate).map((v, i) => [+X(i + 1).toFixed(1), +Y(v).toFixed(1)]);
     const dAc = dlt(aC[mx - 1], aP[Math.max(mx, 1) - 1] || null);
+    const gap = aC[mx - 1] - (aP[Math.max(mx, 1) - 1] || 0);
+    let svgA = `<svg viewBox="0 0 ${VW} ${Hh}" width="100%" class="pn-svg" role="img" aria-label="Gasto acumulado no ano">`;
+    meses.forEach(m => { svgA += `<text x="${X(m)}" y="${Hh - 8}" text-anchor="middle" class="pn-ax ${m <= mx ? 'pn-b' : ''}">${mlab(m)}</text>`; });
+    if (lastP) svgA += `<path d="${suave(pts(aP, lastP))}" fill="none" stroke="var(--c4)" stroke-width="2.4" stroke-dasharray="7 5" stroke-linecap="round"/>`;
+    const pc = pts(aC, mx);
+    svgA += `<path d="${suave(pc)} L${X(mx)} ${Y(0)} L${X(1)} ${Y(0)}Z" fill="var(--teal)" opacity=".14"/><path d="${suave(pc)}" fill="none" stroke="var(--teal-deep)" stroke-width="3.6" stroke-linecap="round"/>`;
+    /* rótulos só nos pontos-chave: último ponto de cada ano e o mês de maior gasto */
+    svgA += `<circle cx="${X(mx)}" cy="${Y(aC[mx - 1])}" r="5" fill="var(--teal-deep)"><title>${MES[mx - 1]}/${cur}: ${fR(aC[mx - 1])} acumulado</title></circle>`;
+    svgA += `<text x="${X(mx) + 12}" y="${Y(aC[mx - 1]) + 1}" class="pn-ax pn-b pn-t">${fMi(aC[mx - 1])}</text><text x="${X(mx) + 12}" y="${Y(aC[mx - 1]) + 15}" class="pn-ax">${cur}</text>`;
+    if (lastP) {
+        const yp = Y(aP[lastP - 1]), yc = Y(aC[mx - 1]), yl = Math.max(yp + 4, yc + 38);
+        svgA += `<circle cx="${X(lastP)}" cy="${yp}" r="4" fill="var(--c4)"/><text x="${X(lastP) + 12}" y="${yl}" class="pn-ax pn-b">${fMi(aP[lastP - 1])}</text><text x="${X(lastP) + 12}" y="${yl + 14}" class="pn-ax">${prv}</text>`;
+    }
+    if (mCur[iMax] && iMax + 1 <= mx) {
+        const xm = X(iMax + 1), ym = Y(aC[iMax]);
+        svgA += `<circle cx="${xm}" cy="${ym}" r="4.5" fill="var(--navy)"/><text x="${xm}" y="${ym - 12}" text-anchor="middle" class="pn-ax pn-b">${MES[iMax]}: +${fMi(mCur[iMax])} no mês</text>`;
+    }
+    svgA += '</svg>';
+    const pillGap = dAc != null ? `<span class="pn-pill ${gap > 0 ? 'up' : 'dn'}">${gap > 0 ? '▲' : '▼'} ${fMi(Math.abs(gap))} (${NF1.format(Math.abs(dAc) * 100)}%) ${gap > 0 ? 'acima' : 'abaixo'} de ${prv} no mesmo ponto</span>` : '';
 
-    /* 2) evolução mensal: barras empilhadas por fornecedor */
-    const vmax = niceMax(Math.max(...mCur, ...meses.map(m => tm[prv + '|' + m] || 0), 1));
-    const bw = iw / 12, Yb = v => mg.t + ih - v / vmax * ih;
-    let svgM = `<svg viewBox="0 0 ${W} ${Hh}" class="pn-svg" role="img" aria-label="Gasto por mês">`;
-    for (let g = 0; g <= 4; g++) { const v = vmax * g / 4, y = Yb(v); svgM += `<line x1="${mg.l}" x2="${W - 12}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width="1"/><text x="${mg.l - 8}" y="${y + 4}" text-anchor="end" class="pn-ax">${fMi(v).replace('R$ ', '')}</text>`; }
+    /* 2) evolução mensal: barras empilhadas por fornecedor; barra clara ao fundo = mesmo mês do ano anterior */
+    const vmax = Math.max(...mCur, ...meses.map(m => tm[prv + '|' + m] || 0), 1) * 1.14;
+    const area = Hh - 36 - 52, bw = (VW - 24) / 12, Yb = v => 36 + area - v / vmax * area, base0 = Yb(0);
+    let svgM = `<svg viewBox="0 0 ${VW} ${Hh}" width="100%" class="pn-svg" role="img" aria-label="Gasto por mês">`;
     meses.forEach(m => {
-        const x = mg.l + (m - 1) * bw + bw * .17, w = bw * .66;
-        let base = 0;
-        forn.forEach((f, i) => { const v = fm[f + '|' + cur + '|' + m] || 0; if (!v) return; svgM += `<rect x="${x.toFixed(1)}" y="${Yb(base + v).toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(.5, v / vmax * ih).toFixed(1)}" fill="${cor(i)}"><title>${f} · ${MES[m - 1]}/${cur}: ${fR(v)}</title></rect>`; base += v; });
-        if (base) svgM += `<text x="${x + w / 2}" y="${Yb(base) - 6}" text-anchor="middle" class="pn-ax pn-b">${fK(base)}</text>`;
-        const p = tm[prv + '|' + m] || 0;
-        if (p) svgM += `<line x1="${x - 3}" x2="${x + w + 3}" y1="${Yb(p)}" y2="${Yb(p)}" stroke="var(--tx)" stroke-width="2" stroke-dasharray="4 3"><title>${MES[m - 1]}/${prv}: ${fR(p)}</title></line>`;
-        svgM += `<text x="${x + w / 2}" y="${Hh - 8}" text-anchor="middle" class="pn-ax">${MES[m - 1]}</text>`;
+        const cx = 12 + (m - 1) * bw + bw / 2, wP = bw * .8, wC = bw * .52;
+        const p = tm[prv + '|' + m] || 0, c = mCur[m - 1];
+        if (p) svgM += `<rect x="${(cx - wP / 2).toFixed(1)}" y="${Yb(p).toFixed(1)}" width="${wP.toFixed(1)}" height="${(base0 - Yb(p)).toFixed(1)}" rx="3" fill="var(--bd)" opacity=".85"><title>${MES[m - 1]}/${prv}: ${fR(p)}</title></rect>`;
+        let acc = 0;
+        forn.forEach((f, i) => { const v = fm[f + '|' + cur + '|' + m] || 0; if (!v) return; svgM += `<rect x="${(cx - wC / 2).toFixed(1)}" y="${Yb(acc + v).toFixed(1)}" width="${wC.toFixed(1)}" height="${Math.max(.6, base0 - Yb(v)).toFixed(1)}" fill="${cor(i)}"><title>${f} · ${MES[m - 1]}/${cur}: ${fR(v)} (${NF0.format(v / c * 100)}% do mês)</title></rect>`; acc += v; });
+        if (c) {
+            svgM += `<text x="${cx}" y="${Yb(Math.max(c, p)) - 7}" text-anchor="middle" class="pn-ax pn-b ${m - 1 === iMax ? 'pn-t' : ''}">${fK(c)}</text>`;
+            if (p) { const d = dlt(c, p); svgM += `<text x="${cx}" y="${Hh - 22}" text-anchor="middle" class="pn-v ${d > 0 ? 'up' : 'dn'}">${d > 0 ? '▲' : '▼'}${NF0.format(Math.abs(d) * 100)}%</text>`; }
+        }
+        svgM += `<text x="${cx}" y="${Hh - 6}" text-anchor="middle" class="pn-ax ${m <= mx ? 'pn-b' : ''}">${mlab(m)}</text>`;
     });
     svgM += '</svg>';
-    const leg = `<div class="pn-leg">${forn.map((f, i) => `<span><i style="background:${cor(i)}"></i>${esc(f)}</span>`).join('')}<span><i class="pn-tr"></i>mesmo mês de ${prv}</span></div>`;
+    const leg = `<div class="pn-leg">${forn.map((f, i) => `<span><i style="background:${cor(i)}"></i><b>${esc(f)}</b></span>`).join('')}<span><i style="background:var(--bd)"></i>mesmo mês de ${prv}</span></div>`;
 
-    /* 3) fornecedor × mês (mapa de calor, R$ mil) */
+    /* 3) fornecedor × mês: mapa de calor, ordenado do maior para o menor */
     const cols = meses.filter(m => m <= mx);
     const vmaxCell = Math.max(1, ...forn.flatMap(f => cols.map(m => fm[f + '|' + cur + '|' + m] || 0)));
-    const gt = `grid-template-columns:minmax(120px,1.5fr) repeat(${cols.length},minmax(44px,1fr)) minmax(70px,.9fr)`;
-    let heat = `<div class="pn-heat" style="${gt}"><div class="pn-h"></div>${cols.map(m => `<div class="pn-h">${MES[m - 1]}</div>`).join('')}<div class="pn-h pn-tt">Total ${cur}</div>`;
+    const gt = `grid-template-columns:minmax(${VW < 640 ? 96 : 130}px,1.5fr) repeat(${cols.length},minmax(40px,1fr)) minmax(64px,.9fr)`;
+    let heat = `<div class="pn-heat" style="${gt}"><div class="pn-h"></div>${cols.map(m => `<div class="pn-h">${mlab(m)}</div>`).join('')}<div class="pn-h pn-tt">${cur}</div>`;
     forn.forEach((f, i) => {
         heat += `<div class="pn-fn"><i style="background:${cor(i)}"></i>${esc(f)}</div>`;
-        cols.forEach(m => { const v = fm[f + '|' + cur + '|' + m] || 0, t = v / vmaxCell; heat += `<div class="pn-c" style="background:rgba(4,140,128,${v ? (.07 + .78 * t).toFixed(2) : 0});color:${t > .5 ? '#fff' : 'inherit'}" title="${esc(f)} · ${MES[m - 1]}/${cur}: ${fR(v)}">${fK(v)}</div>`; });
+        cols.forEach(m => { const v = fm[f + '|' + cur + '|' + m] || 0, t = v / vmaxCell; heat += `<div class="pn-c" style="background:rgba(4,140,128,${v ? (.07 + .78 * t).toFixed(2) : 0});color:${t > .5 ? '#fff' : 'inherit'};font-weight:${t > .5 ? 800 : 500}" title="${esc(f)} · ${MES[m - 1]}/${cur}: ${fR(v)}">${fK(v)}</div>`; });
         heat += `<div class="pn-c pn-tt">${fK(fy[f + '|' + cur])}</div>`;
     });
     heat += `<div class="pn-fn pn-tot">Total</div>${cols.map(m => `<div class="pn-c pn-tot">${fK(tm[cur + '|' + m])}</div>`).join('')}<div class="pn-c pn-tot pn-tt">${fK(tCur)}</div></div>`;
 
-    /* 4) fornecedor × ano (mesmo período de cada ano) */
+    /* 4) fornecedor × ano: barras por ano (mesmo período), maior para o menor */
     const ymaxF = Math.max(1, ...forn.flatMap(f => anos.map(y => fy[f + '|' + y] || 0)));
-    const tint = ['#C9D3D6', '#8FA7B0', 'var(--teal-deep)', 'var(--navy)'];
-    const cy = y => y === cur ? 'var(--teal-deep)' : tint[Math.min(anos.indexOf(y), 1)];
-    let anual = `<div class="pn-leg">${anos.map(y => `<span><i style="background:${cy(y)}"></i>${y}</span>`).join('')}</div><div class="pn-ann">`;
+    const cy = y => y === cur ? 'var(--teal-deep)' : (y === prv ? '#8FA7B0' : '#C9D3D6');
+    let anual = `<div class="pn-leg">${anos.map(y => `<span><i style="background:${cy(y)}"></i><b>${y}</b></span>`).join('')}</div><div class="pn-ann">`;
     forn.forEach((f, i) => {
         const vc = fy[f + '|' + cur] || 0, vp = fy[f + '|' + prv] || 0;
-        anual += `<div class="pn-ar"><div class="pn-fn"><i style="background:${cor(i)}"></i>${esc(f)}</div><div class="pn-bars">${anos.map(y => { const v = fy[f + '|' + y] || 0; return `<div class="pn-bl"><span style="width:${(v / ymaxF * 100).toFixed(1)}%;background:${cy(y)}"></span><b>${fMi(v)}</b></div>`; }).join('')}</div><div class="pn-sh"><b>${tCur ? NF0.format(vc / tCur * 100) : 0}%</b><small>do total ${cur}</small></div><div class="pn-vr">${chip(dlt(vc, vp))}</div></div>`;
+        anual += `<div class="pn-ar"><div class="pn-fn"><i style="background:${cor(i)}"></i>${esc(f)}</div><div class="pn-bars">${anos.map(y => { const v = fy[f + '|' + y] || 0; return `<div class="pn-bl"><span style="width:${(v / ymaxF * 100).toFixed(1)}%;background:${cy(y)}"></span><b${y === cur ? ' class="pn-cur"' : ''}>${fMi(v)}</b></div>`; }).join('')}</div><div class="pn-sh"><b>${tCur ? NF0.format(vc / tCur * 100) : 0}%</b><small>do total ${cur}</small></div><div class="pn-vr">${chip(dlt(vc, vp))}</div></div>`;
     });
-    anual += `<div class="pn-ar pn-tot"><div class="pn-fn">Total</div><div class="pn-bars">${anos.map(y => `<div class="pn-bl"><b>${fMi(tY(y))}</b><small>${y}</small></div>`).join('')}</div><div class="pn-sh"></div><div class="pn-vr">${chip(dlt(tCur, tPrv))}</div></div></div>`;
+    anual += `<div class="pn-ar pn-tot"><div class="pn-fn">Total</div><div class="pn-bars">${anos.map(y => `<div class="pn-bl"><b${y === cur ? ' class="pn-cur"' : ''}>${fMi(tY(y))}</b><small>${y}</small></div>`).join('')}</div><div class="pn-sh"></div><div class="pn-vr">${chip(dlt(tCur, tPrv))}</div></div></div>`;
 
-    const kp = (l, v, s, ex) => `<div class="pn-k"><div class="pn-kl">${l}</div><div class="pn-kv">${v}</div><div class="pn-ks">${s}</div>${ex || ''}</div>`;
+    const kp = (l, v, s) => `<div class="pn-k"><div class="pn-kl">${l}</div><div class="pn-kv">${v}</div><div class="pn-ks">${s}</div></div>`;
     const per = S.f.per === 'ytd' ? `jan–${MES[mx - 1]}` : 'ano';
+    const lider = forn[0], shL = tCur ? (fy[lider + '|' + cur] || 0) / tCur : 0;
     const html = `<div class="pn-kpis">
-      ${kp(`Total pago em ${cur}`, fMi(tCur), `${per} · vs ${prv}: ${chip(dlt(tCur, tPrv)) || '—'}`)}
+      ${kp(`Total pago em ${cur}`, fMi(tCur), `${per} · ${chip(dlt(tCur, tPrv)) || '—'} vs ${prv}`)}
       ${kp('Média por mês', fMi(tCur / nMes), `${nMes} ${nMes === 1 ? 'mês' : 'meses'} com dados`)}
       ${kp('Mês de maior gasto', mCur[iMax] ? MES[iMax].toUpperCase() : '—', mCur[iMax] ? fMi(mCur[iMax]) : '')}
-      ${kp('Custo por hora (serviço)', fR(H.eff), `${fH(H.h)} em ${cur} · ${chip(dlt(H.eff, Hp.eff)) || '—'} vs ${prv}`)}
+      ${kp('Custo por hora (serviço)', fR(H.eff), `${fH(H.h)} · ${chip(dlt(H.eff, Hp.eff)) || '—'} vs ${prv}`)}
     </div>
-    ${card(`Total acumulado: ${fMi(aC[mx - 1])} em ${cur}`, `Gasto somado mês a mês, ${cur} × ${prv}${dAc != null ? ' · ' + (dAc > 0 ? 'acima' : 'abaixo') + ' de ' + prv + ' em ' + NF1.format(Math.abs(dAc) * 100) + '% no mesmo ponto' : ''} · todas as linhas pagas`, `<div class="pn-leg"><span><i style="background:var(--teal-deep)"></i>${cur}</span><span><i style="background:var(--c4)"></i>${prv}</span></div>${svgA}`)}
-    ${card(`Evolução mensal de ${cur}`, `Gasto de cada mês, por fornecedor · valores em R$ mil acima das barras`, leg + svgM)}
-    ${card(`Fornecedores mês a mês · ${cur}`, 'R$ mil pagos por fornecedor em cada mês · quanto mais escuro, maior o valor', heat)}
-    ${card('Fornecedores ano a ano', `Mesmo período de cada ano (${per}) · participação e variação sobre ${prv}`, anual)}`;
+    ${card(`Total acumulado: <b>${fMi(aC[mx - 1])}</b> em ${cur}`, `${cur} × ${prv}, gasto somado mês a mês`, `${pillGap}${svgA}`)}
+    ${card(`Evolução mensal: pico de <b>${fMi(mCur[iMax])}</b> em ${MES[iMax]}`, `R$ mil por mês e fornecedor · variação sobre o mesmo mês de ${prv}`, leg + svgM)}
+    ${card(`${esc(lider)} concentra <b>${NF0.format(shL * 100)}%</b> do gasto de ${cur}`, `R$ mil por fornecedor e mês · mais escuro = maior valor`, heat)}
+    ${card('Fornecedores ano a ano: quem subiu e quem caiu', `Mesmo período de cada ano (${per}) · participação e variação sobre ${prv}`, anual)}`;
     return { html, after() { } };
 };
 
