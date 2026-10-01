@@ -7,7 +7,7 @@
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/projetos/*", "/projetos.js"]
   },
   "kv_namespaces": [{ "binding": "CENTRAL_KV" }]
 }
