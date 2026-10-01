@@ -620,6 +620,18 @@ body.cv-aberta{overflow:hidden}
 .v3-pm-fin{flex-direction:column;line-height:1.15;gap:1px}.v3-pm-fin b{font-size:14px}.v3-pm-fin small{font:600 10.5px var(--font-body);color:var(--tx2)}
 .v3-pm .pn-c{min-height:32px;font-size:12px}
 .v3-pm [hidden]{display:none!important}
+/* alertas de mudança brusca */
+.v3-alert{background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--navy);border-radius:var(--r);padding:14px 18px 12px;margin-bottom:16px;box-shadow:var(--shadow)}
+.v3-alert h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:800 14px var(--font-display);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px}
+.v3-alert h3 span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px}
+.v3-alert h3 em{font:500 12px var(--font-body);text-transform:none;letter-spacing:0;color:var(--tx2)}
+.v3-alert ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.v3-alert li{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;padding:9px 12px;border-radius:8px;background:var(--card-soft);border-left:3px solid var(--navy)}
+.v3-alert li.up{border-left-color:var(--teal-deep)}
+.v3-alert li b{font:800 11.5px var(--font-display);color:var(--tx2);text-transform:uppercase}
+.al-f{font:700 13px var(--font-display)}.al-d{font:800 13px var(--font-display);color:var(--navy)}.v3-alert li.up .al-d{color:var(--teal-deep)}
+.v3-alert li small{grid-column:1/-1;font-size:11.5px;color:var(--tx2)}
+.al-ok{margin:0;font-size:13px;color:var(--tx2)}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -4039,6 +4051,7 @@ V3.oper = function () {
     ${card('Gasto mensal por tipo de operação', `R$ mil por mês em ${cur}`, v3Stack(rs, v3Tipo, top(tipos, 5).map(g => g.k), mx))}
     ${card(`Onde acontece: <b>${esc((lid || { k: '—' }).k)}</b> é o ponto mais movimentado`, `Berços, fundeio, pátio e portos · origem e destino contam um acionamento em cada ponta; o valor é dividido entre elas`, v3Rank(locais, { max: 10, dot: g => nCol[v3Natureza(g.k)], sub: g => v3Natureza(g.k) }) + `<div class="pn-leg" style="margin-top:8px">${Object.entries(nCol).map(([k, c]) => `<span><i style="background:${c}"></i><b>${k}</b></span>`).join('')}</div>`)}
     ${card('Balsa × tipo de operação', `R$ mil em ${cur} · mais escuro = maior valor`, heat)}
+    ${(() => { try { return v3FornTipo(rCur); } catch (e) { console.warn('forn x tipo', e); return ''; } })()}
     ${card('Para quem trabalhamos', `Cliente/navio e contrato · ${cur} × ${prv}`, `<div class="v3-2c"><div><div class="v3-sub">Cliente / navio</div>${v3Rank(clientes, { max: 6, total: tCur, unid: 'acion.' })}</div><div><div class="v3-sub">Contrato</div>${v3Rank(contratos, { max: 6, total: tCur, unid: 'acion.' })}</div></div>`)}
     ${aviso}`;
     return { html, after() { } };
@@ -4061,7 +4074,9 @@ V3.resumo = function () {
     const dec = itens.length ? `<section class="card v3-dec"><div class="card-head"><h3>Pontos de atenção e decisão</h3></div><ul>${itens.join('')}</ul></section>` : '';
     let capa = '';
     try { capa = V3.capa(tc, tp, H, Hp, stand, lid); } catch (e) { console.warn('capa', e); }
-    return { html: (capa || (head + dec)) + p.html, after: p.after };
+    let alertas = '';
+    try { alertas = v3Alertas(); } catch (e) { console.warn('alertas', e); }
+    return { html: (capa || (head + dec)) + alertas + p.html, after: p.after };
 };
 
 /* ---------- capa: resultado em destaque, destaques positivos, oportunidades e marcos ---------- */
@@ -4291,6 +4306,97 @@ V.v3for = function () {
     }
     setTimeout(montar, 0);
 })();
+
+/* ===== extras v3: dependência de fornecedores (HHI), fornecedor × tipo de operação e alertas de mudança brusca ===== */
+const v3Meses12 = () => { const fim = S.maxDate.slice(0, 7); return Array.from({ length: 12 }, (_, i) => addM(fim, -(11 - i))); };
+const v3Largura = () => Math.max(520, Math.min(1100, Math.round(((document.querySelector('#view') || {}).clientWidth || 900) - 56)));
+
+/* 1) Índice de dependência (HHI = soma dos quadrados das participações no gasto, 0 a 10.000) */
+function v3Hhi() {
+    const rs = S.all.filter(r => r.vt > 0 && S.f.ag.has(r.a));
+    const fim = S.maxDate.slice(0, 7), meses = v3Meses12(), ini = meses[0];
+    const by = {}, tot = {}, ant = {}, nov = {};
+    rs.forEach(r => {
+        const k = mk(r);
+        if (k >= ini && k <= fim) { by[k] = by[k] || {}; by[k][r.a] = (by[k][r.a] || 0) + r.vt; tot[k] = (tot[k] || 0) + r.vt; nov[r.a] = (nov[r.a] || 0) + r.vt; }
+        else if (k >= addM(ini, -12) && k < ini) ant[r.a] = (ant[r.a] || 0) + r.vt;
+    });
+    const hhi = o => { const t = Object.values(o).reduce((s, v) => s + v, 0); return t ? Object.values(o).reduce((s, v) => s + Math.pow(v / t * 100, 2), 0) : null; };
+    const vals = meses.map(k => by[k] ? hhi(by[k]) : null);
+    const h12 = hhi(nov), h0 = hhi(ant);
+    const zona = v => v == null ? '' : v < 1500 ? 'baixa' : v <= 2500 ? 'moderada' : 'alta';
+    const corZ = v => v < 1500 ? 'var(--teal)' : v <= 2500 ? '#5F8793' : 'var(--navy)';
+    const W = v3Largura(), Hh = 270, mg = { l: 14, r: 150, t: 28, b: 28 }, iw = W - mg.l - mg.r, ih = Hh - mg.t - mg.b;
+    const ymax = Math.max(4000, ...vals.filter(v => v != null)) * 1.12, Y = v => mg.t + ih - v / ymax * ih, bw = iw / meses.length;
+    let svg = `<svg viewBox="0 0 ${W} ${Hh}" width="100%" class="pn-svg" role="img" aria-label="Índice de dependência de fornecedores">`;
+    [[1500, 'moderada'], [2500, 'alta']].forEach(([v, t]) => { svg += `<line x1="${mg.l}" x2="${W - mg.r + 8}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--tx2)" stroke-width="1" stroke-dasharray="4 4" opacity=".55"/><text x="${W - mg.r + 14}" y="${Y(v) + 4}" class="pn-ax">${NF0.format(v)} · ${t}</text>`; });
+    meses.forEach((k, i) => {
+        const v = vals[i], x = mg.l + i * bw + bw * .2, w = bw * .6;
+        if (v != null) svg += `<rect x="${x.toFixed(1)}" y="${Y(v).toFixed(1)}" width="${w.toFixed(1)}" height="${(Y(0) - Y(v)).toFixed(1)}" rx="3" fill="${corZ(v)}"><title>${mLbl(k)}: ${NF0.format(v)} (${zona(v)})</title></rect><text x="${x + w / 2}" y="${Y(v) - 6}" text-anchor="middle" class="pn-ax pn-b">${NF0.format(v)}</text>`;
+        svg += `<text x="${x + w / 2}" y="${Hh - 8}" text-anchor="middle" class="pn-ax ${i === meses.length - 1 ? '' : 'pn-b'}">${mLbl(k)}</text>`;
+    });
+    svg += '</svg>';
+    if (h12 == null) return '';
+    const dir = h0 == null ? '' : h12 < h0 ? 'caiu' : 'subiu';
+    return card(`Dependência de fornecedores: índice <b>${NF0.format(h12)}</b> (${zona(h12)})${h0 != null ? `, ${dir} de ${NF0.format(h0)}` : ''}`,
+        `Soma dos quadrados das participações no gasto, mês a mês · quanto maior, mais o gasto depende de poucos fornecedores`,
+        `<div class="pn-leg"><span><i style="background:var(--teal)"></i><b>Baixa</b> &lt; 1.500</span><span><i style="background:#5F8793"></i><b>Moderada</b> 1.500–2.500</span><span><i style="background:var(--navy)"></i><b>Alta</b> &gt; 2.500</span></div>${svg}`);
+}
+
+/* 2) Fornecedor × tipo de operação (ano atual) */
+function v3FornTipo(rCur) {
+    const sup = {}, tip = {}, cel = {};
+    rCur.forEach(r => { const t = v3Tipo(r); sup[r.a] = (sup[r.a] || 0) + r.vt; tip[t] = (tip[t] || 0) + r.vt; });
+    const fs = Object.keys(sup).sort((a, b) => sup[b] - sup[a]), F = fs.slice(0, 6), DEM = 'Demais fornecedores';
+    const ts = Object.keys(tip).sort((a, b) => tip[b] - tip[a]), T = ts.slice(0, 5), TD = 'Demais tipos';
+    const gf = a => F.includes(a) ? a : DEM, gt = t => T.includes(t) ? t : TD;
+    rCur.forEach(r => { const k = gf(r.a) + '|' + gt(v3Tipo(r)); cel[k] = (cel[k] || 0) + r.vt; });
+    const forn = F.concat(fs.length > 6 ? [DEM] : []), cols = T.concat(ts.length > 5 ? [TD] : []);
+    const totF = f => cols.reduce((s, t) => s + (cel[f + '|' + t] || 0), 0);
+    const grid = `grid-template-columns:minmax(120px,1.4fr) repeat(${cols.length},minmax(64px,1fr)) minmax(76px,.9fr)`;
+    let h = `<div class="pn-heat" style="${grid}"><div class="pn-h"></div>${cols.map(t => `<div class="pn-h">${esc(t)}</div>`).join('')}<div class="pn-h pn-tt">Total</div>`;
+    forn.forEach(f => {
+        const tf = totF(f);
+        h += `<div class="pn-fn">${esc(f)}</div>` + cols.map(t => { const v = cel[f + '|' + t] || 0, s = tf ? v / tf : 0; return `<div class="pn-c" style="background:rgba(4,140,128,${v ? (.07 + .78 * s).toFixed(2) : 0});color:${s > .5 ? '#fff' : 'inherit'};font-weight:${s > .5 ? 800 : 500}" title="${esc(f)} · ${esc(t)}: ${fR(v)} (${NF0.format(s * 100)}% do fornecedor)">${v ? NF0.format(s * 100) + '%' : '–'}</div>`; }).join('') + `<div class="pn-c pn-tt">${fMi(tf)}</div>`;
+    });
+    h += `<div class="pn-fn pn-tot">Total</div>${cols.map(t => `<div class="pn-c pn-tot">${fMi(forn.reduce((s, f) => s + (cel[f + '|' + t] || 0), 0))}</div>`).join('')}<div class="pn-c pn-tot pn-tt">${fMi(forn.reduce((s, f) => s + totF(f), 0))}</div></div>`;
+    /* destaque: quem concentra o standby */
+    const sb = {}; rCur.filter(r => v3Tipo(r) === 'Standby').forEach(r => { sb[r.a] = (sb[r.a] || 0) + r.vt; });
+    const sbT = Object.values(sb).reduce((s, v) => s + v, 0), lid = Object.keys(sb).sort((a, b) => sb[b] - sb[a])[0];
+    const titulo = lid && sbT ? `<b>${esc(lid)}</b> concentra ${NF0.format(sb[lid] / sbT * 100)}% do standby (${fMi(sb[lid])} de ${fMi(sbT)})` : 'Fornecedor × tipo de operação';
+    return card(titulo, `% do gasto de cada fornecedor por tipo de operação em ${S.cur} · mais escuro = maior peso · total em R$`, h);
+}
+
+/* 3) Alertas: fornecedor que ganha ou perde 15 p.p. ou mais de participação nas manobras de um mês para o outro */
+function v3Alertas() {
+    const rs = S.all.filter(r => isMan(r) && S.f.ag.has(r.a));
+    const fim = S.maxDate.slice(0, 7), meses = Array.from({ length: 7 }, (_, i) => addM(fim, -(6 - i)));
+    const c = {}, t = {};
+    rs.forEach(r => { const k = mk(r); if (k < meses[0] || k > fim) return; c[r.a + '|' + k] = (c[r.a + '|' + k] || 0) + 1; t[k] = (t[k] || 0) + 1; });
+    const forn = [...new Set(rs.filter(r => mk(r) >= meses[0]).map(r => r.a))];
+    const out = [];
+    for (let i = 1; i < meses.length; i++) {
+        const k = meses[i], p = meses[i - 1];
+        if ((t[k] || 0) < 8 || (t[p] || 0) < 8) continue;
+        forn.forEach(f => { const a = (c[f + '|' + k] || 0) / t[k], b = (c[f + '|' + p] || 0) / t[p], d = a - b; if (Math.abs(d) >= 0.15) out.push({ k, f, d, a, b, parcial: k === fim }); });
+    }
+    out.sort((x, y) => y.k.localeCompare(x.k) || Math.abs(y.d) - Math.abs(x.d));
+    const lista = out.slice(0, 4);
+    const pp1 = v => (v > 0 ? '+' : '−') + NF1.format(Math.abs(v) * 100);
+    const corpo = lista.length
+        ? `<ul>${lista.map(o => `<li class="${o.d > 0 ? 'up' : 'dn'}"><b>${mLbl(o.k)}</b><span class="al-f">${esc(o.f)}</span><span class="al-d">${o.d > 0 ? "▲" : "▼"} ${NF1.format(Math.abs(o.d) * 100)} p.p.</span><small>de ${pp(o.b)} para ${pp(o.a)} das manobras${o.parcial ? ' · mês parcial' : ''}</small></li>`).join('')}</ul>`
+        : '<p class="al-ok">Nenhuma mudança brusca (±15 p.p.) na participação dos fornecedores nos últimos 6 meses.</p>';
+    return `<section class="v3-alert"><h3><span>!</span>Alertas de mudança brusca<em>±15 p.p. na participação nas manobras de um mês para o outro</em></h3>${corpo}</section>`;
+}
+
+/* a aba Fornecedores e preço ganha o índice de dependência logo depois do mapa de participação */
+const v3for1 = V.v3for;
+V.v3for = function () {
+    const v = v3for1(); let c = '';
+    try { c = v3Hhi(); } catch (e) { console.warn('hhi', e); }
+    const i = v.html.indexOf('</section>');
+    return { html: i >= 0 ? v.html.slice(0, i + 10) + c + v.html.slice(i + 10) : v.html + c, after: v.after };
+};
 /* ---------- shell ---------- */
 const TABS = [
     ['v3res', 'Resumo'],
