@@ -684,6 +684,11 @@ body[data-tab="v3res"] #fbar,body[data-tab="v3res"] #filters{display:none!import
 .acts #live i{width:5px;height:5px}
 .acts #live span{display:inline!important}
 @media(max-width:640px){.acts #live{display:none!important}}
+
+/* ===== capa em tela cheia, sem bordas ===== */
+.cv-ambient{display:none!important}
+.cv-stage{left:0!important;top:0!important;transform:none!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;background-size:cover!important;background-position:62% 55%!important;box-shadow:none!important}
+@media(max-aspect-ratio:1/1){.cv-stage{background-position:70% 50%!important}}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
