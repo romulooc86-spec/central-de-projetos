@@ -517,6 +517,41 @@ svg .vl{font-size:11.5px!important}
 @media(max-width:900px){.v3-2c{grid-template-columns:1fr}}
 @media(max-width:760px){.v3-2c .v3-rh,.v3-2c .v3-rr,.v3-rh,.v3-rr{grid-template-columns:22px minmax(70px,1.5fr) minmax(30px,.8fr) 80px 54px;gap:8px}.v3-rh span:nth-child(4),.v3-rh span:nth-child(5),.v3-rr .v3x-c{display:none}.v3-head{font-size:14.5px}}
 @media print{body{background:#fff}.tabs,#filters,#fbar,.acts,.foot,#toast{display:none!important}.card,.v3-head{break-inside:avoid;box-shadow:none}.wrap{max-width:none;padding:0}}
+/* ===== capa do Resumo ===== */
+.v3-capa ~ .pn-kpis{display:none}
+.v3-capa{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:0;margin-bottom:16px;border-radius:var(--r);overflow:hidden;background:linear-gradient(135deg,var(--navy),#0B3F55);color:#fff;box-shadow:var(--shadow);border-left:6px solid var(--teal)}
+.cp-main{padding:26px 28px 22px}
+.cp-eyebrow{font:700 11px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:#9FE3DA}
+.cp-big{font:800 clamp(44px,7vw,76px)/1.02 var(--font-display);margin:8px 0 4px;letter-spacing:-.01em}
+.cp-sub{font-size:16px;opacity:.92}.cp-sub b{color:#9FE3DA}
+.cp-split{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.18);font-size:12.5px;opacity:.95}
+.cp-split span{display:flex;flex-direction:column;gap:1px}.cp-split b{font:800 20px var(--font-display);color:#fff}
+.cp-side{background:rgba(255,255,255,.07);padding:22px 24px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.cp-side div{display:flex;flex-direction:column;gap:1px}.cp-side small{font:700 10.5px var(--font-display);letter-spacing:.09em;text-transform:uppercase;opacity:.7}
+.cp-side b{font:800 22px var(--font-display)}.cp-side em{font-style:normal;font-size:12px;font-weight:700;opacity:.9}
+.cp-side em.dn{color:#7FE3D8}
+.cp-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.cp-pos,.cp-opp{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px 8px;box-shadow:var(--shadow)}
+.cp-pos{border-top:4px solid var(--teal)}.cp-opp{border-top:4px solid var(--navy)}
+.cp-pos h3,.cp-opp h3{display:flex;align-items:center;gap:8px;font:800 14px var(--font-display);margin:0 0 6px;text-transform:uppercase;letter-spacing:.05em}
+.cp-pos h3 span,.cp-opp h3 span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:12px;color:#fff}
+.cp-pos h3 span{background:var(--teal-deep)}.cp-opp h3 span{background:var(--navy)}
+.cp-opp h3 em{margin-left:auto;font-style:normal;font:800 14px var(--font-display);color:var(--navy);text-transform:none;letter-spacing:0}
+.cp-it{display:grid;grid-template-columns:minmax(110px,.95fr) 1.6fr;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--bd)}
+.cp-it:first-of-type{border-top:0}
+.cp-it > b{font:800 19px/1.15 var(--font-display);color:var(--navy)}
+.cp-pos .cp-it > b{color:var(--teal-deep)}
+.cp-it strong{display:block;font-size:13px}.cp-it small{display:block;font-size:12px;color:var(--tx2);line-height:1.35}
+.cp-marcos{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cp-marcos h3{font:800 14px var(--font-display);margin:0 0 12px;text-transform:uppercase;letter-spacing:.05em}
+.cp-marcos ol{list-style:none;margin:0;padding:0;display:flex;gap:0;overflow-x:auto;position:relative}
+.cp-marcos ol::before{content:'';position:absolute;left:8px;right:8px;top:6px;height:2px;background:var(--bd)}
+.cp-marcos li{position:relative;flex:1 0 128px;display:flex;flex-direction:column;gap:2px;padding:16px 10px 0 0}
+.cp-marcos li i{position:absolute;left:0;top:0;width:14px;height:14px;border-radius:50%;background:var(--teal-deep);box-shadow:0 0 0 3px var(--card)}
+.cp-marcos li:first-child i{background:var(--navy)}
+.cp-marcos li b{font:800 13px var(--font-display);color:var(--navy)}.cp-marcos li span{font-size:12px;color:var(--tx2);line-height:1.3}
+@media(max-width:860px){.v3-capa{grid-template-columns:1fr}.cp-cols{grid-template-columns:1fr}.cp-side{flex-direction:row;flex-wrap:wrap;gap:18px 26px}}
+@media(max-width:560px){.cp-main{padding:20px 18px}.cp-it{grid-template-columns:1fr;gap:2px}}
 </style></head>
 <body>
 <header class="top"><div class="top-in">
@@ -3956,7 +3991,62 @@ V3.resumo = function () {
     if (stand && tc) itens.push(`<li><b>Standby:</b> ${fMi(stand.v)} (<b>${v3Pct(stand.v / tc)}</b> do gasto, ${NF0.format(Math.round(stand.h))} h). Definir regra de acionamento e franquia de espera.</li>`);
     if (alta && alta.d > 0) itens.push(`<li><b>Maior alta:</b> ${esc(alta.k)} subiu <b>${fMi(alta.d)}</b> sobre ${prv}. Confirmar se é volume ou tarifa.</li>`);
     const dec = itens.length ? `<section class="card v3-dec"><div class="card-head"><h3>Pontos de atenção e decisão</h3></div><ul>${itens.join('')}</ul></section>` : '';
-    return { html: head + dec + p.html, after: p.after };
+    let capa = '';
+    try { capa = V3.capa(tc, tp, H, Hp, stand, lid); } catch (e) { console.warn('capa', e); }
+    return { html: (capa || (head + dec)) + p.html, after: p.after };
+};
+
+/* ---------- capa: resultado em destaque, destaques positivos, oportunidades e marcos ---------- */
+V3.capa = function (tc, tp, H, Hp, stand, lid) {
+    try { gestaoExtra(); } catch (e) { }
+    const G = window._G; if (!G || !G.w0 || !G.w1) return '';
+    const cur = S.cur, prv = S.cur - 1, mx = S.cut.m;
+    const P = ponte(G.w0, G.w1), reneg$ = -P.preco, porte$ = -P.porte;
+    const demanda = dlt(G.a1.h, G.a0.h);
+    const A0 = atend(G.w0), A1 = atend(G.w1);
+    /* oportunidades (mesma conta do card "Próximos passos") */
+    const arred = G.w1.reduce((s, r) => s + (r.vt - r.h * r.vh), 0);
+    const D1 = S.all.filter(r => r.t === 'D' && mk(r) >= GESTAO_INI && S.f.ag.has(r.a)), dC = D1.reduce((s, r) => s + (r.vt || 0), 0);
+    const porto = G.w1.filter(r => isMan(r) && !isFun(r) && r.h > 3.01), portoC = porto.reduce((s, r) => s + (r.h - 3) * (r.vt / r.h), 0);
+    const ops = [
+        G.top && G.topGap > 1000 ? { v: G.topGap, t: `Tarifa da ${G.top.a}`, s: `${pp(G.top.s1)} do gasto; no custo/h das demais, a economia seria desta ordem` } : null,
+        stand && stand.v > 1000 ? { v: stand.v, t: 'Standby de rebocadores', s: `${NF0.format(Math.round(stand.h))} h em ${cur}; definir regra de acionamento e franquia de espera` } : null,
+        arred > 1000 ? { v: arred, t: 'Arredondamento de horas', s: 'horas cobradas acima das reais; negociar fração mínima' } : null,
+        portoC > 1000 ? { v: portoC, t: 'Horas acima da meta de 3 h no porto', s: `${fN(porto.length)} atendimentos; planejar janela e mobilização` } : null,
+        dC > 1000 ? { v: dC, t: 'Diárias e afretamentos', s: `${fN(D1.length)} diárias desde ${GESTAO_LBL}; negociar pacote` } : null
+    ].filter(Boolean).sort((a, b) => b.v - a.v).slice(0, 4);
+    const pos = [
+        G.reneg ? { b: `${esc(G.reneg.a)} ${fP(G.reneg.v1 / G.reneg.v0 - 1)}`, t: 'Maior renegociação', s: `tarifa de ${fR(G.reneg.v0)} para ${fR(G.reneg.v1)}/h` } : null,
+        A0.fp != null && A1.fp != null ? { b: `${pp(A0.fp)} → ${pp(A1.fp)}`, t: 'Fundeio dentro da meta de 5 h', s: 'desde out/25 vs. 12 meses antes' } : null,
+        G.cc0 != null ? { b: `${pp(G.cc0)} → ${pp(G.cc1)}`, t: 'Gasto sem centro de custo', s: 'mais rastreabilidade para rateio e repasse' } : null,
+        G.cm0 && G.cm1 ? { b: `${fR(G.cm0)} → ${fR(G.cm1)}`, t: 'Custo médio por manobra', s: `${fP(dlt(G.cm1, G.cm0))} por atendimento` } : null,
+        G.melhor ? { b: fR(G.melhor.eff), t: 'Menor custo por hora da série', s: `em ${mLbl(G.melhor.k)}` } : null
+    ].filter(Boolean).slice(0, 4);
+    const evs = (G.ev || []).slice(0, 8);
+    const opTot = ops.reduce((s, o) => s + o.v, 0);
+    const seta = d => d == null ? '' : (d < 0 ? '▼ ' : '▲ ') + NF1.format(Math.abs(d) * 100) + '%';
+    return `<section class="v3-capa">
+      <div class="cp-main">
+        <div class="cp-eyebrow">Resultado em custos · desde ${GESTAO_LBL} · dados até ${S.maxDate.split('-').reverse().join('/')}</div>
+        <div class="cp-big">${fMi(G.ecoAc)}</div>
+        <div class="cp-sub">de economia acumulada, mesmo com a demanda de horas <b>${fP(demanda)}</b></div>
+        <div class="cp-split"><span><b>${fMi(reneg$)}</b>renegociação de tarifa</span><span><b>${fMi(porte$)}</b>porte certo do rebocador</span></div>
+      </div>
+      <div class="cp-side">
+        <div><small>Custo por hora</small><b>${fR(G.a0.eff)} → ${fR(G.a1.eff)}</b><em class="dn">${seta(dlt(G.a1.eff, G.a0.eff))}</em></div>
+        <div><small>Gasto ${cur} (${S.f.per === 'ytd' ? 'jan–' + MES[mx - 1] : 'ano'})</small><b>${fMi(tc)}</b><em class="${tc > tp ? 'up' : 'dn'}">${seta(dlt(tc, tp))} vs ${prv}</em></div>
+        <div><small>Projeção ${cur}</small><b>${fMi(G.ecoAc ? (S.all.filter(r => r.t === 'H' && r.y === cur && S.f.ag.has(r.a)).reduce((s, r) => s + r.vt, 0) * 365 / (((new Date(S.maxDate) - new Date(cur + '-01-01')) / 864e5) + 1)) : 0)}</b><em>no ritmo atual</em></div>
+      </div>
+    </section>
+    <div class="cp-cols">
+      <section class="cp-pos"><h3><span>✔</span>Destaques positivos</h3>
+        ${pos.map(o => `<div class="cp-it"><b>${o.b}</b><div><strong>${o.t}</strong><small>${o.s}</small></div></div>`).join('')}
+      </section>
+      <section class="cp-opp"><h3><span>↗</span>Oportunidades de melhoria<em>${fMi(opTot)}</em></h3>
+        ${ops.map(o => `<div class="cp-it"><b>${fMi(o.v)}</b><div><strong>${o.t}</strong><small>${o.s}</small></div></div>`).join('')}
+      </section>
+    </div>
+    <section class="cp-marcos"><h3>Marcos desde ${GESTAO_LBL}</h3><ol>${evs.map(e => `<li><i></i><b>${mLbl(e.k)}</b><span>${esc(e.t)}</span></li>`).join('')}</ol></section>`;
 };
 
 /* ---------- composição das abas a partir das visões existentes ---------- */
