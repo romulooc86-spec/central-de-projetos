@@ -1,4 +1,4 @@
-{"planilha":"2026. Prime Ocean - Controle de Rebocadores.xlsx","modificada":"2026-10-01T17:08:53","publicado":"2026-10-01T17:10:17","linhas":[
+{"planilha":"2026. Prime Ocean - Controle de Rebocadores.xlsx","modificada":"2026-10-01T17:09:29","publicado":"2026-10-01T17:16:10","linhas":[
 [null,null,"BS-5",null,null,null,null,"| CONTROLE DE REBOCADORES"],
 [null,null,null,null,null,null,"PL_PRIME_004_rev13",null,null,null,null,null,null,null,null,1],
 [null,null,"somase balsa",null,null,null,"DATA","EMBARCAÇÃO UTILIZADA","REBOCADORES","BALSA ATENDIDA","BALSA ATENDIDA","BALSA ATENDIDA","ORIGEM E DESTINO","INÍCIO","TÉRMINO","TOTAL (h)","IA (h)","EXCEDENTE (h)","CUSTOS","CONTRATO","VALOR/HR","VALOR/TOTAL","RMS","CLIENTE/NAVIO","OBSERVAÇÃO"],
@@ -585,9 +585,9 @@
 [12,2024,"SÃO TOMÉ",null,null,null,45640,"CARLA","CAMORIM","SÃO TOMÉ",null,null,"ARM.30 - ARM.08",0.29166666666666669,0.91666666666666663,15,null,null,null,null,1800,27000],
 [12,2024,"TERCEIROS",null,null,null,45642,"SLB MELODIA","CAMORIM","MULICEIRO X",null,null,"ESTALEIRO GRADIM / ARM. 09",0.375,0.8125,10.5,null,null,null,null,1800,19800],
 [12,2024,"TERCEIROS",null,null,null,45643,"TITÃ","CAMORIM","MULICEIRO X",null,null,"MUDANÇA ARM.09",0.29166666666666669,0.80555555555555558,12.333333333333332,null,null,null,null,1800,23400],
-[12,2024,"SÃO TOMÉ",null,null,null,45643,"Muliceiro X","MULICEIRO","SÃO TOMÉ",null,null,"-",0.4375,0.79861111111111116,8.6666666666666679,null,null,null,null,1650,14850],
+[12,2024,"SÃO TOMÉ",null,null,null,45643,"MULICEIRO X","MULICEIRO","SÃO TOMÉ",null,null,"-",0.4375,0.79861111111111116,8.6666666666666679,null,null,null,null,1650,14850],
 [12,2024,"TERCEIROS",null,null,null,45644,"VENTANIA","CAMORIM","MULICEIRO X",null,null,"MUDANÇA ARM.09",0.25,0.85763888888888884,14.583333333333332,null,null,null,null,2500,37500],
-[12,2024,"SÃO TOMÉ",null,null,null,45644,"Muliceiro X","MULICEIRO","SÃO TOMÉ",null,null,"-",0.25,0.86111111111111116,14.666666666666668,null,null,null,null,1650,24750],
+[12,2024,"SÃO TOMÉ",null,null,null,45644,"MULICEIRO X","MULICEIRO","SÃO TOMÉ",null,null,"-",0.25,0.86111111111111116,14.666666666666668,null,null,null,null,1650,24750],
 [12,2024,"BS8","SÃO LUIS",null,null,45649,"AMÁLIA","SHIPMARINE","BS8","SÃO LUIS",null,"ESTALEIRO RENAVE",0.37708333333333333,0.66666666666666663,6.9499999999999993,null,null,null,null,1250,8750],
 [12,2024,"BS8","SÃO LUIS",null,null,45649,"BRUTUS","SHIPMARINE","BS8","SÃO LUIS",null,"ESTALEIRO RENAVE",0.37708333333333333,0.66666666666666663,6.9499999999999993,null,null,null,null,1250,8750],
 [12,2024,"BS8",null,null,null,45649,"CARLA","CAMORIM","BS8",null,null,"ESTALEIRO RENAVE",0.375,0.63888888888888884,6.3333333333333321,null,null,null,null,1800,12600],
