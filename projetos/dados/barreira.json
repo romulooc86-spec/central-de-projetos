@@ -1,4 +1,4 @@
-{"planilha":"CONTROLE DE LANÇAMENTOS DE BARREIRA.xlsx","modificada":"2026-10-02T08:00:22","publicado":"2026-10-02T08:00:53","cols":["linha","data","embarcacao","contrato","local","equipe","solicitacao","inicio","termino","tempo","meta","operacao","observacao"],"linhas":[
+{"planilha":"CONTROLE DE LANÇAMENTOS DE BARREIRA.xlsx","modificada":"2026-10-02T08:02:11","publicado":"2026-10-02T08:02:50","cols":["linha","data","embarcacao","contrato","local","equipe","solicitacao","inicio","termino","tempo","meta","operacao","observacao"],"linhas":[
 [4,45658,"AKER WAYFARER","LON 1","BERÇO 03","C",0.36458333333333331,0.36458333333333331,0.375,0.010416666666666685,0.010416666666666685,"COLOCAÇÃO"],
 [5,45658,"REMISTRAR","EQUINOR","EQUINOR","C",0.43055555555555558,0.43402777777777779,0.44097222222222221,0.01041666666666663,0.010416666666666685,"COLOCAÇÃO"],
 [6,45658,"KUDU","LON 2","BEX 01","C",0.44097222222222221,0.44097222222222221,0.44791666666666669,0.0069444444444444753,0.010416666666666685,"COLOCAÇÃO"],
