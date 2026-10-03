@@ -1193,15 +1193,16 @@ function vJornada() {
 const semKpi = h => h.replace(/^\s*<div class="grid g4">[\s\S]*?\n  <\/div>/, '');
 const secao = (id, t) => `<h2 class="sec" id="sec-${id}">${t}</h2>`;
 const salto = l => `<div class="chips jump">${l.map(x => `<button class="chip" data-jump="sec-${x[0]}">${x[1]}</button>`).join('')}</div>`;
+const seguro = (nome, fn) => { try { return fn(); } catch (e) { console.error(e); return { html: '<div class="grid"><section class="card"><h3>Não foi possível montar a seção ' + nome + '</h3><p class="sub">' + esc(e.message) + '</p></section></div>', after() { } }; } };
 function compor(secs) {
-  return { html: salto(secs.map(s => [s[0], s[1]])) + secs.map(s => secao(s[0], s[1]) + s[2].html).join(''), after() { secs.forEach(s => s[2].after()); } };
+  return { html: salto(secs.map(s => [s[0], s[1]])) + secs.map(s => secao(s[0], s[1]) + s[2].html).join(''), after() { secs.forEach(s => { try { s[2].after(); } catch (e) { console.error(e); } }); } };
 }
 function vDemanda() {
-  const a = vVolume(), b = vContratos(), c = vOperacao(), bar = vBarreiras(); b.html = semKpi(b.html); c.html = semKpi(c.html);
+  const a = seguro('Volume', vVolume), b = seguro('Contratos', vContratos), c = seguro('Operação', vOperacao), bar = seguro('Barreiras em uso', vBarreiras); b.html = semKpi(b.html); c.html = semKpi(c.html);
   return compor([['vol', 'Volume e clientes', a], ['con', 'Contratos', b], ['bar', 'Barreiras em uso', bar], ['ope', 'Operação', c]]);
 }
 function vEquipesJornada() {
-  return compor([['eq', 'Equipes', vEquipes()], ['jor', 'Horários e refeição', vJornada()], ['sim', 'Simultaneidade', vSimult()]]);
+  return compor([['eq', 'Equipes', seguro('Equipes', vEquipes)], ['jor', 'Horários e refeição', seguro('Horários e refeição', vJornada)], ['sim', 'Simultaneidade', seguro('Simultaneidade', vSimult)]]);
 }
 Object.assign(INFO, {
   evol: { t: 'Evolução mensal', o: 'Compara cada mês do ano atual com o mesmo mês do ano anterior, em colunas pareadas, e mostra a variação embaixo. Use os botões para trocar entre % na meta, atendimentos e tempo médio.', c: 'Meses com menos de 10 atendimentos ficam sem coluna. O mês em andamento não aparece. A variação do % na meta é em pontos percentuais; verde-água indica melhora, marinho piora, cinza é só volume.' },
@@ -1336,8 +1337,8 @@ function barSimHtml(D, cts, yb, yl, disp) {
   const cs = Object.keys(res); if (!cs.length) return '';
   const rec = (c, lim) => { const i = res[c].findIndex(r => r.pct <= lim); return i < 0 ? res[c].length : i + 1; };
   const nk = Math.max(...cs.map(c => res[c].length), 4), cols = Array.from({ length: nk }, (_, i) => ({ g: 'Quantidade de barreiras no contrato', n: String(i + 1) }));
-  const at = (c, k) => k <= res[c].length ? res[c][k - 1] : { n: res[c][0].n, atr: 0, pct: 0, med: 0, mx: 0, na0: res[c][0].na0, na1: res[c][0].na0 };
-  const sel = c => disp[c] != null ? disp[c] : rec(c, .05);
+  const at = (c, k) => k < 1 ? res[c][0] : k <= res[c].length ? res[c][k - 1] : { n: res[c][0].n, atr: 0, pct: 0, med: 0, mx: 0, na0: res[c][0].na0, na1: res[c][0].na0 };
+  const sel = c => Math.max(1, disp[c] != null ? disp[c] : rec(c, .05));
   const linhas = cs.map(c => {
     const k = sel(c), r = at(c, k);
     return `<tr><td>${esc(c)}</td><td><input class="bin" type="number" min="1" max="99" inputmode="numeric" value="${k}" data-bar="${esc(c)}" aria-label="Barreiras ${esc(c)}"></td><td class="cur">${fP(r.pct)}<small> · ${fN(r.atr)} de ${fN(r.n)}</small></td><td>${r.atr ? espera(r.med) : '–'}</td><td>${r.atr ? espera(r.mx) : '–'}</td><td>${r.na0 == null ? '–' : fP0(r.na0) + ' → ' + fP0(r.na1)}</td><td><b>${rec(c, .01)}</b><small> para menos de 1%</small></td></tr>`;
