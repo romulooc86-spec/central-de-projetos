@@ -111,7 +111,7 @@ svg text{font-family:var(--font-display)}
 .cv-b small{opacity:.7;font-size:12.5px}
 @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 body.cv{overflow:hidden}
-body.pres .fbar,body.pres .filters,body.pres .info,body.pres .foot,body.pres .tab[data-t="dados"]{display:none!important}
+body.pres .fbar,body.pres .filters,body.pres .info,body.pres .foot{display:none!important}
 @media(max-width:980px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.g21,.g12{grid-template-columns:1fr}.hero{grid-template-columns:1fr}
 .top-in{grid-template-columns:auto 1fr auto;padding:10px 14px 0}.ttl h1{font-size:21px}.live{display:none}.tabs{padding:4px 8px 0;justify-content:flex-start;overflow:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:9px 10px}
 main{padding:14px 12px 50px}.rk-h,.rk-r{grid-template-columns:22px minmax(80px,1fr) minmax(90px,1.4fr) repeat(var(--nc,3),minmax(54px,.7fr));gap:6px}.rk-c{font-size:12.5px}}
@@ -178,6 +178,22 @@ html,body{overflow-x:hidden}
 .eb-g{font:800 10.5px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);padding:14px 0 2px}.eb-g:first-child{padding-top:2px}
 .eb-m{top:-6px!important;bottom:auto!important;height:6px;border-left:2px solid #06BEAE!important}
 .leg i.mk{display:inline-block;width:2px;height:10px;background:#06BEAE;border-radius:0;margin-right:7px;vertical-align:-1px}
+/* v4: diagnóstico, comparativo visual, calor opcional */
+.card.dx{border-top:2px solid var(--navy)}
+.dx-c h4{margin:0 0 2px;font:800 11px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--teal-deep)}.dx-c .sub{margin:0 0 12px!important;font-size:13px!important}
+.dc{display:flex;flex-direction:column;gap:10px}.dc-r{display:grid;grid-template-columns:minmax(96px,.9fr) minmax(0,1.6fr);gap:10px;align-items:center}
+.dc-b{position:relative;height:22px}.dc-b i{position:absolute;left:0;top:3px;height:16px;border-radius:3px}.dc-b span{position:absolute;top:2px;font:700 12.5px var(--font-display);color:var(--navy);white-space:nowrap}
+.yr{display:flex;flex-direction:column}.yr-k{display:flex;gap:16px;flex-wrap:wrap;font:600 12.5px var(--font-display);color:var(--tx2);margin:0 0 6px}.yr-k i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}.yr-k .g{display:none}
+.yr-r{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(0,1.5fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.yr-r:last-child{border-bottom:0}
+.yr-l{font:700 13.5px var(--font-display);color:var(--navy);line-height:1.2}.yr-l small{display:block;font:500 12px var(--font-body);color:var(--tx3);margin-top:2px}
+.yr-b{display:flex;flex-direction:column;gap:4px}.yb{position:relative;height:15px;border-radius:3px;background:var(--navy)}.yb.o{background:#C9D3D6}
+.yb span{position:absolute;left:calc(100% + 8px);top:-1px;font:700 12px var(--font-display);color:var(--navy);white-space:nowrap}.yb.o span{color:var(--tx3);font-weight:600}
+.yr-d{text-align:right;min-width:84px}
+.seg{position:absolute;top:18px;right:54px;display:flex;border:1px solid var(--bd2);border-radius:99px;overflow:hidden;z-index:2}.seg button{font:700 11.5px var(--font-display);padding:4px 11px;background:#fff;border:0;color:var(--tx3);cursor:pointer}.seg button.on{background:var(--navy);color:#fff}
+.card.heat td[style*="--h"]{background:rgba(6,190,174,calc(.10 + .78 * var(--h)))!important;color:var(--navy)!important}
+.card.heat .sc td.bst,.card.heat .sc td.wst{box-shadow:none}
+@media(max-width:640px){.yr-r{grid-template-columns:1fr auto}.yr-b{grid-column:1/-1;order:3}.dc-r{grid-template-columns:1fr}}
+.card.heat td .d,.card.heat td small{color:var(--navy)!important}
 
 </style>
 </head>
@@ -422,7 +438,7 @@ function kpi(lb, v, nt, o) {
 }
 function card(title, sub, body, o) {
   o = o || {};
-  return `<section class="card ${o.cls || ''}" ${o.id ? `id="${o.id}"` : ''}>${o.info ? `<button class="info" data-info="${o.info}" aria-label="Como calculamos">i</button>` : ''}<h3>${title}</h3>${sub ? `<p class="sub">${sub}</p>` : ''}${body}</section>`;
+  return `<section class="card ${o.cls || ''}" ${o.id ? `id="${o.id}"` : ''}>${o.tog ? '<div class="seg"><button class="on" data-hm="tab">Tabela</button><button data-hm="calor">Calor</button></div>' : ''}${o.info ? `<button class="info" data-info="${o.info}" aria-label="Como calculamos">i</button>` : ''}<h3>${title}</h3>${sub ? `<p class="sub">${sub}</p>` : ''}${body}</section>`;
 }
 /* ranking visual: rows [{nome, sub, v, vp, cols:[html], key}] ; cols = [{h, cls}] */
 function ranking(rows, o) {
@@ -443,6 +459,18 @@ function ranking(rows, o) {
 
 /* ---------- gráficos SVG ---------- */
 function poly(pts) { return pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(''); }
+function monotone(pts) {   // spline cúbica monotônica (Fritsch–Carlson): suave, sem picos falsos
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), n = xs.length;
+  if (n < 3) return poly(pts);
+  const d = [], m = [];
+  for (let i = 0; i < n - 1; i++) d[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]);
+  m[0] = d[0]; m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) { if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; } const a = m[i] / d[i], b = m[i + 1] / d[i], s = a * a + b * b; if (s > 9) { const k = 3 / Math.sqrt(s); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; } }
+  let p = 'M' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1);
+  for (let i = 0; i < n - 1; i++) { const h = xs[i + 1] - xs[i]; p += `C${(xs[i] + h / 3).toFixed(1)} ${(ys[i] + m[i] * h / 3).toFixed(1)} ${(xs[i + 1] - h / 3).toFixed(1)} ${(ys[i + 1] - m[i + 1] * h / 3).toFixed(1)} ${xs[i + 1].toFixed(1)} ${ys[i + 1].toFixed(1)}`; }
+  return p;
+}
 /* linhas por mês. o: {labels, series:[{nome,cor,vals,dash,w,fmt,rot}], bars:[...] , ymin,ymax, H, fmt, marcos:[{i,txt}], refs:[{v,txt}] } */
 function lineChart(host, o) {
   const W = Math.max(host.clientWidth || 600, 280), H = o.H || 270, L = 12, Rr = 18, T = 26, B = 28;
@@ -466,7 +494,7 @@ function lineChart(host, o) {
     const pts = se.vals.map((v, i) => v == null ? null : [x(i), y(v), i, v]).filter(Boolean);
     if (!pts.length) return;
     const solid = se.partial && pts.length > 1 ? pts.slice(0, -1) : pts;
-    s += `<path d="${poly(solid)}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-linejoin="round" ${se.dash ? 'stroke-dasharray="6 5"' : ''}/>`;
+    s += `<path d="${monotone(solid)}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-linejoin="round" ${se.dash ? 'stroke-dasharray="6 5"' : ''}/>`;
     if (se.partial && pts.length > 1) s += `<path d="${poly(pts.slice(-2))}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-dasharray="2 6"/>`;
     if (se.lab === false) return;
     if (se.lab === 'last') { const p = pts[pts.length - 1]; s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${se.cor}" stroke-width="2.2"/><text class="cxb" x="${p[0] + 2}" y="${p[1] + (se.below ? 20 : -10)}" text-anchor="end" style="fill:${se.cor === '#A9B8BD' ? '#52656C' : se.cor}">${(se.fmt || o.fmt)(p[3])}</text>`; return; }
@@ -610,19 +638,54 @@ function cmpAnual(base) {
   const dF = Math.round((Date.UTC(Y, 0, 1) - Date.UTC(Y - 1, 0, 1)) / 864e5), dP = doy(Y - 1), dC = doy(Y);
   const dmn = (a, b) => delta(a, b, { un: 'abs', dir: 'down', d: 1, suf: ' min' });
   const rows = [
-    ['Atendimentos', a => fN(a.n), dv(C.n, P.n)],
-    ['Atendimentos por dia', (a, d) => fD(a.n / d, 1), dv(C.n / dC, P.n / dP)],
-    ['Dentro da meta de 15 min', a => fP(a.pct), dp(C.pct, P.pct)],
-    ['Tempo médio de atendimento', a => fD(a.avg, 1) + ' min', dm(C.avg, P.avg)],
-    ['Espera média até o início', a => fD(a.espM, 1) + ' min', dmn(C.espM, P.espM)],
-    ['Execução média', a => fD(a.exeM, 1) + ' min', dmn(C.exeM, P.exeM)],
-    ['Pontos críticos (> 60 min)', a => fN(a.crit) + ' · ' + fP(a.critP), delta(C.critP, P.critP, { un: 'pp', dir: 'down' })],
-    ['Atendimentos em sobreposição', a => fP(a.simP), delta(C.simP, P.simP, { un: 'pp', dir: 'down' })]
+    ['Atendimentos', a => a.n, fN, dv(C.n, P.n), null],
+    ['Atendimentos por dia', (a, d) => a.n / d, v => fD(v, 1), dv(C.n / dC, P.n / dP), null],
+    ['Dentro da meta de 15 min', a => a.pct, fP, dp(C.pct, P.pct), 1],
+    ['Tempo médio de atendimento', a => a.avg, v => fD(v, 1) + ' min', dm(C.avg, P.avg), 0],
+    ['Espera média até o início', a => a.espM, v => fD(v, 1) + ' min', dmn(C.espM, P.espM), 0],
+    ['Execução média', a => a.exeM, v => fD(v, 1) + ' min', dmn(C.exeM, P.exeM), 0],
+    ['Pontos críticos (> 60 min)', a => a.critP, fP, delta(C.critP, P.critP, { un: 'pp', dir: 'down' }), 0],
+    ['Atendimentos em sobreposição', a => a.simP, fP, delta(C.simP, P.simP, { un: 'pp', dir: 'down' }), 0]
   ];
-  return `<div class="rkw"><table class="cmp"><tr><th></th><th>${Y - 1} completo</th><th>${lblPer(Y - 1)}</th><th class="cur">${lblPer(Y)}</th><th>Variação</th></tr>
-  ${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1](F, dF)}</td><td>${r[1](P, dP)}</td><td class="cur">${r[1](C, dC)}</td><td>${r[2]}</td></tr>`).join('')}</table></div>`;
+  return `<div class="yr"><div class="yr-k"><span><i style="background:${COR.a25}"></i>${lblPer(Y - 1)}</span><span><i style="background:${COR.a26}"></i>${lblPer(Y)}</span></div>` + rows.map(r => {
+    const vp = r[1](P, dP), vc = r[1](C, dC), vf = r[1](F, dF), mx = Math.max(vp, vc, 1e-9);
+    const w = v => Math.max(v / mx * 78, 1.2);
+    return `<div class="yr-r"><div class="yr-l">${r[0]}<small>${Y - 1} completo: ${r[2](vf)}</small></div><div class="yr-b"><div class="yb o" style="width:${w(vp)}%"><span>${r[2](vp)}</span></div><div class="yb" style="width:${w(vc)}%"><span>${r[2](vc)}</span></div></div><div class="yr-d">${r[3]}</div></div>`;
+  }).join('') + '</div>';
 }
-
+/* contribuição de cada grupo para a variação do % na meta: soma exata = variação total */
+function contrib(cur, prv, keyf, keys) {
+  const N = cur.length || 1, M = prv.length || 1;
+  return keys.map(k => { const a = cur.filter(r => keyf(r) === k), b = prv.filter(r => keyf(r) === k); return { k, c: (a.filter(r => r.na).length / N - b.filter(r => r.na).length / M) * 100, a: a.length ? a.filter(r => r.na).length / a.length : null, b: b.length ? b.filter(r => r.na).length / b.length : null }; }).filter(x => x.a != null || x.b != null);
+}
+function barDiv(rows, un) {   // [{nome, v, sub}] barras divergentes: perda marinho, ganho verde-água
+  const mx = Math.max(...rows.map(r => Math.abs(r.v)), 1e-9);
+  return `<div class="dc">${rows.map(r => `<div class="dc-r"><div class="rk-nm">${esc(r.nome)}${r.sub ? `<small>${r.sub}</small>` : ''}</div><div class="dc-b"><i style="width:${Math.max(Math.abs(r.v) / mx * 72, 1.5)}%;background:${(r.bad != null ? r.bad : r.v < 0) ? '#042738' : '#06BEAE'}"></i><span style="left:calc(${Math.max(Math.abs(r.v) / mx * 72, 1.5)}% + 8px)">${r.v > 0 ? '+' : r.v < 0 ? '−' : ''}${fD(Math.abs(r.v), 1)} ${un}</span></div></div>`).join('')}</div>`;
+}
+function decompor(cur, prv, A, B) {
+  if (!prv.length || !cur.length) return null;
+  const dT = A.avg - B.avg, dE = A.espM - B.espM, dX = A.exeM - B.exeM, tot = (A.pct - B.pct) * 100;
+  const eqs = ['A', 'B', 'C', 'D'].filter(e => cur.some(r => r.eq1 === e) || prv.some(r => r.eq1 === e));
+  const cE = contrib(cur, prv, r => r.eq1, eqs).sort((x, y) => x.c - y.c), cC = contrib(cur, prv, r => r.ct, clientes(cur.concat(prv)).filter(k => cur.filter(r => r.ct === k).length + prv.filter(r => r.ct === k).length >= 100)).sort((x, y) => x.c - y.c);
+  const col = (t, s, b) => `<div class="dx-c"><h4>${t}</h4><p class="sub">${s}</p>${b}</div>`;
+  const html = `<div class="grid g3">
+    ${col('Por causa', `Tempo médio ${dT >= 0 ? '+' : '−'}${fD(Math.abs(dT), 1)} min`, barDiv([{ nome: 'Espera até o início', v: dE, sub: `${fD(B.espM, 1)} → ${fD(A.espM, 1)} min` }, { nome: 'Execução', v: dX, sub: `${fD(B.exeM, 1)} → ${fD(A.exeM, 1)} min` }].map(x => ({ ...x, bad: x.v > 0 })), 'min'))}
+    ${col('Por equipe', `Meta ${tot >= 0 ? '+' : '−'}${fD(Math.abs(tot), 1)} p.p. no total`, barDiv(cE.map(x => ({ nome: 'Equipe ' + x.k, v: x.c, sub: `${x.b == null ? '–' : fP0(x.b)} → ${x.a == null ? '–' : fP0(x.a)} na meta` })), 'p.p.'))}
+    ${col('Por contrato', 'contratos com 100 ou mais atendimentos', barDiv(cC.map(x => ({ nome: x.k, v: x.c, sub: `${x.b == null ? '–' : fP0(x.b)} → ${x.a == null ? '–' : fP0(x.a)} na meta` })), 'p.p.'))}
+  </div>`;
+  return { sub: 'Quanto cada equipe e contrato contribuiu para a variação do % na meta, e quanto do aumento de tempo vem da espera ou da execução', html };
+}
+function diagnostico(cur, prv, A, B, pm, ms, lf) {
+  if (!prv.length || !cur.length) return null;
+  const out = [], tot = (A.pct - B.pct) * 100, dT = A.avg - B.avg, dE = A.espM - B.espM, dX = A.exeM - B.exeM;
+  out.push([`${tot >= 0 ? '+' : '−'}${fD(Math.abs(tot), 1)} <em>p.p.</em>`, `Meta de 15 min: ${fP0(B.pct)} → ${fP0(A.pct)}`, `Com ${fP0(Math.abs(A.n / B.n - 1))} ${A.n < B.n ? 'menos' : 'mais'} atendimentos que no mesmo período do ano anterior; tempo médio de ${fD(B.avg, 1)} para ${fD(A.avg, 1)} min.`, 'resumo']);
+  if (Math.abs(dT) >= .3 && dE + dX !== 0) { const sh = dE / (dE + dX); out.push([`${fD(Math.max(0, Math.min(1, sh)) * 100, 0)}<em>%</em>`, `Do ${dT > 0 ? 'aumento' : 'recuo'} do tempo médio vem da espera`, `A espera até o início ${dE >= 0 ? 'subiu' : 'caiu'} ${fD(Math.abs(dE), 1)} min e a execução variou ${fD(Math.abs(dX), 1)} min. ${Math.abs(dX) < .5 ? 'O problema está antes de a operação começar (mobilização e fila), não na execução.' : ''}`, 'operacao']); }
+  const eqs = ['A', 'B', 'C', 'D'].filter(e => cur.some(r => r.eq1 === e)), cE = contrib(cur, prv, r => r.eq1, eqs).sort((x, y) => x.c - y.c);
+  if (cE.length && cE[0].c < -1) out.push([`Equipe ${cE[0].k}`, `Maior contribuição para a queda: ${fD(cE[0].c, 1).replace('-', '−')} p.p.`, `De ${cE[0].b == null ? '–' : fP0(cE[0].b)} para ${cE[0].a == null ? '–' : fP0(cE[0].a)} na meta. Veja o quadro abaixo e a aba Equipes.`, 'equipes']);
+  const lfI = ms.indexOf(lf), pI = pm.reduce((b, v, i) => v != null && (b < 0 || v < pm[b]) ? i : b, -1);
+  if (lfI >= 0 && pI >= 0 && pm[lfI] != null && pI !== lfI) out.push([`${fP0(pm[lfI])}`, `Último mês fechado (${mLbl(ms[lfI])})`, `${pm[lfI] > pm[pI] ? 'Recuperação' : 'Sem recuperação'} sobre o pior mês, ${mLbl(ms[pI])}, com ${fP0(pm[pI])}.`, 'resumo']);
+  return out;
+}
 /* ---------- 1 · RESUMO ---------- */
 function vResumo() {
   const base = S.rows, cur = base.filter(r => inWin(r, S.Y)), prv = base.filter(r => inWin(r, S.Y - 1));
@@ -649,6 +712,7 @@ function vResumo() {
   const li = p => `<div class="li" data-go="${p[3]}"><div class="n">${p[0]}</div><div class="lt"><b>${p[1]}</b><span>${p[2]}</span></div></div>`;
   const ov = overlay(base, pctMes), nv = overlay(base, nMes);
   const cmp = cmpAnual(base);
+  const dg = diagnostico(cur, prv, A, B, pm, ms, lf), dec = decompor(cur, prv, A, B);
   const html = `
   <div class="hero"><div class="l">
     <div class="eyebrow">Meta de 15 minutos · ${lc} · dados até ${fDt(S.max)}</div>
@@ -664,6 +728,8 @@ function vResumo() {
       <div><div class="lb">Atendimentos em sobreposição</div><div class="v">${fP0(A.simP)} ${delta(A.simP, B.simP, { un: 'pp', dir: 'down' })}</div><div class="nt">mais de um atendimento ao mesmo tempo</div></div>
       <div><div class="lb">Pontos críticos (> 60 min)</div><div class="v">${fN(A.crit)} <em>·</em> ${fP(A.critP)}</div><div class="nt">${dcr(A.crit, B.crit)} vs ${lp}</div></div>
     </div></div>
+  ${dg ? `<div class="grid" style="margin-top:16px">${card('Diagnóstico', `O que os números dizem sobre ${lc} contra ${lp}`, `<div class="lst">${dg.map(li).join('')}</div>`, { cls: 'dx' })}</div>` : ''}
+  ${dec ? `<div class="grid" style="margin-top:16px">${card('De onde vem a queda', dec.sub, dec.html, { info: 'queda' })}</div>` : ''}
   <div class="grid g2" style="margin-top:16px">
     ${card('Destaques positivos', '', `<div class="lst">${ptsPos.slice(0, 4).map(li).join('')}</div>`, { cls: 'pos' })}
     ${card('Pontos de atenção', '', `<div class="lst">${ptsNeg.slice(0, 5).map(li).join('')}</div>`, { cls: 'neg' })}
@@ -702,7 +768,7 @@ function vVolume() {
     ${card('Acumulado no ano', `Atendimentos somados mês a mês · ${S.Y} × ${S.Y - 1}`, `<div class="leg"><span><i style="background:${COR.a26}"></i>${S.Y}</span><span><i style="background:${COR.a25}"></i>${S.Y - 1}</span></div><div id="cha"></div>`, { info: 'acumulado' })}
     ${card('Acumulado por cliente', `${P.lc}${B ? ' × ' + P.lp : ''} · barra clara = período anterior`, '<div id="rkv"></div>')}
   </div>
-  <div class="grid" style="margin-top:16px">${card('Mês a mês por cliente', 'Quantidade de atendimentos, total do mês e acumulado no ano', `<div class="chips">${[...new Set(base.map(r => r.y))].sort().map(y => `<button class="chip ${y === yv ? 'on' : ''}" data-yv="${y}">${y}</button>`).join('')}</div><div id="tbv"></div>`)}</div>`;
+  <div class="grid" style="margin-top:16px">${card('Mês a mês por cliente', 'Quantidade de atendimentos, total do mês e acumulado no ano', `<div class="chips">${[...new Set(base.map(r => r.y))].sort().map(y => `<button class="chip ${y === yv ? 'on' : ''}" data-yv="${y}">${y}</button>`).join('')}</div><div id="tbv"></div>`, { tog: true })}</div>`;
   return {
     html, after() {
       $('#lgv').innerHTML = cl.map(k => `<span><i class="b" style="background:${cliCor(cl, k)}"></i>${esc(k)}</span>`).join('');
@@ -717,7 +783,7 @@ function vVolume() {
       const mx = cl.map((_, j) => Math.max(...lin.map(l => l.v[j]))), mxt = Math.max(...lin.map(l => l.t));
       const tot = cl.map((_, j) => sum(lin.map(l => l.v[j]))), tt = sum(lin.map(l => l.t)), tp = pr.length ? sum(lin.map(l => l.p)) : null;
       $('#tbv').innerHTML = `<div class="rkw"><table class="cmp mt"><tr><th>Mês</th>${cl.map(k => `<th>${esc(k)}</th>`).join('')}<th class="cur">Total</th><th>Acumulado</th><th>vs ${yv - 1}</th></tr>
-      ${lin.map(l => `<tr><td>${MES[l.m - 1]}/${String(yv).slice(2)}${l.parcial ? ' <small>parcial</small>' : ''}</td>${l.v.map((v, j) => `<td class="${v === mx[j] && v ? 'mx' : ''}">${fN(v)}</td>`).join('')}<td class="cur ${l.t === mxt ? 'mx' : ''}">${fN(l.t)}</td><td>${fN(l.ac)}</td><td>${l.p != null ? dv(l.t, l.p) : '–'}</td></tr>`).join('')}
+      ${lin.map(l => `<tr><td>${MES[l.m - 1]}/${String(yv).slice(2)}${l.parcial ? ' <small>parcial</small>' : ''}</td>${l.v.map((v, j) => `<td class="${v === mx[j] && v ? 'mx' : ''}" style="--h:${(mx[j] ? v / mx[j] : 0).toFixed(2)}">${fN(v)}</td>`).join('')}<td class="cur ${l.t === mxt ? 'mx' : ''}" style="--h:${(l.t / mxt).toFixed(2)}">${fN(l.t)}</td><td>${fN(l.ac)}</td><td>${l.p != null ? dv(l.t, l.p) : '–'}</td></tr>`).join('')}
       <tr class="tot"><td>Total</td>${tot.map(v => `<td>${fN(v)}</td>`).join('')}<td class="cur">${fN(tt)}</td><td>${fN(ac)}</td><td>${tp != null ? dv(tt, tp) : '–'}</td></tr></table></div>`;
     }
   };
@@ -841,12 +907,13 @@ function vEquipes() {
       const bV = r.best === 'max' ? mx : mn, wV = r.best === 'max' ? mn : mx, bN = r.best === 'max' ? nMx : nMn, wN = r.best === 'max' ? nMn : nMx;
       const cl = c.all ? 'all' : (r.best && vary && v != null ? (v === bV && bN === 1 ? 'bst' : (v === wV && wN === 1 ? 'wst' : '')) : '');
       const sm = r.sub ? r.sub(c.x) : (r.d && c.x.b ? r.d(c.x.a, c.x.b) : '');
-      return `<td class="${cl}">${txt}${sm ? `<small>${sm}</small>` : ''}</td>`;
+      let hs = ''; if (!c.all && v != null && vary) { let q = (v - mn) / (mx - mn); if (r.best === 'min') q = 1 - q; hs = ` style="--h:${q.toFixed(2)}"`; }
+      return `<td class="${cl}"${hs}>${txt}${sm ? `<small>${sm}</small>` : ''}</td>`;
     }).join('')}</tr>`;
   }).join('')}</table></div>`;
   const html = `
   <div class="banner"><div class="n">${fP0(worst.a.pct)}</div><div><b>Equipe ${worst.e}: menor cumprimento da meta de 15 min em ${P.lc}</b><span>A melhor, a equipe ${best.e}, chega a ${fP0(best.a.pct)}; as demais juntas, a ${fP0(rest.pct)}. A equipe ${worst.e} faz ${fP0(worst.a.n / A.n)} dos atendimentos e responde por ${fP0(missW)} dos que ficaram fora da meta; tempo médio de ${fD(worst.a.avg, 1)} min contra ${fD(rest.avg, 1)} min. <b style="display:inline;font:700 14px var(--font-body)">Últimos 3 meses (${ms3.map(mLbl).join(', ')}): ${l3}.</b></span></div></div>
-  <div class="grid">${card('Placar das equipes', `${P.lc}${prv ? ' · variação sobre ' + P.lp : ''}`, `<div class="key"><span><i style="background:#E0F6F3"></i>Melhor equipe no indicador</span><span><i style="background:#E7EDF0"></i>Pior equipe</span></div>${sc}`, { info: 'equipe' })}</div>
+  <div class="grid">${card('Placar das equipes', `${P.lc}${prv ? ' · variação sobre ' + P.lp : ''}`, `<div class="key"><span><i style="background:#E0F6F3"></i>Melhor equipe no indicador</span><span><i style="background:#E7EDF0"></i>Pior equipe</span></div>${sc}`, { info: 'equipe', tog: true })}</div>
   <div class="grid g2" style="margin-top:16px">
     ${card('Perfil do tempo de atendimento', 'Como se distribuem os atendimentos de cada equipe', '<div class="key"><span><i style="background:#06BEAE"></i>Até 15 min (meta)</span><span><i style="background:#A9B8BD"></i>16 a 60 min</span><span><i style="background:#042738"></i>Acima de 60 min</span></div><div class="pf" id="pfq"></div>', { info: 'perfil' })}
     ${card('Volume por equipe', 'Atendimentos por mês nos últimos 12 meses fechados · quanto mais escuro, maior o volume', '<div id="chq"></div>')}
@@ -953,21 +1020,18 @@ function vQualidade() {
 }
 
 /* ---------- 8 · DADOS ---------- */
-function vDados() {
+function fonteHtml() {
   const m = S.meta, n = S.rows.length;
-  const html = `
-  <div class="grid g2">
-    ${card('Fonte dos dados', 'Painel ao vivo, sem upload manual', `<table class="tb"><tr><td>Planilha</td><td><b>${esc(m.planilha || '–')}</b></td></tr><tr><td>Origem</td><td>SharePoint · PrimeSea › PRIME › 02. Lançamento de Barreiras</td></tr><tr><td>Salva em</td><td>${m.modificada ? fDtHora(m.modificada) : '–'}</td></tr><tr><td>Publicada pelo robô em</td><td>${m.publicado ? fDtHora(m.publicado) : '–'}</td></tr><tr><td>Lançamentos lidos</td><td>${fN(n)}</td></tr><tr><td>Período</td><td>${fDt(S.rows.reduce((a, r) => r.iso < a ? r.iso : a, '9999'))} a ${fDt(S.max)}</td></tr></table><p class="sub" style="margin-top:12px">Um robô lê a aba Dados a cada poucos minutos e publica os números; o painel relê a cada minuto. Da gravação da planilha até a tela, leva de 5 a 8 minutos.</p>`)}
-    ${card('Como calculamos', 'Regras usadas em todas as abas', `<table class="tb">
+  return `<h4>Fonte dos dados</h4><table class="tb"><tr><td>Planilha</td><td><b>${esc(m.planilha || '–')}</b></td></tr><tr><td>Origem</td><td>SharePoint · PrimeSea › PRIME › 02. Lançamento de Barreiras</td></tr><tr><td>Salva em</td><td>${m.modificada ? fDtHora(m.modificada) : '–'}</td></tr><tr><td>Publicada pelo robô em</td><td>${m.publicado ? fDtHora(m.publicado) : '–'}</td></tr><tr><td>Lançamentos lidos</td><td>${fN(n)}</td></tr><tr><td>Período</td><td>${fDt(S.rows.reduce((a, r) => r.iso < a ? r.iso : a, '9999'))} a ${fDt(S.max)}</td></tr></table>
+  <p>Um robô lê a aba Dados a cada poucos minutos e publica os números; o painel relê a cada minuto. Da gravação da planilha até a tela, leva de 5 a 8 minutos.</p>
+  <h4>Como calculamos</h4><table class="tb">
       <tr><td><b>Tempo de atendimento</b></td><td>Término − solicitação (igual à planilha). Considera virada de dia.</td></tr>
       <tr><td><b>Dentro da meta</b></td><td>Tempo de até 15 min, inclusive 15.</td></tr>
       <tr><td><b>Ponto crítico</b></td><td>Tempo acima de 60 min. Não é descartado: conta nos resultados e é listado.</td></tr>
       <tr><td><b>Médias</b></td><td>Ignoram só tempos acima de 12 h (provável erro de data), que ficam em Qualidade dos dados.</td></tr>
       <tr><td><b>Comparação</b></td><td>Mesmo período dos dois anos (até ${S.cut.slice(3)}/${S.cut.slice(0, 2)}), para não comparar um ano inteiro com um parcial.</td></tr>
       <tr><td><b>Simultaneidade</b></td><td>Atendimentos cujos intervalos se sobrepõem. Janela de atendimento: solicitação → término. Janela de execução: início → término.</td></tr>
-      <tr><td><b>Turnos</b></td><td>Dia 07h–19h e noite 19h–07h pela hora da solicitação.</td></tr></table>`)}
-  </div>`;
-  return { html, after() { } };
+      <tr><td><b>Turnos</b></td><td>Dia 07h–19h e noite 19h–07h pela hora da solicitação.</td></tr></table>`;
 }
 const fDtHora = s => { const d = new Date(s); return isNaN(d) ? s : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }); };
 
@@ -988,11 +1052,12 @@ Object.assign(INFO, {
   turno: { t: 'Equipe × turno', o: 'Quantos atendimentos cada equipe fez de dia e de noite e o percentual na meta em cada turno.', c: 'Dia = hora da solicitação entre 07h e 19h; noite = de 19h às 07h. Em geral A e C atuam de dia, B e D à noite; células com poucos registros são lançamentos fora da escala habitual.' },
   simult: { t: 'Simultaneidade', o: 'Quantos atendimentos estavam em andamento ao mesmo tempo. Nível 1 = atendimento isolado; 2 ou mais = sobreposição.', c: 'Dois atendimentos se sobrepõem quando o intervalo de um começa antes de o outro terminar (encostar não conta). O nível de um atendimento é o maior número de atendimentos ativos ao mesmo tempo durante a sua janela. Janela de atendimento: solicitação → término (a que a meta de 15 min mede). Janela de execução: início → término.' },
   qualidade: { t: 'Qualidade dos dados', o: 'Regras automáticas que apontam lançamentos com erro, dúvida ou campo faltando. Cada apontamento mostra a linha da planilha.', c: 'Gravidade alta = impede ou distorce o cálculo; média = distorce uma análise; baixa = padronização. Pontos críticos (> 60 min) não são tratados como erro, apenas quando falta observação.' },
+  queda: { t: 'De onde vem a queda', o: 'Separa a variação em partes: quanto do aumento do tempo vem da espera ou da execução e quanto cada equipe e contrato contribuiu para a variação do % na meta.', c: 'Causa: diferença das médias de espera (solicitação → início) e de execução (início → término) entre os dois períodos. Equipe e contrato: (atendimentos na meta do grupo ÷ total do período atual) − (o mesmo no período anterior); a soma de todos os grupos é igual à variação total do % na meta. Barras marinho pioram o resultado; verde-água melhoram.' },
   saldo: { t: 'Colocações × retiradas', o: 'Cada embarcação deveria ter o mesmo número de colocações e retiradas de barreira.', c: 'Diferença absoluta entre colocações e retiradas de cada embarcação em todo o histórico. Diferença de 2 ou mais costuma indicar lançamento faltante ou repetido.' }
 });
 
 /* ===================== APLICAÇÃO ===================== */
-const TABS = [['resumo', 'Resumo', vResumo, false], ['volume', 'Volume', vVolume, true], ['contratos', 'Contratos', vContratos, true], ['operacao', 'Operação', vOperacao, true], ['equipes', 'Equipes', vEquipes, true], ['simultaneidade', 'Simultaneidade', vSimult, true], ['qualidade', 'Qualidade dos dados', vQualidade, true], ['dados', 'Dados', vDados, false]];
+const TABS = [['resumo', 'Resumo', vResumo, false], ['volume', 'Volume', vVolume, true], ['contratos', 'Contratos', vContratos, true], ['operacao', 'Operação', vOperacao, true], ['equipes', 'Equipes', vEquipes, true], ['simultaneidade', 'Simultaneidade', vSimult, true], ['qualidade', 'Qualidade dos dados', vQualidade, true]];
 const LIVE_URLS = (location.hostname === 'localhost' || location.protocol === 'file:' ? ['dados/barreira.json'] : []).concat(['https://raw.githubusercontent.com/romulooc86-spec/central-de-projetos/main/projetos/dados/barreira.json', 'dados/barreira.json']);
 const LIVE = { ok: false, lido: null, sig: '', err: null };
 
@@ -1029,7 +1094,7 @@ function render() {
   $('#fsum').textContent = filterSummary();
   let v;
   try { v = def[2](); } catch (e) { console.error(e); $('#view').innerHTML = `<div class="card"><h3>Não foi possível montar esta aba</h3><p class="sub">${esc(e.message)}</p></div>`; return; }
-  $('#view').innerHTML = v.html + '<div class="foot">Prime Ocean Navegação · Lançamento de barreira · dados da planilha de controle da equipe</div>';
+  $('#view').innerHTML = v.html + '<div class="foot">Prime Ocean Navegação · Lançamento de barreira · <a href="#" data-fonte="1">fonte, atualização e regras de cálculo</a></div>';
   try { v.after(); } catch (e) { console.error(e); }
   window._redraw = () => { try { v.after(); } catch (e) { } };
 }
@@ -1069,6 +1134,8 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-t]'); if (t && t.classList.contains('tab')) return setTab(t.dataset.t);
   const g = e.target.closest('[data-go]'); if (g) return setTab(g.dataset.go);
   const inf = e.target.closest('[data-info]'); if (inf) return showInfo(inf.dataset.info);
+  const fo = e.target.closest('[data-fonte]'); if (fo) { e.preventDefault(); return openDrawer('Fonte e regras de cálculo', fonteHtml()); }
+  const hm = e.target.closest('[data-hm]'); if (hm) { const c = hm.closest('.card'); c.classList.toggle('heat', hm.dataset.hm === 'calor'); c.querySelectorAll('[data-hm]').forEach(b => b.classList.toggle('on', b === hm)); return; }
   const yv = e.target.closest('[data-yv]'); if (yv) { S.yv = +yv.dataset.yv; return render(); }
   const w = e.target.closest('[data-win]'); if (w) { S.win = w.dataset.win; return render(); }
   const ck = e.target.closest('[data-ck]'); if (ck) { const c = ck.dataset.ck, rs = filt(S.rows, { ...S.f, per: 'all' }).filter(r => r.fl.includes(c)); return openDrawer(CHK[c].nome, `<h4>O que significa</h4><p>${CHK[c].desc}</p><h4>Linhas</h4>${tabelaAtend(rs, { det: r => r.dt[c] || '' })}`); }
@@ -1091,7 +1158,7 @@ $('#bRef').onclick = () => loadLive(true);
 $('#bFil').onclick = () => $('#filters').classList.toggle('open');
 $('#bPres').onclick = () => {
   const on = !document.body.classList.contains('pres'); document.body.classList.toggle('pres', on);
-  if (on) { if (S.tab === 'dados') setTab('resumo'); (document.documentElement.requestFullscreen || (() => { })).call(document.documentElement).catch(() => { }); }
+  if (on) { (document.documentElement.requestFullscreen || (() => { })).call(document.documentElement).catch(() => { }); }
   else if (document.fullscreenElement) document.exitFullscreen();
 };
 document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) document.body.classList.remove('pres'); });
