@@ -814,10 +814,10 @@ function vVolume() {
       const lin = []; let ac = 0;
       for (let m = 1; m <= last; m++) { const v = cl.map(k => cell(rs, m, k)), t = cell(rs, m); ac += t; lin.push({ m, v, t, ac, p: pr.length ? cell(pr, m) : null, parcial: yv === S.Y && lf != null && S.Y + '-' + String(m).padStart(2, '0') > lf }); }
       const mx = cl.map((_, j) => Math.max(...lin.map(l => l.v[j]))), mxt = Math.max(...lin.map(l => l.t));
-      const tot = cl.map((_, j) => sum(lin.map(l => l.v[j]))), tt = sum(lin.map(l => l.t)), tp = pr.length ? sum(lin.map(l => l.p)) : null;
+      const tot = cl.map((_, j) => sum(lin.map(l => l.v[j]))), tt = sum(lin.map(l => l.t)), tp = pr.length ? sum(lin.filter(l => !l.parcial).map(l => l.p)) : null, ttf = sum(lin.filter(l => !l.parcial).map(l => l.t));
       $('#tbv').innerHTML = `<div class="rkw"><table class="cmp mt"><tr><th>Mês</th>${cl.map(k => `<th>${esc(k)}</th>`).join('')}<th class="cur">Total</th><th>Acumulado</th><th>vs ${yv - 1}</th></tr>
-      ${lin.map(l => `<tr><td>${MES[l.m - 1]}/${String(yv).slice(2)}${l.parcial ? ' <small>parcial</small>' : ''}</td>${l.v.map((v, j) => `<td class="${v === mx[j] && v ? 'mx' : ''}" style="--h:${(mx[j] ? v / mx[j] : 0).toFixed(2)}">${fN(v)}</td>`).join('')}<td class="cur ${l.t === mxt ? 'mx' : ''}" style="--h:${(l.t / mxt).toFixed(2)}">${fN(l.t)}</td><td>${fN(l.ac)}</td><td>${l.p != null ? dv(l.t, l.p) : '–'}</td></tr>`).join('')}
-      <tr class="tot"><td>Total</td>${tot.map(v => `<td>${fN(v)}</td>`).join('')}<td class="cur">${fN(tt)}</td><td>${fN(ac)}</td><td>${tp != null ? dv(tt, tp) : '–'}</td></tr></table></div>`;
+      ${lin.map(l => `<tr><td>${MES[l.m - 1]}/${String(yv).slice(2)}${l.parcial ? ' <small>parcial</small>' : ''}</td>${l.v.map((v, j) => `<td style="--h:${(mx[j] ? v / mx[j] : 0).toFixed(2)}">${fN(v)}</td>`).join('')}<td class="cur" style="--h:${(l.t / mxt).toFixed(2)}">${fN(l.t)}</td><td style="--h:${(l.ac / ac).toFixed(2)}">${fN(l.ac)}</td><td>${l.p != null && !l.parcial ? dv(l.t, l.p) : '–'}</td></tr>`).join('')}
+      <tr class="tot"><td>Total</td>${tot.map(v => `<td>${fN(v)}</td>`).join('')}<td class="cur">${fN(tt)}</td><td>${fN(ac)}</td><td>${tp != null ? dv(ttf, tp) : '–'}</td></tr></table></div>`;
     }
   };
 }
