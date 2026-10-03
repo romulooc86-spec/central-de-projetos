@@ -172,6 +172,12 @@ html,body{overflow-x:hidden}
 .g56{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
 .g56 .cmp td,.g56 .cmp th{padding-left:6px;padding-right:6px}.g56 .cmp td{font-size:13.5px}.cmp td:first-child{white-space:normal;line-height:1.2}
 @media(max-width:980px){.g56{grid-template-columns:1fr}}
+/* v3: acabamento minimalista */
+.ht.sm{min-width:480px}.ht.sm .ht-n{font-size:12px}
+.rk-t{cursor:default;border-top:2px solid var(--bd2);border-bottom:0!important}.rk-t:hover{background:none}.rk-t .rk-nm{color:var(--tx2)}.rk-t .rk-b span{font-weight:800}
+.eb-g{font:800 10.5px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);padding:14px 0 2px}.eb-g:first-child{padding-top:2px}
+.eb-m{top:-6px!important;bottom:auto!important;height:6px;border-left:2px solid #06BEAE!important}
+.leg i.mk{display:inline-block;width:2px;height:10px;background:#06BEAE;border-radius:0;margin-right:7px;vertical-align:-1px}
 
 </style>
 </head>
@@ -210,7 +216,7 @@ const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out
 const DOW = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 const META = 15;            // minutos: meta contratual (solicitação → término)
 const T_MAX = 720;          // acima de 12 h o tempo não entra nas médias (vai para a qualidade dos dados)
-const CRIT = 30;            // ponto crítico: mais de 30 min
+const CRIT = 60;            // ponto crítico: mais de 60 min
 const fN = n => n == null || isNaN(n) ? '–' : Math.round(n).toLocaleString('pt-BR');
 const fD = (n, d = 1) => n == null || isNaN(n) ? '–' : n.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
 const fP = (x, d = 1) => x == null || isNaN(x) ? '–' : fD(x * 100, d) + '%';
@@ -244,7 +250,7 @@ const CHK = {
   embSimul:{ sev: 'Alta', nome: 'Mesma embarcação em dois atendimentos ao mesmo tempo', desc: 'A embarcação aparece em duas operações com horários de execução sobrepostos.' },
   locSimul:{ sev: 'Média', nome: 'Mesmo berço com dois atendimentos ao mesmo tempo', desc: 'Duas operações no mesmo local com horários de execução sobrepostos.' },
   eqTurno:{ sev: 'Baixa', nome: 'Equipe fora do turno habitual', desc: 'Em geral A e C atuam de dia (07h–19h) e B e D à noite; pode ser troca de escala, vale confirmar.' },
-  critObs:{ sev: 'Média', nome: 'Ponto crítico sem observação', desc: 'Atendimento acima de 30 min sem justificativa na coluna Observação.' },
+  critObs:{ sev: 'Média', nome: 'Ponto crítico sem observação', desc: 'Atendimento acima de 60 min sem justificativa na coluna Observação.' },
 };
 const SEV_ORD = { 'Alta': 0, 'Média': 1, 'Baixa': 2 };
 const LOC_CT = { 'BERÇO 01': 'LON 1', 'BERÇO 02': 'LON 1', 'BERÇO 03': 'LON 1', 'BERÇO 04': 'LON 1', 'BERÇO 06': 'LON 1', 'BERÇO 07': 'LON 1', 'BEX 01': 'LON 2', 'BEX 02': 'LON 2', 'EQUINOR': 'EQUINOR' };
@@ -424,29 +430,19 @@ function ranking(rows, o) {
   const nc = o.cols.length;
   const head = `<div class="rk-h"><div></div><div>${o.hn || ''}</div><div>${o.hv || ''}</div>${o.cols.map(c => `<div class="rk-c">${c}</div>`).join('')}</div>`;
   const body = rows.map((r, i) => {
-    const w = r.v == null ? 0 : r.v / max * 100, wp = r.vp == null ? 0 : r.vp / max * 100;
+    const w = r.v == null ? 0 : r.v / max * 84, wp = r.vp == null ? 0 : r.vp / max * 84;
     const lab = o.fmt(r.v);
-    const inside = w > 55;
     return `<div class="rk-r ${i === 0 ? 'f' : ''}" ${r.key != null ? `data-key="${esc(r.key)}"` : ''}><div class="rk-n">${i + 1}</div>
       <div class="rk-nm">${esc(r.nome)}${r.sub ? `<small>${r.sub}</small>` : ''}</div>
-      <div class="rk-b">${r.vp != null ? `<i class="o" style="width:${wp}%"></i>` : ''}<i style="width:${Math.max(w, .6)}%"></i>${(Math.max(w, wp) <= 62) ? `<span style="left:calc(${Math.max(w, wp)}% + 6px)">${lab}</span>` : (w >= 30 ? `<span style="right:calc(${100 - w}% + 6px);color:#fff">${lab}</span>` : `<span style="left:calc(${w}% + 6px)">${lab}</span>`)}</div>
+      <div class="rk-b">${r.vp != null ? `<i class="o" style="width:${wp}%"></i>` : ''}<i style="width:${Math.max(w, .6)}%"></i><span style="left:calc(${Math.max(w, wp)}% + 8px)">${lab}</span></div>
       ${r.cols.map((c, j) => `<div class="rk-c ${j === 0 ? 'b' : ''}">${c}</div>`).join('')}</div>`;
   }).join('');
-  return `<div class="rkw"><div class="rk" style="--nc:${nc}">${head}${body}</div></div>`;
+  const tot = o.total ? `<div class="rk-r rk-t"><div class="rk-n"></div><div class="rk-nm">${o.total.nome}</div><div class="rk-b"><span style="left:0">${o.fmt(o.total.v)}</span></div>${o.total.cols.map((c, j) => `<div class="rk-c ${j === 0 ? 'b' : ''}">${c}</div>`).join('')}</div>` : '';
+  return `<div class="rkw"><div class="rk" style="--nc:${nc}">${head}${body}${tot}</div></div>`;
 }
 
 /* ---------- gráficos SVG ---------- */
-function monotone(xs, ys) {   // spline cúbica monotônica (Fritsch–Carlson)
-  const n = xs.length; if (n < 3) return xs.map((x, i) => (i ? 'L' : 'M') + x + ' ' + ys[i]).join('');
-  const d = [], m = [], t = [];
-  for (let i = 0; i < n - 1; i++) { d[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]); }
-  m[0] = d[0]; m[n - 1] = d[n - 2];
-  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
-  for (let i = 0; i < n - 1; i++) { if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; } const a = m[i] / d[i], b = m[i + 1] / d[i], s = a * a + b * b; if (s > 9) { const k = 3 / Math.sqrt(s); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; } }
-  let p = 'M' + xs[0] + ' ' + ys[0];
-  for (let i = 0; i < n - 1; i++) { const h = xs[i + 1] - xs[i]; p += `C${xs[i] + h / 3} ${ys[i] + m[i] * h / 3} ${xs[i + 1] - h / 3} ${ys[i + 1] - m[i + 1] * h / 3} ${xs[i + 1]} ${ys[i + 1]}`; }
-  return p;
-}
+function poly(pts) { return pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(''); }
 /* linhas por mês. o: {labels, series:[{nome,cor,vals,dash,w,fmt,rot}], bars:[...] , ymin,ymax, H, fmt, marcos:[{i,txt}], refs:[{v,txt}] } */
 function lineChart(host, o) {
   const W = Math.max(host.clientWidth || 600, 280), H = o.H || 270, L = 12, Rr = 18, T = 26, B = 28;
@@ -469,15 +465,16 @@ function lineChart(host, o) {
   o.series.forEach(se => {
     const pts = se.vals.map((v, i) => v == null ? null : [x(i), y(v), i, v]).filter(Boolean);
     if (!pts.length) return;
-    if (se.area) { const d0 = monotone(pts.map(p => p[0]), pts.map(p => p[1])), yb = H - B - baseBars; s += `<path d="${d0}L${pts[pts.length - 1][0]} ${yb}L${pts[0][0]} ${yb}Z" fill="${se.cor}" fill-opacity=".08"/>`; }
-    s += `<path d="${monotone(pts.map(p => p[0]), pts.map(p => p[1]))}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" ${se.dash ? 'stroke-dasharray="6 5"' : ''}/>`;
+    const solid = se.partial && pts.length > 1 ? pts.slice(0, -1) : pts;
+    s += `<path d="${poly(solid)}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-linejoin="round" ${se.dash ? 'stroke-dasharray="6 5"' : ''}/>`;
+    if (se.partial && pts.length > 1) s += `<path d="${poly(pts.slice(-2))}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-dasharray="2 6"/>`;
     if (se.lab === false) return;
     if (se.lab === 'last') { const p = pts[pts.length - 1]; s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${se.cor}" stroke-width="2.2"/><text class="cxb" x="${p[0] + 2}" y="${p[1] + (se.below ? 20 : -10)}" text-anchor="end" style="fill:${se.cor === '#A9B8BD' ? '#52656C' : se.cor}">${(se.fmt || o.fmt)(p[3])}</text>`; return; }
     const mx = pts.reduce((a, b) => b[3] > a[3] ? b : a), mn = pts.reduce((a, b) => b[3] < a[3] ? b : a);
     const key = new Set([pts[0], pts[pts.length - 1], mx, mn]);
     key.forEach(p => {
       const f = (se.fmt || o.fmt)(p[3]);
-      const above = p === mx || (p !== mn && p[3] >= (pts[0][3] + pts[pts.length - 1][3]) / 2);
+      const ix = pts.indexOf(p), nb = [pts[ix - 1], pts[ix + 1]].filter(Boolean), above = p === mx ? true : p === mn ? false : nb.every(q => p[3] >= q[3]);
       const anchor = p === pts[0] ? 'start' : p === pts[pts.length - 1] ? 'end' : 'middle';
       s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${se.cor}" stroke-width="2.2"/><text class="cxb" x="${p[0] + (anchor === 'start' ? -2 : anchor === 'end' ? 2 : 0)}" y="${p[1] + (above ? -10 : 19)}" text-anchor="${anchor}" style="fill:${se.cor === '#C9D3D6' || se.cor === '#A9B8BD' ? '#52656C' : se.cor}">${f}</text>`;
     });
@@ -507,11 +504,12 @@ function stack100(segs, o) {
   return `<div style="display:flex;height:30px;border-radius:6px;overflow:hidden">${segs.map(s => { const p = s.v / tot * 100; return `<div style="width:${p}%;background:${s.cor};color:${s.tx || '#fff'};font:700 12px var(--font-display);display:grid;place-items:center;overflow:hidden" title="${esc(s.nome)}: ${fN(s.v)}">${p >= 7 ? fD(p, 0) + '%' : ''}</div>`; }).join('')}</div>
   <div class="leg" style="margin-top:8px">${segs.map(s => `<span><i class="b" style="background:${s.cor}"></i>${esc(s.nome)} · ${fN(s.v)} (${fD(s.v / tot * 100, 0)}%)</span>`).join('')}</div>`;
 }
+const heatBg = v => `rgba(6,190,174,${(.10 + .78 * Math.min(Math.max(v, 0), 1)).toFixed(2)})`;
 /* tabela de calor mensal: rowsL nomes, ms meses ('AAAA-MM'), f(i,j) → {v 0..1 | null, txt}; escala única verde-água */
-function heatTable(rowsL, ms, f) {
+function heatTable(rowsL, ms, f, cls) {
   const yrs = []; ms.forEach(m => { const y = m.slice(0, 4), u = yrs[yrs.length - 1]; if (u && u[0] === y) u[1]++; else yrs.push([y, 1]); });
-  let h = `<div class="rkw"><div class="ht" style="--n:${ms.length}"><div class="ht-y"><i></i>${yrs.map(y => `<b style="grid-column:span ${y[1]}">${y[0]}</b>`).join('')}</div><div class="ht-m"><i></i>${ms.map(m => `<span>${MES[+m.slice(5) - 1]}</span>`).join('')}</div>`;
-  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${ms.map((m, j) => { const c = f(i, j), v = c.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:rgba(4,140,128,${(.08 + .82 * Math.min(Math.max(v, 0), 1)).toFixed(2)});color:${v > .52 ? '#fff' : '#042738'}">${c.txt}</div>`; }).join('')}</div>`; });
+  let h = `<div class="rkw"><div class="ht ${cls || ''}" style="--n:${ms.length}"><div class="ht-y"><i></i>${yrs.map(y => `<b style="grid-column:span ${y[1]}">${y[0]}</b>`).join('')}</div><div class="ht-m"><i></i>${ms.map(m => `<span>${MES[+m.slice(5) - 1]}</span>`).join('')}</div>`;
+  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${ms.map((m, j) => { const c = f(i, j), v = c.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:${heatBg(v)};color:#042738">${c.txt}</div>`; }).join('')}</div>`; });
   return h + '</div></div>';
 }
 /* colunas empilhadas por mês (ms 'AAAA-MM'); o: {ms, H, groups:[{nome,cor,vals}]} */
@@ -559,7 +557,7 @@ function csv(nome, cab, linhas) {
 function heatGrid(rowsL, cols, f) {
   const gs = []; cols.forEach(c => { const u = gs[gs.length - 1]; if (u && u[0] === c.g) u[1]++; else gs.push([c.g, 1]); });
   let h = `<div class="rkw"><div class="ht hg" style="--n:${cols.length}"><div class="ht-y"><i></i>${gs.map(g => `<b style="grid-column:span ${g[1]}">${g[0]}</b>`).join('')}</div><div class="ht-m"><i></i>${cols.map(c => `<span>${c.n}</span>`).join('')}</div>`;
-  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${cols.map((c, j) => { const x = f(i, j), v = x.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:rgba(4,140,128,${(.08 + .82 * Math.min(Math.max(v, 0), 1)).toFixed(2)});color:${v > .52 ? '#fff' : '#042738'}">${x.txt}<small>${x.sub || ''}</small></div>`; }).join('')}</div>`; });
+  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${cols.map((c, j) => { const x = f(i, j), v = x.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:${heatBg(v)};color:#042738">${x.txt}<small>${x.sub || ''}</small></div>`; }).join('')}</div>`; });
   return h + '</div></div>';
 }
 
@@ -575,7 +573,7 @@ const stats3 = (A, B) => [
   `${fP(A.pct)}<small>${B ? dp(A.pct, B.pct) : ''}</small>`,
   `${fD(A.avg, 1)} min<small>${B ? dm(A.avg, B.avg) : ''}</small>`,
   `${fN(A.crit)}<small>${B ? dcr(A.crit, B.crit) : ''}</small>`];
-const H3 = ['% na meta', 'Tempo médio', 'Críticos >30'];
+const H3 = ['% na meta', 'Tempo médio', 'Críticos >60'];
 function pctMes(rs, ms) { const g = groupBy(rs, r => r.ym); return ms.map(m => { const a = g.get(m); return a && a.length >= 10 ? a.filter(r => r.na).length / a.length : null; }); }
 function sobreMes(rs, ms, W) { const g = groupBy(rs, r => r.ym); return ms.map(m => { const a = g.get(m); return a && a.length >= 10 ? a.filter(r => r['c' + W] >= 2).length / a.length : null; }); }
 const nMes = (rs, ms) => { const g = groupBy(rs, r => r.ym); return ms.map(m => (g.get(m) || []).length); };
@@ -618,7 +616,7 @@ function cmpAnual(base) {
     ['Tempo médio de atendimento', a => fD(a.avg, 1) + ' min', dm(C.avg, P.avg)],
     ['Espera média até o início', a => fD(a.espM, 1) + ' min', dmn(C.espM, P.espM)],
     ['Execução média', a => fD(a.exeM, 1) + ' min', dmn(C.exeM, P.exeM)],
-    ['Pontos críticos (> 30 min)', a => fN(a.crit) + ' · ' + fP(a.critP), delta(C.critP, P.critP, { un: 'pp', dir: 'down' })],
+    ['Pontos críticos (> 60 min)', a => fN(a.crit) + ' · ' + fP(a.critP), delta(C.critP, P.critP, { un: 'pp', dir: 'down' })],
     ['Atendimentos em sobreposição', a => fP(a.simP), delta(C.simP, P.simP, { un: 'pp', dir: 'down' })]
   ];
   return `<div class="rkw"><table class="cmp"><tr><th></th><th>${Y - 1} completo</th><th>${lblPer(Y - 1)}</th><th class="cur">${lblPer(Y)}</th><th>Variação</th></tr>
@@ -646,7 +644,7 @@ function vResumo() {
   ptsNeg.push([`${fP0(B.pct)} → ${fP0(A.pct)}`, 'Queda no cumprimento da meta de 15 min', `${lp} × ${lc}: ${fD((A.pct - B.pct) * 100, 1)} p.p. Tempo médio foi de ${fD(B.avg, 1)} para ${fD(A.avg, 1)} min.`, 'contratos']);
   if (worstEq) ptsNeg.push([`EQUIPE ${worstEq.e} ${fP0(worstEq.a.pct)}`, 'Menor cumprimento da meta', `Responde por ${fP0((worstEq.a.n - worstEq.a.ok) / (A.n - A.ok))} dos atendimentos fora da meta com ${fP0(worstEq.a.n / A.n)} do volume.`, 'equipes']);
   ptsNeg.push([`${fP0(A.simP)}`, 'Atendimentos em sobreposição', `${fN(A.sim)} atendimentos coincidiram com outro; ${fN(A.simEq)} deles com a mesma equipe em paralelo. Pico de ${cur.reduce((m, r) => Math.max(m, r.cE), 0)} ao mesmo tempo.`, 'simultaneidade']);
-  ptsNeg.push([`${fN(A.crit)}`, 'Pontos críticos acima de 30 min', `${fP(A.critP)} do período; ${fN(cur.filter(r => r.cr && !r.obs).length)} sem observação registrada.`, 'operacao']);
+  ptsNeg.push([`${fN(A.crit)}`, 'Pontos críticos acima de 60 min', `${fP(A.critP)} do período; ${fN(cur.filter(r => r.cr && !r.obs).length)} sem observação registrada.`, 'operacao']);
   ptsNeg.push([`${fN(bad)}`, 'Lançamentos com inconsistência', `${fP(badP)} das linhas da planilha pedem correção (${fN(base.filter(r => r.bad && r.fl.some(c => CHK[c].sev === 'Alta')).length)} de gravidade alta).`, 'qualidade']);
   const li = p => `<div class="li" data-go="${p[3]}"><div class="n">${p[0]}</div><div class="lt"><b>${p[1]}</b><span>${p[2]}</span></div></div>`;
   const ov = overlay(base, pctMes), nv = overlay(base, nMes);
@@ -664,7 +662,7 @@ function vResumo() {
     <div class="r side dk">
       <div><div class="lb">Colocação × retirada na meta</div><div class="v">${fP0(ops[0].a.pct)} <em>×</em> ${fP0(ops[1].a.pct)}</div><div class="nt">${fN(ops[0].a.n)} colocações · ${fN(ops[1].a.n)} retiradas</div></div>
       <div><div class="lb">Atendimentos em sobreposição</div><div class="v">${fP0(A.simP)} ${delta(A.simP, B.simP, { un: 'pp', dir: 'down' })}</div><div class="nt">mais de um atendimento ao mesmo tempo</div></div>
-      <div><div class="lb">Pontos críticos (> 30 min)</div><div class="v">${fN(A.crit)} <em>·</em> ${fP(A.critP)}</div><div class="nt">${dcr(A.crit, B.crit)} vs ${lp}</div></div>
+      <div><div class="lb">Pontos críticos (> 60 min)</div><div class="v">${fN(A.crit)} <em>·</em> ${fP(A.critP)}</div><div class="nt">${dcr(A.crit, B.crit)} vs ${lp}</div></div>
     </div></div>
   <div class="grid g2" style="margin-top:16px">
     ${card('Destaques positivos', '', `<div class="lst">${ptsPos.slice(0, 4).map(li).join('')}</div>`, { cls: 'pos' })}
@@ -672,12 +670,12 @@ function vResumo() {
   </div>
   <div class="grid ${cmp ? 'g56' : ''}" style="margin-top:16px">
     ${card('Cumprimento da meta mês a mês', `% de atendimentos em até 15 min · ${fP0(A.pct)} em ${lc} contra ${fP0(B.pct)} em ${lp}`, `<div class="leg"><span><i style="background:${COR.a26}"></i>${S.Y}</span><span><i style="background:${COR.a25}"></i>${S.Y - 1}</span></div><div id="ch1"></div>`, { info: 'meta' })}
-    ${cmp ? card('Comparativo entre anos', `${S.Y - 1} completo, mesmo período e variação · verde-água = melhora, marinho = piora`, cmp, { info: 'anual' }) : ''}
+    ${cmp ? card('Comparativo entre anos', `${S.Y - 1} completo, mesmo período e variação · verde-água melhora, marinho piora, cinza volume`, cmp, { info: 'anual' }) : ''}
   </div>`;
   return {
     html, after() {
       const lab = mesesAno(), m26 = ov[S.Y], m25 = ov[S.Y - 1];
-      lineChart($('#ch1'), { labels: lab, H: 330, ymin: 0, fmt: v => fP0(v), series: [{ nome: S.Y - 1, cor: COR.a25, vals: m25, lab: false, w: 2.2 }, { nome: S.Y, cor: COR.a26, vals: m26, area: true }], refs: [] });
+      lineChart($('#ch1'), { labels: lab, H: 330, ymin: 0, fmt: v => fP0(v), series: [{ nome: S.Y - 1, cor: COR.a25, vals: m25, lab: 'last', w: 2.2 }, { nome: S.Y, cor: COR.a26, vals: m26 }], refs: [] });
     }
   };
 }
@@ -710,8 +708,8 @@ function vVolume() {
       $('#lgv').innerHTML = cl.map(k => `<span><i class="b" style="background:${cliCor(cl, k)}"></i>${esc(k)}</span>`).join('');
       stackCols($('#chv'), { ms, H: 300, partial: m => +m.slice(0, 4) === S.Y && m > (lastFull() || ''), groups: cl.map(k => ({ nome: k, cor: cliCor(cl, k), vals: ms.map(m => base.filter(r => r.ym === m && r.ct === k).length) })) });
       const a1 = acum(base, S.Y - 1), a2 = acum(base, S.Y);
-      lineChart($('#cha'), { labels: mesesAno(), H: 250, ymin: 0, fmt: v => fN(v), series: [{ cor: COR.a25, vals: a1, lab: 'last', w: 2.4 }, { cor: COR.a26, vals: a2, lab: 'last', w: 3, area: true }] });
-      $('#rkv').innerHTML = ranking(cl.map(k => { const a = P.cur.filter(r => r.ct === k), b = P.prv ? P.prv.filter(r => r.ct === k) : []; return { nome: k, key: 'ct|' + k, v: a.length, vp: P.prv ? b.length : null, cols: [fP0(a.length / (P.cur.length || 1)), b.length ? dv(a.length, b.length) : '–'] }; }), { fmt: v => fN(v), hn: 'Cliente', hv: 'Atendimentos', cols: ['Part.', 'Var.'] });
+      lineChart($('#cha'), { labels: mesesAno(), H: 250, ymin: 0, fmt: v => fN(v), series: [{ cor: COR.a25, vals: a1, lab: 'last', w: 2.4 }, { cor: COR.a26, vals: a2, lab: 'last', w: 3, below: true, partial: (() => { const li = a2.reduce((b, v, i) => v != null ? i : b, -1), lf = lastFull(); return li >= 0 && (!lf || S.Y + '-' + String(li + 1).padStart(2, '0') > lf); })() }] });
+      $('#rkv').innerHTML = ranking(cl.map(k => { const a = P.cur.filter(r => r.ct === k), b = P.prv ? P.prv.filter(r => r.ct === k) : []; return { nome: k, key: 'ct|' + k, v: a.length, vp: P.prv ? b.length : null, cols: [(p => p > 0 && p < .01 ? '<1%' : fP0(p))(a.length / (P.cur.length || 1)), b.length ? dv(a.length, b.length) : '–'] }; }), { fmt: v => fN(v), hn: 'Cliente', hv: 'Atendimentos', cols: ['Part.', 'Var.'], total: { nome: 'Total', v: P.cur.length, cols: ['100%', B ? dv(P.cur.length, P.prv.length) : '–'] } });
       const rs = base.filter(r => r.y === yv), pr = base.filter(r => r.y === yv - 1), last = rs.reduce((m, r) => Math.max(m, r.mo), 0), lf = lastFull();
       const cell = (a, m, k) => a.filter(r => r.mo === m && (k == null || r.ct === k)).length;
       const lin = []; let ac = 0;
@@ -734,7 +732,7 @@ function vContratos() {
     ${kpi('Atendimentos', fN(A.n), B ? `${dv(A.n, B.n)} vs ${P.lp}` : P.lc)}
     ${kpi('Dentro da meta', fP(A.pct), B ? dp(A.pct, B.pct) + ' vs ' + P.lp : 'até 15 min', { dark: true })}
     ${kpi('Tempo médio', fD(A.avg, 1) + '<small>min</small>', B ? dm(A.avg, B.avg) : 'meta 15 min')}
-    ${kpi('Pontos críticos', fN(A.crit), `${fP(A.critP)} · acima de 30 min`)}
+    ${kpi('Pontos críticos', fN(A.crit), `${fP(A.critP)} · acima de 60 min`)}
   </div>
   <div class="grid" style="margin-top:16px">${card('Desempenho por contrato', `${P.lc}${P.prv ? ' × ' + P.lp : ''} · barra clara = período anterior`, '<div id="rkc"></div>', { info: 'contrato' })}</div>
   <div class="grid" style="margin-top:16px">${card('Cumprimento da meta por contrato, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmc"></div>', { info: 'calor' })}</div>
@@ -776,23 +774,23 @@ function vOperacao() {
   </div>
   <div class="grid" style="margin-top:16px">${card('Colocação × retirada, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmo"></div>', { info: 'calor' })}</div>
   <div class="grid g2" style="margin-top:16px">
-    ${card(tDist, `${P.lc} · atendimentos por faixa de tempo`, '<div class="leg"><span><i class="b" style="background:#06BEAE"></i>Dentro da meta</span><span><i class="b" style="background:#A9B8BD"></i>Até 30 min</span><span><i class="b" style="background:#042738"></i>Crítico (> 30 min)</span></div><div id="chd"></div>', { info: 'faixas' })}
-    ${card(`Espera de ${fD(A0.espM, 0)} min + execução de ${fD(A0.exeM, 0)} min`, `${P.lc} · total de ${fD(A0.avg, 0)} min contra a meta de 15 (linha tracejada) · minutos médios`, '<div id="chb"></div>', { info: 'espera' })}
+    ${card(tDist, `${P.lc} · atendimentos por faixa de tempo`, '<div class="leg"><span><i class="b" style="background:#06BEAE"></i>Dentro da meta</span><span><i class="b" style="background:#A9B8BD"></i>Até 60 min</span><span><i class="b" style="background:#042738"></i>Crítico (> 60 min)</span></div><div id="chd"></div>', { info: 'faixas' })}
+    ${card(`Espera de ${fD(A0.espM, 0)} min + execução de ${fD(A0.exeM, 0)} min`, `${P.lc} · total de ${fD(A0.avg, 0)} min contra a meta de 15 (marca no topo da barra) · minutos médios`, '<div id="chb"></div>', { info: 'espera' })}
   </div>
   <div class="grid" style="margin-top:16px">${card('Demanda e cumprimento por hora do dia', `${P.lc} · colunas = atendimentos por hora da solicitação; abaixo, % na meta`, '<div class="leg"><span><i class="b" style="background:#042738"></i>Menos de 50% na meta</span><span><i class="b" style="background:#06BEAE"></i>50% ou mais</span></div><div id="chh"></div>', { info: 'hora' })}</div>
   <div class="grid g2" style="margin-top:16px">
     ${card('Dia da semana', 'Atendimentos e % na meta', '<div id="chw"></div>')}
-    ${card('Pontos críticos por contrato', 'Atendimentos acima de 30 min · clique para ver a lista', '<div id="rkp"></div>')}
+    ${card('Pontos críticos por contrato', 'Atendimentos acima de 60 min · clique para ver a lista', '<div id="rkp"></div>')}
   </div>`;
   return {
     html, after() {
-      colChart($('#chd'), { labels: faixas.map(f => f[0]), vals: cnt, cores: ['#06BEAE', '#06BEAE', '#A9B8BD', '#A9B8BD', '#A9B8BD', '#042738', '#042738'], fmt: v => fN(v), H: 250, sub: cnt.map(c => fP0(c / tot)) });
+      colChart($('#chd'), { labels: faixas.map(f => f[0]), vals: cnt, cores: ['#06BEAE', '#06BEAE', '#A9B8BD', '#A9B8BD', '#A9B8BD', '#A9B8BD', '#042738'], fmt: v => fN(v), H: 250, sub: cnt.map(c => fP0(c / tot)) });
       const all = filt(S.rows, { ...S.f }), ms = meses(all);
       $('#hmo').innerHTML = heatMes([['Total', all], ['Colocação', all.filter(r => r.op === 'COLOCAÇÃO')], ['Retirada', all.filter(r => r.op === 'RETIRADA')]], ms);
-      const grp = [['Colocação', r => r.op === 'COLOCAÇÃO'], ['Retirada', r => r.op === 'RETIRADA'], ['Turno dia', r => r.turno === 'Dia'], ['Turno noite', r => r.turno === 'Noite'], ...[...new Set(cur.map(r => r.ct))].filter(Boolean).sort().map(c => ['Contrato ' + c, r => r.ct === c])];
-      const lin = grp.map(([nm, f]) => { const a = agg(cur.filter(f)); return { nm, n: a.n, e: a.espM, x: a.exeM }; }).filter(g => g.n >= 30 && g.e != null && g.x != null).sort((a, b) => (b.e + b.x) - (a.e + a.x));
-      const mxm = Math.max(30, ...lin.map(g => g.e + g.x)) * 1.12;
-      $('#chb').innerHTML = `<div class="leg"><span><i class="b" style="background:#A9B8BD"></i>Espera até começar</span><span><i class="b" style="background:#042738"></i>Execução</span></div><div class="eb">` + lin.map(g => `<div class="eb-r"><div class="rk-nm">${g.nm}</div><div class="eb-t"><div class="eb-w" style="left:0;width:${g.e / mxm * 100}%">${g.e / mxm > .07 ? fD(g.e, 1) : ''}</div><div class="eb-x" style="left:${g.e / mxm * 100}%;width:${g.x / mxm * 100}%">${g.x / mxm > .07 ? fD(g.x, 1) : ''}</div><div class="eb-m" style="left:${15 / mxm * 100}%"></div></div><div class="rk-c b">${fD(g.e + g.x, 1)} min</div></div>`).join('') + '</div>';
+      const blocos = [['Contrato', [...new Set(cur.map(r => r.ct))].filter(Boolean).map(c => [c, r => r.ct === c])], ['Turno', [['Dia', r => r.turno === 'Dia'], ['Noite', r => r.turno === 'Noite']]], ['Operação', [['Colocação', r => r.op === 'COLOCAÇÃO'], ['Retirada', r => r.op === 'RETIRADA']]]]
+        .map(([t, g]) => [t, g.map(([nm, f]) => { const a = agg(cur.filter(f)); return { nm, n: a.n, e: a.espM, x: a.exeM }; }).filter(g => g.n >= 30 && g.e != null && g.x != null).sort((a, b) => (b.e + b.x) - (a.e + a.x))]).filter(b => b[1].length);
+      const mxm = Math.max(30, ...blocos.flatMap(b => b[1].map(g => g.e + g.x))) * 1.1;
+      $('#chb').innerHTML = `<div class="leg"><span><i class="b" style="background:#A9B8BD"></i>Espera até começar</span><span><i class="b" style="background:#042738"></i>Execução</span><span><i class="mk"></i>Meta de 15 min</span></div><div class="eb">` + blocos.map(([t, lin]) => `<div class="eb-g">${t}</div>` + lin.map(g => `<div class="eb-r"><div class="rk-nm">${esc(g.nm)}</div><div class="eb-t"><div class="eb-w" style="left:0;width:${g.e / mxm * 100}%">${g.e / mxm > .07 ? fD(g.e, 1) : ''}</div><div class="eb-x" style="left:${g.e / mxm * 100}%;width:${g.x / mxm * 100}%">${g.x / mxm > .07 ? fD(g.x, 1) : ''}</div><div class="eb-m" style="left:${15 / mxm * 100}%"></div></div><div class="rk-c b">${fD(g.e + g.x, 1)} min</div></div>`).join('')).join('') + '</div>';
       const hr = Array.from({ length: 24 }, (_, h) => cur.filter(r => r.h === h));
       colChart($('#chh'), { labels: hr.map((_, h) => String(h).padStart(2, '0')), vals: hr.map(a => a.length), cores: hr.map(a => { const p = a.length ? a.filter(r => r.na).length / a.length : 0; return p >= .5 ? '#06BEAE' : '#042738'; }), fmt: v => fN(v), H: 250, sub: hr.map(a => a.length ? fP0(a.filter(r => r.na).length / a.length) : '') });
       const wd = [1, 2, 3, 4, 5, 6, 0].map(d => cur.filter(r => r.dow === d));
@@ -826,7 +824,7 @@ function vEquipes() {
     { l: 'Tempo de resposta (espera até o início)', v: x => x.a.espM, f: v => fD(v, 1) + ' min', best: 'min', d: (a, b) => dmn(a.espM, b.espM) },
     { l: 'Execução média', v: x => x.a.exeM, f: v => fD(v, 1) + ' min', best: 'min', d: (a, b) => dmn(a.exeM, b.exeM) },
     ['Pontos críticos'],
-    { l: 'Acima de 30 min', v: x => x.a.critP, f: fP, best: 'min', sub: x => fN(x.a.crit) + ' atend.' },
+    { l: 'Acima de 60 min', v: x => x.a.critP, f: fP, best: 'min', sub: x => fN(x.a.crit) + ' atend.' },
     { l: 'Críticos sem observação', v: x => semObs(x.rs), f: fP0, best: 'min' },
     ['Simultaneidade e dados'],
     { l: 'Em sobreposição', v: x => x.a.simP, f: fP0, best: 'min', d: (a, b) => ddp(a.simP, b.simP) },
@@ -850,8 +848,8 @@ function vEquipes() {
   <div class="banner"><div class="n">${fP0(worst.a.pct)}</div><div><b>Equipe ${worst.e}: menor cumprimento da meta de 15 min em ${P.lc}</b><span>A melhor, a equipe ${best.e}, chega a ${fP0(best.a.pct)}; as demais juntas, a ${fP0(rest.pct)}. A equipe ${worst.e} faz ${fP0(worst.a.n / A.n)} dos atendimentos e responde por ${fP0(missW)} dos que ficaram fora da meta; tempo médio de ${fD(worst.a.avg, 1)} min contra ${fD(rest.avg, 1)} min. <b style="display:inline;font:700 14px var(--font-body)">Últimos 3 meses (${ms3.map(mLbl).join(', ')}): ${l3}.</b></span></div></div>
   <div class="grid">${card('Placar das equipes', `${P.lc}${prv ? ' · variação sobre ' + P.lp : ''}`, `<div class="key"><span><i style="background:#E0F6F3"></i>Melhor equipe no indicador</span><span><i style="background:#E7EDF0"></i>Pior equipe</span></div>${sc}`, { info: 'equipe' })}</div>
   <div class="grid g2" style="margin-top:16px">
-    ${card('Perfil do tempo de atendimento', 'Como se distribuem os atendimentos de cada equipe', '<div class="key"><span><i style="background:#06BEAE"></i>Até 15 min (meta)</span><span><i style="background:#A9B8BD"></i>16 a 30 min</span><span><i style="background:#042738"></i>Acima de 30 min</span></div><div class="pf" id="pfq"></div>', { info: 'perfil' })}
-    ${card('Volume por equipe', 'Atendimentos por mês · participação de cada equipe', '<div class="leg" id="lgq"></div><div id="chq"></div>')}
+    ${card('Perfil do tempo de atendimento', 'Como se distribuem os atendimentos de cada equipe', '<div class="key"><span><i style="background:#06BEAE"></i>Até 15 min (meta)</span><span><i style="background:#A9B8BD"></i>16 a 60 min</span><span><i style="background:#042738"></i>Acima de 60 min</span></div><div class="pf" id="pfq"></div>', { info: 'perfil' })}
+    ${card('Volume por equipe', 'Atendimentos por mês nos últimos 12 meses fechados · quanto mais escuro, maior o volume', '<div id="chq"></div>')}
   </div>
   <div class="grid" style="margin-top:16px">${card('Cumprimento da meta por equipe, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmq"></div>', { info: 'calor' })}</div>
   <div class="grid" style="margin-top:16px">${card('Onde cada equipe cumpre a meta', `${P.lc} · % na meta e quantidade de atendimentos, por contrato, operação e turno`, '<div id="mtq"></div>', { info: 'matriz' })}</div>`;
@@ -863,8 +861,9 @@ function vEquipes() {
         return `<div class="pf-r"><div class="rk-nm">Equipe ${x.e}<small>${fN(x.a.n)} atend.</small></div><div class="pf-b">${seg(k1, '#06BEAE', '#042738')}${seg(k2, '#A9B8BD', '#042738')}${seg(k3, '#042738', '#fff')}</div></div>`;
       }).join('');
       const all = filt(S.rows, f2), ms = meses(all), teams = ['A', 'B', 'C', 'D'].filter(e => all.some(r => r.eq1 === e));
-      $('#lgq').innerHTML = teams.map(e => `<span><i class="b" style="background:${EQ_COR[e]}"></i>Equipe ${e}</span>`).join('');
-      stackCols($('#chq'), { ms, H: 250, partial: m => +m.slice(0, 4) === S.Y && m > (lastFull() || ''), groups: teams.map(e => ({ nome: e, cor: EQ_COR[e], vals: ms.map(m => all.filter(r => r.ym === m && r.eq1 === e).length) })) });
+      const msf = ms.filter(m => +m.slice(0, 4) < S.Y || m <= (lastFull() || '')).slice(-12), VQ = teams.map(e => msf.map(m => all.filter(r => r.ym === m && r.eq1 === e).length)), mxq = Math.max(...VQ.flat(), 1);
+      const TQ = msf.map((_, j) => sum(VQ.map(r => r[j]))), mxt = Math.max(...TQ, 1);
+      $('#chq').innerHTML = heatTable([...teams.map(e => 'Equipe ' + e), 'Total'], msf, (i, j) => i < teams.length ? { v: VQ[i][j] / mxq, txt: fN(VQ[i][j]) } : { v: TQ[j] / mxt, txt: fN(TQ[j]) }, 'sm');
       $('#hmq').innerHTML = heatMes([['Total', all], ...ord.map(x => ['Equipe ' + x.e, all.filter(r => r.eq1 === x.e)])], ms);
       const mc = [...clientes(cur).filter(k => cur.filter(r => r.ct === k).length >= 30).map(k => ({ g: 'Contrato', n: k, fn: r => r.ct === k })), { g: 'Operação', n: 'Colocação', fn: r => r.op === 'COLOCAÇÃO' }, { g: 'Operação', n: 'Retirada', fn: r => r.op === 'RETIRADA' }, { g: 'Turno', n: 'Dia', fn: r => r.turno === 'Dia' }, { g: 'Turno', n: 'Noite', fn: r => r.turno === 'Noite' }];
       $('#mtq').innerHTML = heatGrid([...ord.map(x => 'Equipe ' + x.e), 'Todas'], mc, (i, j) => { const rs = (i < ord.length ? ord[i].rs : cur).filter(mc[j].fn), n = rs.length; if (n < 10) return { v: null }; const p = rs.filter(r => r.na).length / n; return { v: p, txt: fP0(p), sub: fN(n) + ' atend.' }; });
@@ -891,7 +890,7 @@ function vSimult() {
   </div>
   <div class="grid g2" style="margin-top:16px">
     ${card('Quantos atendimentos ao mesmo tempo', `${P.lc} · atendimentos por nível; abaixo, % na meta`, '<div class="leg"><span><i class="b" style="background:#A9B8BD"></i>Isolado</span><span><i class="b" style="background:#042738"></i>Em sobreposição</span></div><div id="chs"></div>', { info: 'simult' })}
-    ${card('Evolução da sobreposição', '% dos atendimentos do mês que coincidiram com outro', `<div class="leg"><span><i style="background:${COR.a26}"></i>${S.Y}</span><span><i style="background:${COR.a25}"></i>${S.Y - 1}</span></div><div id="chm"></div>`)}
+    ${card('Sobreposição mês a mês', '% dos atendimentos do mês que coincidiram com outro · últimos 12 meses fechados · quanto mais escuro, maior', '<div id="chm"></div>')}
   </div>
   <div class="grid g2" style="margin-top:16px">
     ${card('Por contrato', 'Quem mais convive com sobreposição', '<div id="rkc"></div>')}
@@ -902,8 +901,9 @@ function vSimult() {
     html, after() {
       const lv = [1, 2, 3, 4].map(n => cur.filter(r => n < 4 ? r[cc] === n : r[cc] >= 4));
       colChart($('#chs'), { labels: ['1 (isolado)', '2', '3', '4 ou mais'], vals: lv.map(a => a.length), cores: ['#A9B8BD', '#042738', '#042738', '#042738'], fmt: v => fN(v), H: 250, sub: lv.map(a => a.length ? fP0(a.filter(r => r.na).length / a.length) + ' na meta' : '') });
-      const ov = overlay(S.rows.filter(r => (!S.f.ct || r.ct === S.f.ct) && (!S.f.op || r.op === S.f.op) && (!S.f.eq || r.eq1 === S.f.eq)), (rs, ms) => sobreMes(rs, ms, W));
-      lineChart($('#chm'), { labels: mesesAno(), H: 250, ymin: 0, fmt: v => fP0(v), series: [{ cor: COR.a25, vals: ov[S.Y - 1], lab: false, w: 2.2 }, { cor: COR.a26, vals: ov[S.Y] }] });
+      const sb = S.rows.filter(r => (!S.f.ct || r.ct === S.f.ct) && (!S.f.op || r.op === S.f.op) && (!S.f.eq || r.eq1 === S.f.eq)), sms = meses(sb).filter(m => +m.slice(0, 4) < S.Y || m <= (lastFull() || '')).slice(-12);
+      const sl = [['Total', sb], ...['A', 'B', 'C', 'D'].filter(e => sb.some(r => r.eq1 === e)).map(e => ['Equipe ' + e, sb.filter(r => r.eq1 === e)])], SV = sl.map(l => sobreMes(l[1], sms, W)), smx = Math.max(...SV.flat().filter(v => v != null), .01);
+      $('#chm').innerHTML = heatTable(sl.map(l => l[0]), sms, (i, j) => ({ v: SV[i][j] == null ? null : SV[i][j] / smx, txt: SV[i][j] == null ? '' : Math.round(SV[i][j] * 100) }), 'sm');
       const mk = (keyf, lblf) => [...groupBy(cur, keyf).entries()].filter(([k, a]) => k && a.length >= 30).map(([k, a]) => ({ k, A: agg(a, W), b: prv ? agg(prv.filter(r => keyf(r) === k), W) : null })).sort((x, y) => y.A.simP - x.A.simP);
       $('#rkc').innerHTML = ranking(mk(r => r.ct).map(c => ({ nome: c.k, key: 'sc|' + c.k, v: c.A.simP, vp: c.b ? c.b.simP : null, cols: [fN(c.A.sim), fP0(c.A.pctSim)] })), { fmt: v => fP0(v), hn: 'Contrato', hv: '% em sobreposição', cols: ['Atend.', '% na meta'] });
       $('#rke').innerHTML = ranking(mk(r => r.eq1).map(c => ({ nome: 'Equipe ' + c.k, key: 'se|' + c.k, v: c.A.simP, vp: c.b ? c.b.simP : null, cols: [fN(c.A.simEq), fP0(c.A.pctSimEq)] })), { fmt: v => fP0(v), hn: 'Equipe', hv: '% em sobreposição', cols: ['Equipe ocupada', '% na meta'] });
@@ -961,7 +961,7 @@ function vDados() {
     ${card('Como calculamos', 'Regras usadas em todas as abas', `<table class="tb">
       <tr><td><b>Tempo de atendimento</b></td><td>Término − solicitação (igual à planilha). Considera virada de dia.</td></tr>
       <tr><td><b>Dentro da meta</b></td><td>Tempo de até 15 min, inclusive 15.</td></tr>
-      <tr><td><b>Ponto crítico</b></td><td>Tempo acima de 30 min. Não é descartado: conta nos resultados e é listado.</td></tr>
+      <tr><td><b>Ponto crítico</b></td><td>Tempo acima de 60 min. Não é descartado: conta nos resultados e é listado.</td></tr>
       <tr><td><b>Médias</b></td><td>Ignoram só tempos acima de 12 h (provável erro de data), que ficam em Qualidade dos dados.</td></tr>
       <tr><td><b>Comparação</b></td><td>Mesmo período dos dois anos (até ${S.cut.slice(3)}/${S.cut.slice(0, 2)}), para não comparar um ano inteiro com um parcial.</td></tr>
       <tr><td><b>Simultaneidade</b></td><td>Atendimentos cujos intervalos se sobrepõem. Janela de atendimento: solicitação → término. Janela de execução: início → término.</td></tr>
@@ -975,19 +975,19 @@ const fDtHora = s => { const d = new Date(s); return isNaN(d) ? s : d.toLocaleSt
 Object.assign(INFO, {
   meta: { t: 'Cumprimento da meta', o: 'Percentual de atendimentos concluídos em até 15 minutos da solicitação, mês a mês, comparando os dois anos.', c: 'Para cada mês: atendimentos com (término − solicitação) ≤ 15 min ÷ atendimentos do mês. Meses com menos de 10 atendimentos ficam sem ponto. As barras cinza mostram o volume do ano atual.' },
   contrato: { t: 'Desempenho por contrato', o: 'Volume, cumprimento da meta, tempo médio e pontos críticos de cada contrato, com a variação contra o mesmo período do ano anterior.', c: 'Contrato é o lançado na coluna Contrato. As setas indicam melhora (verde-água) ou piora (marinho). A barra clara ao fundo é o volume do período anterior.' },
-  faixas: { t: 'Faixas de tempo', o: 'Quantos atendimentos caem em cada faixa de tempo. As duas primeiras (verde-água) estão dentro da meta; as cinza, até 30 min; as marinho são pontos críticos.', c: 'Tempo arredondado ao minuto. Os lançamentos são feitos de 5 em 5 minutos, por isso o 15 min exato concentra grande parte dos atendimentos e conta como dentro da meta.' },
-  espera: { t: 'De onde vem o tempo', o: 'Divide o tempo de atendimento em duas partes: a espera até o início da operação e a execução em si. A linha tracejada marca a meta de 15 minutos.', c: 'Espera = início − solicitação (valores negativos, quando o início foi lançado antes da solicitação, ficam fora da média). Execução = término − início. A soma das duas médias fica próxima do tempo médio de atendimento. Mostra se o atraso nasce antes de começar (mobilização, fila) ou durante a operação.' },
+  faixas: { t: 'Faixas de tempo', o: 'Quantos atendimentos caem em cada faixa de tempo. As duas primeiras (verde-água) estão dentro da meta; as cinza, até 60 min; as marinho são pontos críticos.', c: 'Tempo arredondado ao minuto. Os lançamentos são feitos de 5 em 5 minutos, por isso o 15 min exato concentra grande parte dos atendimentos e conta como dentro da meta.' },
+  espera: { t: 'De onde vem o tempo', o: 'Divide o tempo de atendimento em duas partes: a espera até o início da operação e a execução em si. A marca verde-água no topo de cada barra indica a meta de 15 minutos.', c: 'Espera = início − solicitação (valores negativos, quando o início foi lançado antes da solicitação, ficam fora da média). Execução = término − início. A soma das duas médias fica próxima do tempo médio de atendimento. Mostra se o atraso nasce antes de começar (mobilização, fila) ou durante a operação.' },
   hora: { t: 'Demanda por hora', o: 'Em que horas os pedidos chegam e em quais horas a meta é cumprida. Cor da coluna: verde-água quando 50% ou mais dos atendimentos da hora ficaram na meta, marinho nas demais.', c: 'Hora da solicitação (ou do início, se a solicitação estiver vazia).' },
   volume: { t: 'Atendimentos por mês e por cliente', o: 'Quantidade de atendimentos de cada mês desde o início da série, empilhada por cliente (contrato). A altura da coluna é o total do mês.', c: 'Cliente = coluna Contrato da planilha. O mês em andamento aparece parcial. Respeita os filtros de operação e equipe; o filtro de contrato não se aplica aqui, porque a divisão por cliente já está no gráfico.' },
   acumulado: { t: 'Acumulado no ano', o: 'Soma de atendimentos desde 1º de janeiro, mês a mês, para o ano atual e o anterior. Mostra se o ano corre acima ou abaixo do anterior no mesmo ponto.', c: 'Para cada mês: total de atendimentos de janeiro até o fim daquele mês. O ano atual termina no último mês com dados.' },
   anual: { t: 'Comparativo entre anos', o: 'Indicadores do ano anterior completo, do mesmo período dos dois anos (para comparar igual com igual) e a variação.', c: 'Atendimentos por dia = atendimentos ÷ dias corridos da janela. Setas em verde-água indicam melhora e em marinho piora; para volume a seta é neutra.' },
   calor: { t: 'Cumprimento da meta mês a mês', o: 'Cada célula é o % de atendimentos do mês concluídos em até 15 minutos. Quanto mais escuro o verde-água, maior o cumprimento. Permite ver de uma vez a evolução e a virada de patamar.', c: 'Meses com menos de 10 atendimentos ficam em branco. A linha Total considera os filtros aplicados.' },
   equipe: { t: 'Placar das equipes', o: 'Todos os indicadores de cada equipe lado a lado. Verde-água marca a melhor equipe no indicador e cinza a pior; as setas comparam com o mesmo período do ano anterior.', c: 'Tempo de resposta = espera entre a solicitação e o início da operação. Execução = início → término. Sobreposição na janela de execução; “equipe ocupada” = a própria equipe já estava em outro atendimento. Linhas com inconsistência = regras da aba Qualidade dos dados.' },
-  perfil: { t: 'Perfil do tempo de atendimento', o: 'Para cada equipe, que parte dos atendimentos ficou dentro da meta, entre 16 e 30 min ou acima de 30 min (pontos críticos).', c: 'Tempo = término − solicitação, arredondado ao minuto; 15 min exatos contam como dentro da meta.' },
+  perfil: { t: 'Perfil do tempo de atendimento', o: 'Para cada equipe, que parte dos atendimentos ficou dentro da meta, entre 16 e 60 min ou acima de 60 min (pontos críticos).', c: 'Tempo = término − solicitação, arredondado ao minuto; 15 min exatos contam como dentro da meta.' },
   matriz: { t: 'Onde cada equipe cumpre a meta', o: 'Cruza cada equipe com contrato, tipo de operação e turno. A cor mostra o % na meta e o número abaixo, a quantidade de atendimentos.', c: 'Células com menos de 10 atendimentos ficam em branco. Turno pela hora da solicitação: dia 07h–19h, noite 19h–07h.' },
   turno: { t: 'Equipe × turno', o: 'Quantos atendimentos cada equipe fez de dia e de noite e o percentual na meta em cada turno.', c: 'Dia = hora da solicitação entre 07h e 19h; noite = de 19h às 07h. Em geral A e C atuam de dia, B e D à noite; células com poucos registros são lançamentos fora da escala habitual.' },
   simult: { t: 'Simultaneidade', o: 'Quantos atendimentos estavam em andamento ao mesmo tempo. Nível 1 = atendimento isolado; 2 ou mais = sobreposição.', c: 'Dois atendimentos se sobrepõem quando o intervalo de um começa antes de o outro terminar (encostar não conta). O nível de um atendimento é o maior número de atendimentos ativos ao mesmo tempo durante a sua janela. Janela de atendimento: solicitação → término (a que a meta de 15 min mede). Janela de execução: início → término.' },
-  qualidade: { t: 'Qualidade dos dados', o: 'Regras automáticas que apontam lançamentos com erro, dúvida ou campo faltando. Cada apontamento mostra a linha da planilha.', c: 'Gravidade alta = impede ou distorce o cálculo; média = distorce uma análise; baixa = padronização. Pontos críticos (> 30 min) não são tratados como erro, apenas quando falta observação.' },
+  qualidade: { t: 'Qualidade dos dados', o: 'Regras automáticas que apontam lançamentos com erro, dúvida ou campo faltando. Cada apontamento mostra a linha da planilha.', c: 'Gravidade alta = impede ou distorce o cálculo; média = distorce uma análise; baixa = padronização. Pontos críticos (> 60 min) não são tratados como erro, apenas quando falta observação.' },
   saldo: { t: 'Colocações × retiradas', o: 'Cada embarcação deveria ter o mesmo número de colocações e retiradas de barreira.', c: 'Diferença absoluta entre colocações e retiradas de cada embarcação em todo o histórico. Diferença de 2 ou mais costuma indicar lançamento faltante ou repetido.' }
 });
 
