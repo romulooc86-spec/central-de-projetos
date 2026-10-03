@@ -209,6 +209,11 @@ h4.sh{margin:6px 0 4px;font:800 11px var(--font-display);letter-spacing:.1em;tex
 .hg.hs{min-width:760px}.hg.hs .ht-y,.hg.hs .ht-m,.hg.hs .ht-r{grid-template-columns:78px repeat(var(--n),minmax(26px,1fr))}.hg.hs .ht-c{height:32px;font-size:11.5px}.hg.hs .ht-m span{font-size:11px}
 .live{cursor:pointer}
 .ht-c,.card.heat td[style*="--h"]{font-weight:800!important}.card.heat td[style*="--h"] small{font-weight:700}
+/* v6: barreiras em uso */
+.cmp.bt td small{color:var(--tx3);font-weight:600}
+.bin{width:84px;padding:5px 8px;border:1px solid var(--bd2);border-radius:6px;font:700 13.5px var(--font-display);color:var(--navy);text-align:right;background:#fff}.bin::placeholder{font-weight:500;color:var(--tx3);font-size:12px}.bin:focus{outline:2px solid var(--teal);outline-offset:1px}
+.leit{margin-top:14px;border-top:1px solid var(--bd);padding-top:10px}.leit p{margin:6px 0;font-size:14.5px;color:var(--tx2);line-height:1.45}.leit b{color:var(--navy)}
+p.nt{font-size:12.5px;color:var(--tx3);margin:8px 0 0}
 
 </style>
 </head>
@@ -558,7 +563,7 @@ function heatTable(rowsL, ms, f, cls) {
 /* colunas empilhadas por mês (ms 'AAAA-MM'); o: {ms, H, groups:[{nome,cor,vals}]} */
 function stackCols(host, o) {
   const W = Math.max(host.clientWidth || 600, 280), H = o.H || 300, L = 6, Rr = 6, T = 26, B = 50, n = o.ms.length, bw = (W - L - Rr) / n, cw = Math.min(bw * .68, 46);
-  const tot = o.ms.map((_, i) => sum(o.groups.map(g => g.vals[i] || 0))), mx = Math.max(...tot, 1), mxI = tot.indexOf(mx), narrow = bw < 36;
+  const tot = o.ms.map((_, i) => sum(o.groups.map(g => g.vals[i] || 0))), mx = Math.max(...tot, o.ref || 0, 1), mxI = tot.indexOf(Math.max(...tot)), narrow = bw < 36;
   let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
   o.ms.forEach((m, i) => {
     const cx = L + bw * (i + .5); let y0 = H - B;
@@ -573,6 +578,7 @@ function stackCols(host, o) {
     s += `<line x1="${xa}" x2="${xb}" y1="${H - B + 28}" y2="${H - B + 28}" stroke="#CCD9D9" stroke-width="1"/><text class="cxb" x="${(xa + xb) / 2}" y="${H - B + 44}" text-anchor="middle">${o.ms[i0].slice(0, 4)}</text>`;
     i0 = i1 + 1;
   }
+  if (o.ref) { const yr = H - B - o.ref / mx * (H - T - B); s += `<line x1="${L}" x2="${W - Rr}" y1="${yr}" y2="${yr}" stroke="#06BEAE" stroke-width="1.6" stroke-dasharray="5 4"/><text class="cxb" x="${W - Rr}" y="${yr - 5}" text-anchor="end" style="fill:#048C80;font-size:11.5px;paint-order:stroke;stroke:#fff;stroke-width:4px">Disponível: ${o.ref}</text>`; }
   host.innerHTML = s + '</svg>';
 }
 
@@ -1175,8 +1181,8 @@ function compor(secs) {
   return { html: salto(secs.map(s => [s[0], s[1]])) + secs.map(s => secao(s[0], s[1]) + s[2].html).join(''), after() { secs.forEach(s => s[2].after()); } };
 }
 function vDemanda() {
-  const a = vVolume(), b = vContratos(), c = vOperacao(); b.html = semKpi(b.html); c.html = semKpi(c.html);
-  return compor([['vol', 'Volume e clientes', a], ['con', 'Contratos', b], ['ope', 'Operação', c]]);
+  const a = vVolume(), b = vContratos(), c = vOperacao(), bar = vBarreiras(); b.html = semKpi(b.html); c.html = semKpi(c.html);
+  return compor([['vol', 'Volume e clientes', a], ['con', 'Contratos', b], ['bar', 'Barreiras em uso', bar], ['ope', 'Operação', c]]);
 }
 function vEquipesJornada() {
   return compor([['eq', 'Equipes', vEquipes()], ['jor', 'Horários e refeição', vJornada()], ['sim', 'Simultaneidade', vSimult()]]);
@@ -1186,6 +1192,80 @@ Object.assign(INFO, {
   tl: { t: 'Linha do tempo', o: 'Marcos que o painel encontra sozinho na base: início da série, viradas de patamar de cada equipe, melhor e pior mês, maior volume, mais pontos críticos e maior pico de simultaneidade.', c: 'Virada de patamar = a média dos 3 meses seguintes difere em 30 p.p. ou mais da média dos 3 meses anteriores no % na meta da equipe. Os marcos se atualizam a cada leitura da planilha.' },
   hhw: { t: 'Quando chegam os chamados', o: 'Quantidade de atendimentos por hora da solicitação e dia da semana. Mostra os horários de maior demanda de cada turno.', c: 'Hora da solicitação (ou do início, se a solicitação estiver vazia). Colunas na ordem do turno: 07h às 18h (dia) e 19h às 06h (noite). Respeita os filtros de contrato, operação e equipe.' },
   refeicao: { t: 'Janelas de refeição', o: 'Para cada hora de início, a chance de a equipe de plantão ter um atendimento em andamento durante 1 hora seguida. Serve como base para organizar a pausa de refeição quando não há equipe de rendição.', c: 'Cada turno de 12 h (dia 07h–19h, noite 19h–07h) de uma equipe com 3 ou mais atendimentos é analisado. A equipe de plantão é inferida pelos lançamentos, não pela escala real. Atendimento em andamento = da solicitação ao término. A 1ª e a última hora de cada turno (troca de equipe) ficam em cinza claro e fora da comparação. Os indicadores acima mostram que o tempo livre existe, mas não é previsível. A avaliação trabalhista sobre intervalo e disponibilidade é do RH e do jurídico; o painel só entrega o dado.' }
+});
+
+/* ---------- barreiras em uso por contrato (colocação → retirada) ---------- */
+let _bar = null;
+const BAR_MAX_H = 48;   // permanência acima disso é par suspeito (colocação e retirada de ciclos diferentes)
+function barreirasDados() {
+  const key = S.rows.length + '|' + S.max; if (_bar && _bar.key === key) return _bar;
+  const rows = S.rows.filter(r => r.emb && r.ct && (r.op === 'COLOCAÇÃO' || r.op === 'RETIRADA') && r.ini != null && r.fim != null);
+  const ev = rows.map(r => ({ emb: r.emb, ct: r.ct, loc: r.loc, op: r.op, iso: r.iso, t: r.ds * 1440 + (r.op === 'COLOCAÇÃO' ? (r.fim + (r.fim < r.ini ? 1 : 0)) : r.ini) * 1440 })).sort((a, b) => a.t - b.t);
+  const byE = new Map(); ev.forEach(e => { if (!byE.has(e.emb)) byE.set(e.emb, []); byE.get(e.emb).push(e); });
+  const pares = [], d = { total: 0, longos: 0, orf: 0 };
+  byE.forEach(a => {
+    let open = null;
+    a.forEach(e => {
+      if (e.op === 'COLOCAÇÃO') { if (open) d.orf++; open = e; }
+      else if (open) { const h = Math.max(0, (e.t - open.t) / 60); d.total++; if (h <= BAR_MAX_H) pares.push({ ct: open.ct, emb: open.emb, loc: open.loc, a: open.t, b: Math.max(e.t, open.t), h, iso: open.iso }); else d.longos++; open = null; }
+      else d.orf++;
+    });
+    if (open) d.orf++;
+  });
+  const per = {}, ms = meses(S.rows);
+  clientes(S.rows).forEach(c => {
+    const a = pares.filter(p => p.ct === c); if (a.length < 5) return;
+    const evs = []; a.forEach(p => { evs.push([p.a, 1]); evs.push([p.b, -1]); }); evs.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+    const segs = []; let cur = 0, last = null; evs.forEach(([t, dl]) => { if (last != null && t > last) segs.push([last, t, cur]); cur += dl; last = t; });
+    const T = sum(segs.map(s => s[1] - s[0])) || 1, dist = {}; segs.forEach(s => { dist[s[2]] = (dist[s[2]] || 0) + (s[1] - s[0]); });
+    const cover = p => { let acc = 0; for (const k of Object.keys(dist).map(Number).sort((x, y) => x - y)) { acc += dist[k]; if (acc / T >= p) return k; } return 0; };
+    const monthly = {}; segs.forEach(s => { const m = serialISO(Math.floor(s[0] / 1440)).slice(0, 7), o = monthly[m] || (monthly[m] = { pk: 0, w: 0, t: 0 }); o.pk = Math.max(o.pk, s[2]); o.w += s[2] * (s[1] - s[0]); o.t += s[1] - s[0]; });
+    const hs = a.map(p => p.h).sort((x, y) => x - y), md = hs[Math.floor(hs.length / 2)];
+    const pk = segs.reduce((b, s) => s[2] > b[2] ? s : b, segs[0]);
+    const eps = []; const used = new Set();
+    [...segs].sort((x, y) => y[2] - x[2] || (y[1] - y[0]) - (x[1] - x[0])).forEach(s => {
+      if (eps.length >= 3 || s[2] < 2) return; const iso = serialISO(Math.floor(s[0] / 1440)); if (used.has(iso)) return; used.add(iso);
+      eps.push({ n: s[2], iso, hora: hhmm((s[0] % 1440) / 1440), emb: [...new Set(a.filter(p => p.a <= s[0] && p.b > s[0]).map(p => p.emb))] });
+    });
+    per[c] = { n: a.length, med: md, p90: hs[Math.floor(hs.length * .9)], peak: pk[2], peakIso: serialISO(Math.floor(pk[0] / 1440)), p95: Math.max(1, cover(.95)), p99: Math.max(1, cover(.99)), avg: sum(segs.map(s => s[2] * (s[1] - s[0]))) / T, monthly, segs, T, eps };
+  });
+  return (_bar = { key, per, pares, d, ms });
+}
+function barDisp() { try { return JSON.parse(localStorage.getItem('barreira.disp') || '{}'); } catch (e) { return {}; } }
+function barDispSet(c, v) { const o = barDisp(); if (v == null || v === '' || isNaN(v)) delete o[c]; else o[c] = Math.max(0, Math.min(99, Math.round(+v))); try { localStorage.setItem('barreira.disp', JSON.stringify(o)); } catch (e) { } }
+function barDeficit(p, K) {
+  let acima = 0, eps = 0, prev = false;
+  p.segs.forEach(s => { const on = s[2] > K; if (on) { acima += s[1] - s[0]; if (!prev) eps++; } prev = on; });
+  const nm = Math.max(Object.keys(p.monthly).length, 1);
+  return { pct: acima / p.T, hmes: acima / 60 / nm, eps, falta: Math.max(0, p.peak - K) };
+}
+function vBarreiras() {
+  const D = barreirasDados(), cts = Object.keys(D.per), disp = barDisp(), lf = lastFull(), ms = D.ms;
+  const hh = h => h < 1 ? fD(h * 60, 0) + ' min' : fD(h, 1).replace(',0', '') + ' h';
+  const linhas = cts.map(c => {
+    const p = D.per[c], k = disp[c], df = k != null ? barDeficit(p, k) : null;
+    return `<tr><td>${esc(c)}</td><td class="cur">${p.peak}</td><td>${p.p99}</td><td>${p.p95}</td><td>${fD(p.avg, 1)}</td><td>${hh(p.med)}</td><td><input class="bin" type="number" min="0" max="99" inputmode="numeric" placeholder="informar" value="${k != null ? k : ''}" data-bar="${esc(c)}" aria-label="Barreiras disponíveis ${esc(c)}"></td><td>${df ? `${fP(df.pct)}<small> · ${fD(df.hmes, 0)} h/mês</small>` : '–'}</td><td>${df ? (df.falta ? `<b>+${df.falta}</b>` : 'Sem falta') : '–'}</td></tr>`;
+  }).join('');
+  const leit = cts.map(c => { const p = D.per[c]; return `<p><b>${esc(c)}</b> chegou a <b>${p.peak}</b> barreiras lançadas ao mesmo tempo (${fDt(p.peakIso)}); em 95% do tempo bastam ${p.p95} e em 99% bastam ${p.p99}. Cada barreira fica em uso por uma mediana de ${hh(p.med)}. O pico é um instante isolado; para dimensionar, use a quantidade que cobre 95% ou 99% do tempo.</p>`; }).join('');
+  const html = `
+  <div class="grid">${card('Quantas barreiras ao mesmo tempo cada contrato exige', `Barreiras lançadas e ainda não retiradas, de ${mLbl(ms[0])} até ${mLbl(ms[ms.length - 1])} · informe a quantidade disponível para ver o tempo acima do estoque`, `<div class="rkw"><table class="cmp bt"><tr><th>Contrato</th><th class="cur">Pico</th><th>Cobre 99%</th><th>Cobre 95%</th><th>Média em uso</th><th>Permanência</th><th>Disponível</th><th>Tempo acima</th><th>Falta no pico</th></tr>${linhas}</table></div><div class="leit">${leit}</div><p class="nt">A quantidade disponível fica salva apenas neste navegador.</p>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Linha do tempo: pico mensal de barreiras em uso', 'Maior número de barreiras lançadas ao mesmo tempo em cada mês, por contrato' + (Object.keys(disp).length ? ' · linha verde-água = disponível' : ''), `<div class="grid g2">${cts.map((c, i) => `<div><h4 class="sh">${esc(c)}</h4><div id="bm${i}"></div></div>`).join('')}</div>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Colocações e retiradas por contrato, mês a mês', 'Quantidade lançada por mês · quanto mais escuro, mais operações no contrato', '<div id="bhm"></div>', { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Momentos de maior uso', 'Os dias com mais barreiras lançadas ao mesmo tempo, por contrato', `<div class="grid g2">${cts.map(c => D.per[c].eps.length ? `<div><h4 class="sh">${esc(c)}</h4><div class="lst">${D.per[c].eps.slice(0, 2).map(e => `<div class="li"><div class="n">${e.n} <em>ao mesmo tempo</em></div><div class="lt"><b>${fDt(e.iso)} · ${e.hora}</b><span>${e.emb.slice(0, 5).map(esc).join(', ')}${e.emb.length > 5 ? ' e mais ' + (e.emb.length - 5) : ''}</span></div></div>`).join('')}</div></div>` : '').join('')}</div>`, { info: 'barr' })}</div>
+  <p class="nt" style="margin-top:10px">${fN(D.pares.length)} ciclos de colocação e retirada pareados por embarcação; ${fN(D.d.longos)} com mais de ${BAR_MAX_H} h e ${fN(D.d.orf)} lançamentos sem par foram descartados (veja Qualidade dos dados).</p>`;
+  return {
+    html, after() {
+      const part = m => +m.slice(0, 4) === S.Y && m > (lf || '');
+      cts.forEach((c, i) => { const el = $('#bm' + i); if (!el) return; stackCols(el, { ms, H: 210, partial: part, ref: disp[c], groups: [{ nome: c, cor: '#042738', vals: ms.map(m => (D.per[c].monthly[m] || { pk: 0 }).pk) }] }); });
+      const lin = [], tit = [];
+      cts.forEach(c => { ['COLOCAÇÃO', 'RETIRADA'].forEach(op => { tit.push(c + ' · ' + (op === 'COLOCAÇÃO' ? 'colocações' : 'retiradas')); lin.push(ms.map(m => S.rows.filter(r => r.ym === m && r.ct === c && r.op === op).length)); }); });
+      const mxc = cts.map((c, k) => Math.max(...lin[2 * k], ...lin[2 * k + 1], 1));
+      $('#bhm').innerHTML = heatTable(tit, ms, (i, j) => ({ v: lin[i][j] / mxc[Math.floor(i / 2)], txt: String(lin[i][j]) }), 'sm');
+    }
+  };
+}
+Object.assign(INFO, {
+  barr: { t: 'Barreiras em uso por contrato', o: 'Mostra quantas barreiras estão lançadas ao mesmo tempo em cada contrato, do momento da colocação até a retirada. É a base para dimensionar quantas barreiras cada contrato precisa ter.', c: 'Cada colocação é pareada com a retirada seguinte da mesma embarcação; a barreira conta como em uso do término da colocação até o início da retirada. Ciclos com mais de 48 h e lançamentos sem par são descartados. Pico = maior número simultâneo; “cobre 95%/99%” = quantidade que atende a esse percentual do tempo; “tempo acima” = parte do período em que o uso superou a quantidade informada; “falta no pico” = diferença entre o pico e o disponível. Supõe uma barreira por embarcação em operação. A quantidade disponível é informada por você e fica salva só neste navegador.' }
 });
 
 /* ===================== APLICAÇÃO ===================== */
@@ -1306,6 +1386,7 @@ $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === S.tab));
 loadLive().then(() => { setTab(S.tab, true); });
 setInterval(() => { if (!document.hidden) loadLive(); }, 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden && (!LIVE.lido || Date.now() - LIVE.lido > 60 * 1000)) loadLive(); });
+document.addEventListener('change', e => { const b = e.target.closest && e.target.closest('[data-bar]'); if (b) { barDispSet(b.dataset.bar, b.value); render(); } });
 
 </script>
 </body>
