@@ -1,0 +1,1495 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestão de Lançamento de Barreira · Prime Ocean (teste)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--font-display:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;--font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+--navy:#042738;--navy-soft:#103C52;--teal:#06BEAE;--teal-deep:#048C80;--teal-wash:#E0F6F3;--page:#F2F6F6;--card:#fff;--card-soft:#F8FBFB;--tx:#0B2530;--tx2:#52656C;--tx3:#8B9A9F;--bd:#E0E9E9;--bd2:#CCD9D9;
+--good:#048C80;--good-w:#E0F6F3;--att:#103C52;--att-w:#E7EDF0;--c1:#042738;--c2:#06BEAE;--c3:#5F8793;--c4:#A9B8BD;--c5:#048C80;--c6:#8ED8CE;--c7:#C9D3D6;--old:#B9C8CC;
+--shadow:0 1px 2px rgba(4,39,56,.07),0 2px 8px rgba(4,39,56,.04);--r:12px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--tx);font:16px/1.45 var(--font-body);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+b,strong{font-weight:700}
+.top{background:linear-gradient(150deg,#042738,#103C52);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(4,39,56,.25)}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 24px 0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.brand img{height:46px;width:auto;display:block;cursor:pointer}
+.ttl{text-align:center}.ttl h1{margin:0;font:700 29px/1.1 var(--font-display);letter-spacing:-.01em}
+.tools{justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.icons{display:flex;gap:2px}
+.ib{width:32px;height:32px;border:0;background:transparent;border-radius:8px;display:grid;place-items:center;color:#cfe6ea;transition:.15s}
+.ib:hover{background:rgba(255,255,255,.12);color:#fff}.ib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.live{font-size:11px;color:#A9C3CB;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.live i{width:7px;height:7px;border-radius:50%;background:#7a8f96;display:inline-block}.live i.on{background:#06BEAE;box-shadow:0 0 0 3px rgba(6,190,174,.25)}
+.tabs{max-width:1280px;margin:0 auto;padding:6px 24px 0;display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.tab{border:0;background:transparent;color:#A9C3CB;font:600 14px var(--font-display);padding:10px 14px 11px;border-bottom:3px solid transparent;display:flex;gap:7px;align-items:center}
+.tab span{font-size:12px;opacity:.7;border:1px solid currentColor;border-radius:99px;width:19px;height:19px;display:grid;place-items:center;font-weight:600}
+.tab:hover{color:#fff}.tab.on{color:#fff;border-bottom-color:#06BEAE}.tab.on span{background:#06BEAE;border-color:#06BEAE;color:#042738;opacity:1}
+main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+.fbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.fbtn{border:1px solid var(--bd2);background:#fff;border-radius:99px;padding:7px 14px;font:600 13px var(--font-display);display:flex;align-items:center;gap:8px;color:var(--navy)}
+.fbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.fsum{font-size:13px;color:var(--tx2)}
+.filters{display:none;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.filters.open{display:flex}.filters label{font:700 11px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);display:flex;flex-direction:column;gap:4px}
+.filters select{font:500 14px var(--font-body);padding:7px 10px;border:1px solid var(--bd2);border-radius:8px;background:#fff;min-width:150px;color:var(--tx)}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}.g12{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+.sec{margin:22px 0 10px;font:700 12px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;position:relative;min-width:0}
+.card h3{margin:0 0 3px;font:700 19px/1.2 var(--font-display);color:var(--navy);padding-right:26px}
+.card .sub{font-size:14px;color:var(--tx2);margin:0 0 12px}
+.info{position:absolute;right:12px;top:12px;width:22px;height:22px;border-radius:50%;border:1px solid var(--bd2);background:#fff;color:var(--tx3);font:700 12px var(--font-display);display:grid;place-items:center;padding:0}
+.info:hover{background:var(--teal-wash);color:var(--teal-deep);border-color:var(--teal)}
+.hero{background:linear-gradient(120deg,#042738 0%,#0a4a5a 55%,#0b6e72 100%);color:#fff;border-radius:16px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);box-shadow:0 6px 24px rgba(4,39,56,.25)}
+.hero .l{padding:26px 30px}.hero .r{padding:22px 26px;background:rgba(255,255,255,.07);display:flex;flex-direction:column;gap:16px;justify-content:center}
+.eyebrow{font:700 11.5px var(--font-display);letter-spacing:.18em;text-transform:uppercase;color:#6EEBDC}
+.big{font:800 clamp(64px,9vw,112px)/1 var(--font-display);letter-spacing:-.03em;margin:10px 0 6px}.big em{font-style:normal;color:#6EEBDC;font-size:.5em;letter-spacing:0}
+.hero p{margin:0;font-size:16.5px;color:#d7ecef}.hero .rowk{display:flex;gap:28px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);flex-wrap:wrap}
+.hk b{display:block;font:700 28px var(--font-display)}.hk b em{font-style:normal;color:#6EEBDC}.hk span{font-size:13px;color:#A9C3CB}
+.side .lb{font:700 11px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:#A9C3CB}
+.side .v{font:700 30px/1.15 var(--font-display)}.side .v em{font-style:normal;color:#6EEBDC}.side .nt{font-size:13px;color:#A9C3CB}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;cursor:pointer;transition:.15s;min-width:0}
+.kpi:hover{border-color:var(--teal);transform:translateY(-1px)}
+.kpi .lb{font:700 11px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--tx3)}
+.kpi .v{font:800 32px/1.15 var(--font-display);color:var(--navy);margin:4px 0 2px}.kpi .v small{font-size:15px;font-weight:600;color:var(--tx2);margin-left:3px}
+.kpi .nt{font-size:13px;color:var(--tx2)}
+.kpi.dark{background:var(--navy);border-color:var(--navy)}.kpi.dark .lb{color:#9FE3DA}.kpi.dark .v{color:#fff}.kpi.dark .v small{color:#A9C3CB}.kpi.dark .nt{color:#A9C3CB}
+.d{font:700 13px var(--font-display);white-space:nowrap}.d.good{color:var(--good)}.d.att{color:var(--att)}.d.neu{color:var(--tx3)}
+.dk .d.good,.kpi.dark .d.good{color:#6EEBDC}.dk .d.att,.kpi.dark .d.att{color:#fff}
+.lst{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:minmax(96px,34%) 1fr;gap:14px;padding:11px 0;border-top:1px solid var(--bd);align-items:center;cursor:pointer}.li:first-child{border-top:0}
+.li:hover .lt b{color:var(--teal-deep)}
+.li .n{font:800 24px/1.1 var(--font-display);color:var(--navy);white-space:nowrap}.li .n em{font-style:normal;color:var(--teal-deep)}
+.li .lt b{display:block;font-size:15px}.li .lt span{font-size:13.5px;color:var(--tx2)}
+.card.pos{border-top:3px solid var(--teal)}.card.neg{border-top:3px solid var(--navy)}
+.rk{display:flex;flex-direction:column}
+.rk-h,.rk-r{display:grid;grid-template-columns:26px minmax(100px,1.15fr) minmax(130px,2fr) repeat(var(--nc,3),minmax(72px,.8fr));gap:10px;align-items:center}
+.rk-h{font:700 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding:0 0 6px;border-bottom:1px solid var(--bd)}
+.rk-r{padding:9px 0;border-bottom:1px solid var(--bd);cursor:pointer}.rk-r:hover{background:var(--card-soft)}.rk-r:last-child{border-bottom:0}
+.rk-n{font:700 13px var(--font-display);color:var(--tx3);text-align:center}.rk-r.f .rk-n{color:var(--teal-deep)}
+.rk-nm{font:700 13.5px var(--font-display);color:var(--navy);line-height:1.2}.rk-nm small{display:block;font:500 12px var(--font-body);color:var(--tx3)}
+.rk-b{position:relative;height:22px}
+.rk-b i{position:absolute;left:0;top:3px;height:16px;border-radius:3px;background:var(--navy)}.rk-b i.o{background:var(--old);opacity:.55}
+.rk-b span{position:absolute;top:2px;font:700 12.5px var(--font-display);color:var(--navy);white-space:nowrap}
+.rk-c{text-align:right;font:600 13.5px var(--font-display);color:var(--tx)}.rk-c.b{color:var(--navy);font-weight:800}.rk-c small{display:block;font-weight:700}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.chip{border:1px solid var(--bd2);background:#fff;border-radius:99px;padding:4px 12px;font:600 12.5px var(--font-display);color:var(--tx2)}.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font:600 12.5px var(--font-display);color:var(--tx2);margin:0 0 6px}.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}.leg i.b{height:10px;width:10px;border-radius:2px}
+svg text{font-family:var(--font-display)}
+.cx{font-size:12px;fill:var(--tx2);font-weight:600}.cxb{font-size:13px;fill:var(--navy);font-weight:800}
+.hm{display:grid;gap:3px}.hm div{font:600 11px var(--font-display);text-align:center;border-radius:4px;padding:6px 2px;color:var(--navy);min-width:0}.hm .h{color:var(--tx3);padding:2px;background:none!important}
+.banner{display:flex;gap:14px;align-items:center;background:var(--att-w);border:1px solid #cdd9de;border-left:4px solid var(--navy);border-radius:var(--r);padding:14px 18px;margin-bottom:16px}
+.banner .n{font:800 34px var(--font-display);color:var(--navy);white-space:nowrap}.banner b{display:block;font:700 16px var(--font-display);color:var(--navy)}.banner span{font-size:14px;color:var(--tx2)}
+.sev{font:700 10.5px var(--font-display);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px;text-align:center}.sev.Alta{background:var(--navy);color:#fff}.sev.Média{background:#cfd9de;color:var(--navy)}.sev.Baixa{background:var(--teal-wash);color:var(--teal-deep)}
+.ck{display:grid;grid-template-columns:70px minmax(0,1fr) 120px 62px;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--bd);cursor:pointer}.ck:first-child{border-top:0}.ck:hover{background:var(--card-soft)}
+.ck b{display:block;font:700 14.5px var(--font-display);color:var(--navy)}.ck span.t{font-size:13px;color:var(--tx2)}
+.ck .bar{height:10px;background:var(--bd);border-radius:5px;overflow:hidden}.ck .bar i{display:block;height:100%;background:var(--navy);border-radius:5px}.ck .q{text-align:right;font:800 17px var(--font-display);color:var(--navy)}
+.score{display:flex;align-items:center;gap:18px}.score .n{font:800 56px/1 var(--font-display);color:var(--navy)}.score .n em{font-style:normal;color:var(--teal-deep);font-size:.5em}
+.btn{border:0;border-radius:99px;padding:9px 18px;background:var(--navy);color:#fff;font:700 13px var(--font-display);letter-spacing:.04em}.btn:hover{background:var(--navy-soft)}.btn.s2{background:#fff;color:var(--navy);border:1px solid var(--bd2)}
+.drw-bg{position:fixed;inset:0;background:rgba(4,39,56,.45);z-index:90;opacity:0;pointer-events:none;transition:.25s}.drw-bg.on{opacity:1;pointer-events:auto}
+.drw{position:fixed;top:0;right:0;bottom:0;width:min(700px,100vw);background:#fff;z-index:91;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(4,39,56,.25)}.drw.on{transform:none}
+.drw-h{background:var(--navy);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.drw-h h2{margin:0;font:700 21px/1.2 var(--font-display)}.drw-h button{border:0;background:rgba(255,255,255,.12);color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px;line-height:1;flex:none}
+.drw-b{padding:18px 20px 40px;overflow:auto;font-size:15px}
+.drw-b h4{margin:18px 0 6px;font:700 12px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--teal-deep)}.drw-b p{margin:0 0 8px;color:var(--tx2)}
+.tb{width:100%;border-collapse:collapse;font-size:13.5px}.tb th{font:700 10.5px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);text-align:left;padding:6px 8px;border-bottom:2px solid var(--bd);position:sticky;top:-18px;background:#fff}.tb td{padding:6px 8px;border-bottom:1px solid var(--bd);vertical-align:top}.tb tr:hover td{background:var(--card-soft)}.tb td.r,.tb th.r{text-align:right}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;transition:.3s;z-index:300;pointer-events:none}.toast.on{opacity:1;transform:translateX(-50%)}
+.foot{margin-top:30px;text-align:center;font-size:12.5px;color:var(--tx3)}
+#cover{position:fixed;inset:0;z-index:200;color:#fff;overflow:hidden;background:radial-gradient(120% 90% at 85% 15%,#0b6e72 0%,#0a4a5a 35%,#042738 75%);transition:transform .85s cubic-bezier(.7,0,.2,1),opacity .5s .4s;display:flex;flex-direction:column;justify-content:space-between}
+#cover.out{transform:translateY(-100%);opacity:0;pointer-events:none}
+#cover svg.wv{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;opacity:.9;pointer-events:none}
+.cv-t{position:relative;padding:clamp(16px,3vw,34px) clamp(20px,4vw,52px)}.cv-t img{height:clamp(36px,5vw,56px)}
+.cv-b{position:relative;padding:0 clamp(20px,4vw,52px) clamp(30px,6vw,70px);max-width:980px}
+.cv-b .eyebrow{animation:up .9s .15s both}.cv-b h1{font:800 clamp(38px,7vw,92px)/.98 var(--font-display);letter-spacing:-.02em;margin:10px 0 0;animation:up .9s .3s both}
+.cv-b p{font:600 clamp(15px,1.8vw,20px)/1.4 var(--font-body);margin:16px 0 0;animation:up .9s .45s both;max-width:720px}.cv-b p b{color:#6EEBDC}
+.cv-b .go{margin-top:26px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;animation:up .9s .6s both}
+.cvbtn{border:0;border-radius:99px;padding:14px 28px;background:#06BEAE;color:#042738;font:800 13px var(--font-display);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 8px 28px rgba(6,190,174,.4)}.cvbtn:hover{transform:translateY(-2px)}
+.cv-b small{opacity:.7;font-size:12.5px}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+body.cv{overflow:hidden}
+body.pres .fbar,body.pres .filters,body.pres .info,body.pres .foot{display:none!important}
+@media(max-width:980px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.g21,.g12{grid-template-columns:1fr}.hero{grid-template-columns:1fr}
+.top-in{grid-template-columns:auto 1fr auto;padding:10px 14px 0}.ttl h1{font-size:21px}.live{display:none}.tabs{padding:4px 8px 0;justify-content:flex-start;overflow:auto;flex-wrap:nowrap}.tab{white-space:nowrap;padding:9px 10px}
+main{padding:14px 12px 50px}.rk-h,.rk-r{grid-template-columns:22px minmax(80px,1fr) minmax(90px,1.4fr) repeat(var(--nc,3),minmax(54px,.7fr));gap:6px}.rk-c{font-size:12.5px}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.hero .l{padding:20px}.ck{grid-template-columns:62px 1fr 56px}.ck .bar{display:none}}
+.hero .d.good,.hero .side .d.good{color:#6EEBDC}.hero .d.att{color:#fff}.hero .d.neu{color:#A9C3CB}
+.rkw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+html,body{overflow-x:hidden}
+@media(max-width:640px){.rk{min-width:560px}.banner{flex-direction:column;align-items:flex-start}.card{padding:16px 14px}.hero .big{font-size:84px}.top-in{padding:8px 10px 0}.brand img{height:34px}.ttl h1{font-size:18px}.tabs{gap:0}}
+#cover{background:linear-gradient(90deg,rgba(4,39,56,.9) 0%,rgba(4,39,56,.62) 42%,rgba(4,39,56,.12) 100%),linear-gradient(0deg,rgba(4,39,56,.85) 0%,rgba(4,39,56,0) 45%),url(img/capa-barreira.jpg) center/cover no-repeat,#042738}
+#cover svg.wv{display:none}
+@media(max-width:700px){#cover{background:linear-gradient(0deg,rgba(4,39,56,.95) 0%,rgba(4,39,56,.7) 55%,rgba(4,39,56,.25) 100%),url(img/capa-barreira.jpg) 62% center/cover no-repeat,#042738}}
+/* ---- refino executivo v2: cards leves, uma só escala de cor ---- */
+.card{box-shadow:none;border-color:var(--bd);padding:20px 22px}
+.card h3{font-size:18px}.card .sub{font-size:13.5px;color:var(--tx3);margin-bottom:14px}
+.kpi{box-shadow:none}.kpi .v{font-size:30px}
+.card.pos{border-top:2px solid var(--teal)}.card.neg{border-top:2px solid var(--navy)}
+.ht{min-width:640px}
+.ht-y,.ht-m,.ht-r{display:grid;grid-template-columns:92px repeat(var(--n),minmax(30px,1fr));gap:3px;align-items:center}
+.ht-y{margin-bottom:2px}.ht-y b{font:700 12px var(--font-display);color:var(--navy);padding:0 0 3px;border-bottom:1px solid var(--bd2);text-align:left}
+.ht-m{margin-bottom:4px}.ht-m span{font:600 10.5px var(--font-display);color:var(--tx3);text-align:center;text-transform:lowercase}
+.ht-r{margin-top:3px}.ht-n{font:700 12.5px var(--font-display);color:var(--navy);line-height:1.15}
+.ht-c{height:30px;border-radius:4px;display:grid;place-items:center;font:700 11.5px var(--font-display)}
+.ht-c.e{background:var(--card-soft);color:#C9D3D6;font-weight:400}
+.cmp{width:100%;border-collapse:collapse;font-size:14px}
+.cmp th{font:700 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);text-align:right;padding:8px 10px;border-bottom:1px solid var(--bd2);white-space:nowrap}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp td{padding:10px;border-bottom:1px solid var(--bd);text-align:right;color:var(--tx2);white-space:nowrap}
+.cmp td:first-child{font:700 13.5px var(--font-display);color:var(--navy)}
+.cmp th.cur,.cmp td.cur{color:var(--navy);font-weight:800;background:var(--card-soft)}
+.cmp td.mx{color:var(--navy);font-weight:800}
+.cmp small{color:var(--tx3);font-weight:600}.cmp td b{color:var(--navy)}
+.cmp tr.tot td{font-weight:800;color:var(--navy);border-top:2px solid var(--bd2);border-bottom:0}
+.cmp tr:last-child td{border-bottom:0}
+.mt td,.mt th{padding:9px 8px}
+.eb{display:flex;flex-direction:column}
+.eb-r{display:grid;grid-template-columns:104px minmax(0,1fr) 74px;gap:10px;align-items:center;padding:5px 0}
+.eb-t{position:relative;height:22px;background:var(--page);border-radius:4px}
+.eb-w,.eb-x{position:absolute;top:0;bottom:0;color:#fff;font:700 11.5px var(--font-display);display:grid;place-items:center}
+.eb-w{background:#A9B8BD;border-radius:4px 0 0 4px;color:#042738}.eb-x{background:#042738;border-radius:0 4px 4px 0}
+.eb-m{position:absolute;top:-3px;bottom:-3px;border-left:2px dashed #06BEAE}
+@media(max-width:640px){.eb-r{grid-template-columns:82px minmax(0,1fr) 62px}.cmp{min-width:520px}}
+.hg .ht-m span{font-size:11.5px;text-transform:none;font-weight:700;color:var(--tx2)}
+.hg{min-width:620px}.hg .ht-y,.hg .ht-m,.hg .ht-r{grid-template-columns:96px repeat(var(--n),minmax(64px,1fr))}
+.hg .ht-c{height:46px;line-height:1.15;font-size:14px;align-content:center}.ht-c small{display:block;font:600 10.5px var(--font-display);opacity:.8}
+.sc{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+.sc th{font:700 11px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);text-align:right;padding:8px 12px;border-bottom:2px solid var(--bd2);white-space:nowrap}
+.sc th:first-child,.sc td:first-child{text-align:left}
+.sc th.tt{color:var(--navy);font-size:12.5px;letter-spacing:.02em;text-transform:none}
+.sc td{padding:9px 12px;border-bottom:1px solid var(--bd);text-align:right;font:700 14.5px var(--font-display);color:var(--navy);white-space:nowrap}
+.sc td:first-child{font:600 13.5px var(--font-body);color:var(--tx2)}
+.sc td small{display:block;font:700 11px var(--font-display);color:var(--tx3)}.sc td small .d{font-size:11px}
+.sc tr.grp td{padding:14px 12px 4px;font:800 10.5px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);border-bottom:0}
+.sc td.bst{background:var(--teal-wash);color:var(--teal-deep)}.sc td.wst{background:#E7EDF0;color:var(--navy)}
+.sc td.all{color:var(--tx2);border-left:1px solid var(--bd)}.sc th.all{border-left:1px solid var(--bd)}
+.pf{display:flex;flex-direction:column;gap:20px;padding-top:6px}.pf-r{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center}
+.pf-b{display:flex;height:38px;border-radius:5px;overflow:hidden}.pf-b div{display:grid;place-items:center;font:700 12px var(--font-display);overflow:hidden}
+.key{display:flex;gap:16px;flex-wrap:wrap;font:600 12.5px var(--font-display);color:var(--tx2);margin:0 0 10px}.key i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+.g56{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+.g56 .cmp td,.g56 .cmp th{padding-left:6px;padding-right:6px}.g56 .cmp td{font-size:13.5px}.cmp td:first-child{white-space:normal;line-height:1.2}
+@media(max-width:980px){.g56{grid-template-columns:1fr}}
+/* v3: acabamento minimalista */
+.ht.sm{min-width:480px}.ht.sm .ht-n{font-size:12px}
+.rk-t{cursor:default;border-top:2px solid var(--bd2);border-bottom:0!important}.rk-t:hover{background:none}.rk-t .rk-nm{color:var(--tx2)}.rk-t .rk-b span{font-weight:800}
+.eb-g{font:800 10.5px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);padding:14px 0 2px}.eb-g:first-child{padding-top:2px}
+.eb-m{top:-6px!important;bottom:auto!important;height:6px;border-left:2px solid #06BEAE!important}
+.leg i.mk{display:inline-block;width:2px;height:10px;background:#06BEAE;border-radius:0;margin-right:7px;vertical-align:-1px}
+/* v4: diagnóstico, comparativo visual, calor opcional */
+.card.dx{border-top:2px solid var(--navy)}
+.dx-c h4{margin:0 0 2px;font:800 11px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--teal-deep)}.dx-c .sub{margin:0 0 12px!important;font-size:13px!important}
+.dc{display:flex;flex-direction:column;gap:10px}.dc-r{display:grid;grid-template-columns:minmax(96px,.9fr) minmax(0,1.6fr);gap:10px;align-items:center}
+.dc-b{position:relative;height:22px}.dc-b i{position:absolute;left:0;top:3px;height:16px;border-radius:3px}.dc-b span{position:absolute;top:2px;font:700 12.5px var(--font-display);color:var(--navy);white-space:nowrap}
+.yr{display:flex;flex-direction:column}.yr-k{display:flex;gap:16px;flex-wrap:wrap;font:600 12.5px var(--font-display);color:var(--tx2);margin:0 0 6px}.yr-k i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}.yr-k .g{display:none}
+.yr-r{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(0,1.5fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.yr-r:last-child{border-bottom:0}
+.yr-l{font:700 13.5px var(--font-display);color:var(--navy);line-height:1.2}.yr-l small{display:block;font:500 12px var(--font-body);color:var(--tx3);margin-top:2px}
+.yr-b{display:flex;flex-direction:column;gap:4px}.yb{position:relative;height:15px;border-radius:3px;background:var(--navy)}.yb.o{background:#C9D3D6}
+.yb span{position:absolute;left:calc(100% + 8px);top:-1px;font:700 12px var(--font-display);color:var(--navy);white-space:nowrap}.yb.o span{color:var(--tx3);font-weight:600}
+.yr-d{text-align:right;min-width:84px}
+.seg{position:absolute;top:18px;right:54px;display:flex;border:1px solid var(--bd2);border-radius:99px;overflow:hidden;z-index:2}.seg button{font:700 11.5px var(--font-display);padding:4px 11px;background:#fff;border:0;color:var(--tx3);cursor:pointer}.seg button.on{background:var(--navy);color:#fff}
+.card.heat td[style*="--h"]{background:rgba(6,190,174,calc(.10 + .78 * var(--h)))!important;color:var(--navy)!important}
+.card.heat .sc td.bst,.card.heat .sc td.wst{box-shadow:none}
+@media(max-width:640px){.yr-r{grid-template-columns:1fr auto}.yr-b{grid-column:1/-1;order:3}.dc-r{grid-template-columns:1fr}}
+.card.heat td .d,.card.heat td small{color:var(--navy)!important}
+/* v5: abas compostas, linha do tempo, jornada */
+h2.sec{margin:34px 0 12px;font:800 12px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);scroll-margin-top:130px}
+h2.sec:first-of-type{margin-top:18px}
+.chips.jump{margin-bottom:0}
+h4.sh{margin:6px 0 4px;font:800 11px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+.tl{display:flex;overflow-x:auto;padding:4px 0 8px;scrollbar-width:thin}
+.tl-i{flex:0 0 205px;position:relative;padding:26px 16px 0 0}
+.tl-i::before{content:'';position:absolute;top:9px;left:0;right:0;height:2px;background:#CCD9D9}
+.tl-i::after{content:'';position:absolute;top:4px;left:0;width:12px;height:12px;border-radius:50%;background:#A9B8BD;border:2px solid #fff;box-shadow:0 0 0 1px #A9B8BD}
+.tl-i.neg::after{background:#042738;box-shadow:0 0 0 1px #042738}.tl-i.pos::after{background:#06BEAE;box-shadow:0 0 0 1px #06BEAE}
+.tl-m{font:800 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.tl-i b{display:block;font:700 14px/1.25 var(--font-display);color:var(--navy);margin-bottom:3px}.tl-i span{display:block;font-size:13px;line-height:1.35;color:var(--tx2)}
+.hg.hs{min-width:760px}.hg.hs .ht-y,.hg.hs .ht-m,.hg.hs .ht-r{grid-template-columns:78px repeat(var(--n),minmax(26px,1fr))}.hg.hs .ht-c{height:32px;font-size:11.5px}.hg.hs .ht-m span{font-size:11px}
+.live{cursor:pointer}
+.ht-c,.card.heat td[style*="--h"]{font-weight:800!important}.card.heat td[style*="--h"] small{font-weight:700}
+/* v6: barreiras em uso */
+.cmp.bt td small{color:var(--tx3);font-weight:600}
+.bin{width:84px;padding:5px 8px;border:1px solid var(--bd2);border-radius:6px;font:700 13.5px var(--font-display);color:var(--navy);text-align:right;background:#fff}.bin::placeholder{font-weight:500;color:var(--tx3);font-size:12px}.bin:focus{outline:2px solid var(--teal);outline-offset:1px}
+.leit{margin-top:14px;border-top:1px solid var(--bd);padding-top:10px}.leit p{margin:6px 0;font-size:14.5px;color:var(--tx2);line-height:1.45}.leit b{color:var(--navy)}
+p.nt{font-size:12.5px;color:var(--tx3);margin:8px 0 0}
+/* v7: momentos de maior uso */
+.mm-h{display:flex;flex-direction:column;gap:2px;margin:2px 0 8px}.mm-h b{font:800 12px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}.mm-h span{font-size:13px;color:var(--tx2)}
+.mmt{width:100%;border-collapse:collapse;font-size:13.5px}.mmt th{font:700 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--bd2);white-space:nowrap}
+.mmt td{padding:10px 10px 10px 0;border-bottom:1px solid var(--bd);vertical-align:top;color:var(--tx2)}.mmt tr:last-child td{border-bottom:0}.mmt td b{color:var(--navy);font:700 13.5px var(--font-display);display:block}.mmt small{display:block;color:var(--tx3);font-size:12px}
+.mmt td.em{line-height:1.45;min-width:170px}.mmt td.em i{font-style:italic;color:var(--tx3);font-size:12px;margin-left:2px}.mmt td.em small{display:inline}
+.bd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;background:var(--navy);color:#fff;font:800 14px var(--font-display);text-align:center}
+@media(max-width:640px){
+  .mmt,.mmt tbody,.mmt td{display:block}.mmt tr:first-child{display:none}
+  .mmt tr{display:grid;grid-template-columns:104px 52px 1fr;gap:2px 8px;padding:10px 0;border-bottom:1px solid var(--bd)}.mmt tr:last-child{border-bottom:0}
+  .mmt td{padding:0;border:0}.mmt td.em{grid-column:1/-1;min-width:0;padding-top:4px}
+}
+/* v8: simulador e lançamentos sem par */
+.hg.hk{min-width:560px}.hg.hk .ht-y,.hg.hk .ht-m,.hg.hk .ht-r{grid-template-columns:96px repeat(var(--n),minmax(40px,1fr))}.hg.hk .ht-c{height:46px;font-size:13px}.hg.hk .ht-c small{font-size:10px}
+.tg{display:inline-block;padding:2px 8px;border-radius:99px;font:700 11px var(--font-display);white-space:nowrap;background:#E7EDF0;color:var(--navy)}.tg.ret{background:#E0F6F3;color:#048C80}.tg.longo{background:#042738;color:#fff}.tg.nome{background:#C9D3D6;color:#042738}
+.mmt.orf td.em{min-width:230px}.mmt.orf td{vertical-align:middle}
+@media(max-width:640px){.mmt.orf{display:table}.mmt.orf tbody,.mmt.orf td{display:table-cell}.mmt.orf tr:first-child{display:table-row}.mmt.orf tr{display:table-row;padding:0}.mmt.orf td{padding:8px 10px 8px 0;border-bottom:1px solid var(--bd)}.mmt.orf{min-width:640px}}
+
+</style>
+</head>
+<body class="cv">
+<div id="cover">
+  <svg class="wv" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 220 C240 150 480 290 720 220 S1200 150 1440 230 V400 H0Z" fill="rgba(6,190,174,.16)"/><path d="M0 270 C260 210 520 330 780 270 S1220 220 1440 290 V400 H0Z" fill="rgba(6,190,174,.22)"/><path d="M0 330 C300 290 560 380 840 330 S1260 300 1440 350 V400 H0Z" fill="rgba(4,39,56,.55)"/></svg>
+  <div class="cv-t"><img alt="Prime Ocean Navegação" src="img/logo-primeocean-neg.png"></div>
+  <div class="cv-b">
+    <div class="eyebrow">Prime Ocean Navegação · Controle operacional</div>
+    <h1>Lançamento de Barreira</h1>
+    <p id="cvTxt">Carregando os dados…</p>
+    <div class="go"><button class="cvbtn" id="cvGo">Abrir o painel</button><small>ou pressione Enter · clique na logo para voltar a esta tela</small></div>
+  </div>
+</div>
+<header class="top"><div class="top-in">
+  <div class="brand"><img id="logo" alt="Prime Ocean Navegação" src="img/logo-primeocean-neg.png"></div>
+  <div class="ttl"><h1>Lançamento de Barreira</h1></div>
+  <div class="tools"><div class="icons">
+    <button class="ib" id="bHome" title="Início" aria-label="Início"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
+    <button class="ib" id="bRef" title="Atualizar dados" aria-label="Atualizar"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v5h-5"/></svg></button>
+    <button class="ib" id="bPres" title="Modo apresentação" aria-label="Apresentação"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></button>
+  </div><div class="live" id="live" title="Fonte, atualização e regras de cálculo"><i></i><span>Conectando…</span></div></div>
+</div><nav class="tabs" id="tabs"></nav></header>
+<main>
+  <div class="fbar" id="fbar"><button class="fbtn" id="bFil"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>Filtros</button><span class="fsum" id="fsum"></span></div>
+  <div class="filters" id="filters"></div>
+  <div id="view"></div>
+</main>
+<div class="drw-bg" id="drwBg"></div>
+<aside class="drw" id="drw"><div class="drw-h"><h2 id="drwT"></h2><button id="drwX" aria-label="Fechar">×</button></div><div class="drw-b" id="drwB"></div></aside>
+<div class="toast" id="toast"></div>
+<script>
+/* ===================== NÚCLEO DE DADOS · Lançamento de Barreira ===================== */
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const DOW = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+const META = 15;            // minutos: meta contratual (solicitação → término)
+const T_MAX = 720;          // acima de 12 h o tempo não entra nas médias (vai para a qualidade dos dados)
+const CRIT = 60;            // ponto crítico: mais de 60 min
+const fN = n => n == null || isNaN(n) ? '–' : Math.round(n).toLocaleString('pt-BR');
+const fD = (n, d = 1) => n == null || isNaN(n) ? '–' : n.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fP = (x, d = 1) => x == null || isNaN(x) ? '–' : fD(x * 100, d) + '%';
+const fP0 = x => x == null || isNaN(x) ? '–' : fD(x * 100, 0) + '%';
+const hhmm = f => { if (f == null) return '–'; const m = Math.round(f * 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const fDt = iso => iso ? iso.slice(8) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : '–';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const mod1 = x => ((x % 1) + 1) % 1;
+const mLbl = ym => MES[+ym.slice(5) - 1] + '/' + ym.slice(2, 4);
+const sum = a => a.reduce((s, v) => s + v, 0);
+const avg = a => a.length ? sum(a) / a.length : null;
+const median = a => { if (!a.length) return null; a = [...a].sort((x, y) => x - y); const m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; };
+const groupBy = (a, f) => { const m = new Map(); a.forEach(x => { const k = f(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }); return m; };
+
+/* ---------- catálogo de inconsistências ---------- */
+const CHK = {
+  txt:    { sev: 'Alta',  nome: 'Horário digitado como texto', desc: 'Hora escrita com ponto e vírgula, dois pontos duplos ou outro símbolo. O painel recupera o valor, mas a planilha não calcula.' },
+  h24:    { sev: 'Alta',  nome: 'Horário fora de 00:00–23:59', desc: 'Hora com valor de um dia inteiro ou mais (ex.: 30:00).' },
+  fimAnt: { sev: 'Alta',  nome: 'Término antes do início', desc: 'Hora de término menor que a de início, sem virada de dia plausível (23h–03h).' },
+  iniAnt: { sev: 'Média', nome: 'Início antes da solicitação', desc: 'O atendimento começou antes de ser solicitado, sem virada de dia plausível.' },
+  div:    { sev: 'Média', nome: 'Tempo da planilha diverge do calculado', desc: 'O tempo digitado/calculado na planilha difere de término − solicitação em mais de 1,5 min.' },
+  t12:    { sev: 'Alta',  nome: 'Tempo acima de 12 horas', desc: 'Provável erro de data ou de hora; fica fora das médias, mas conta como fora da meta.' },
+  curto:  { sev: 'Baixa', nome: 'Tempo abaixo de 5 minutos', desc: 'Atendimento praticamente instantâneo; vale confirmar os horários.' },
+  semCt:  { sev: 'Alta',  nome: 'Contrato em branco', desc: 'Sem contrato, o atendimento não entra no resultado por contrato.' },
+  semLoc: { sev: 'Alta',  nome: 'Local em branco', desc: 'Sem berço ou local informado.' },
+  ctLoc:  { sev: 'Alta',  nome: 'Contrato incompatível com o local', desc: 'Berço de um contrato lançado em outro (LON 1: berços; LON 2: BEX; EQUINOR; demais locais: SPOT).' },
+  eqMin:  { sev: 'Baixa', nome: 'Equipe fora do padrão', desc: 'Equipe escrita fora do padrão A, B, C ou D (ex.: minúscula).' },
+  dup:    { sev: 'Alta',  nome: 'Possível lançamento duplicado', desc: 'Mesma data, embarcação, operação e hora de início já lançados em outra linha.' },
+  meta:   { sev: 'Média', nome: 'Meta diferente de 15 minutos', desc: 'A coluna Meta da linha não está em 15 min, o contratado.' },
+  nome:   { sev: 'Baixa', nome: 'Nome da embarcação com espaço sobrando', desc: 'Espaço no fim ou duplo no nome; separa a mesma embarcação em duas nos relatórios.' },
+  embSimul:{ sev: 'Alta', nome: 'Mesma embarcação em dois atendimentos ao mesmo tempo', desc: 'A embarcação aparece em duas operações com horários de execução sobrepostos.' },
+  locSimul:{ sev: 'Média', nome: 'Mesmo berço com dois atendimentos ao mesmo tempo', desc: 'Duas operações no mesmo local com horários de execução sobrepostos.' },
+  eqTurno:{ sev: 'Baixa', nome: 'Equipe fora do turno habitual', desc: 'Em geral A e C atuam de dia (07h–19h) e B e D à noite; pode ser troca de escala, vale confirmar.' },
+  critObs:{ sev: 'Média', nome: 'Ponto crítico sem observação', desc: 'Atendimento acima de 60 min sem justificativa na coluna Observação.' },
+};
+const SEV_ORD = { 'Alta': 0, 'Média': 1, 'Baixa': 2 };
+const LOC_CT = { 'BERÇO 01': 'LON 1', 'BERÇO 02': 'LON 1', 'BERÇO 03': 'LON 1', 'BERÇO 04': 'LON 1', 'BERÇO 06': 'LON 1', 'BERÇO 07': 'LON 1', 'BEX 01': 'LON 2', 'BEX 02': 'LON 2', 'EQUINOR': 'EQUINOR' };
+
+/* ---------- leitura da planilha ---------- */
+function horaTexto(x) {
+  if (typeof x === 'number') return { v: x, txt: false };
+  if (x == null) return { v: null, txt: false };
+  const m = String(x).match(/(\d{1,2})\D+(\d{1,2})/);
+  if (m && +m[1] < 24 && +m[2] < 60) return { v: (+m[1] * 60 + +m[2]) / 1440, txt: true };
+  return { v: null, txt: true };
+}
+const serialISO = s => new Date(Date.UTC(1899, 11, 30) + Math.round(s) * 864e5).toISOString().slice(0, 10);
+
+function parseBarreira(linhas) {
+  const rows = [];
+  linhas.forEach(a => {
+    if (typeof a[1] !== 'number') return;
+    const ds = Math.floor(a[1]), iso = serialISO(ds);
+    const embRaw = a[2] == null ? '' : String(a[2]);
+    const eqRaw = a[5] == null ? '' : String(a[5]);
+    const so = horaTexto(a[6]), io = horaTexto(a[7]), fo = horaTexto(a[8]);
+    const r = {
+      id: a[0], ds, iso, y: +iso.slice(0, 4), mo: +iso.slice(5, 7), ym: iso.slice(0, 7), dow: new Date(iso + 'T12:00:00Z').getUTCDay(),
+      embRaw, emb: embRaw.trim().replace(/\s+/g, ' ').toUpperCase(), ct: a[3] ? String(a[3]).trim().toUpperCase() : '', loc: a[4] ? String(a[4]).trim().toUpperCase() : '',
+      eqRaw, eq: eqRaw.trim().toUpperCase(), op: a[11] ? String(a[11]).trim().toUpperCase() : '', obs: a[12] ? String(a[12]).trim() : '',
+      sol: so.v, ini: io.v, fim: fo.v, tcol: typeof a[9] === 'number' ? a[9] * 1440 : null, meta: typeof a[10] === 'number' ? a[10] * 1440 : null,
+      fl: [], dt: {}
+    };
+    const flag = (c, det) => { r.fl.push(c); r.dt[c] = det || ''; };
+    if (so.txt || io.txt || fo.txt) flag('txt', ['sol', 'ini', 'fim'].filter((k, i) => [so, io, fo][i].txt).map(k => ({ sol: 'solicitação', ini: 'início', fim: 'término' }[k]) + ' “' + a[{ sol: 6, ini: 7, fim: 8 }[k]] + '”').join(' · '));
+    ['sol', 'ini', 'fim'].forEach(k => { if (r[k] != null && (r[k] >= 1 || r[k] < 0)) { flag('h24', 'valor ' + r[k].toFixed(3)); r[k] = mod1(r[k]); } });
+    r.eq1 = r.eq.replace(/[^A-D]/g, '');
+    // tempo de atendimento = término − solicitação (como a planilha calcula)
+    let tc = null;
+    if (r.sol != null && r.fim != null) tc = mod1(r.fim - r.sol) * 1440;
+    else if (r.ini != null && r.fim != null) tc = mod1(r.fim - r.ini) * 1440;
+    r.t = tc != null ? tc : (r.tcol != null && r.tcol > 0 ? r.tcol : null);
+    if (tc != null && r.tcol != null && Math.abs(r.tcol - tc) > 1.5 && Math.abs(Math.abs(r.tcol - tc) - 1440) > 1.5) flag('div', 'planilha ' + fD(r.tcol, 0) + ' min × calculado ' + fD(tc, 0) + ' min');
+    else if (tc != null && r.tcol != null && r.tcol < 0) flag('div', 'planilha ' + fD(r.tcol, 0) + ' min × calculado ' + fD(tc, 0) + ' min');
+    r.esp = null; r.exe = null;
+    if (r.sol != null && r.ini != null) { let e = (r.ini - r.sol) * 1440; if (e < -720) e += 1440; if (e > 720) e -= 1440; r.esp = e; }
+    if (r.ini != null && r.fim != null) { const x = mod1(r.fim - r.ini) * 1440; if (x <= T_MAX) r.exe = x; }
+    if (r.t != null && r.t > T_MAX) { flag('t12', fD(r.t / 60, 1) + ' h'); }
+    if (r.t != null && r.t < 5) flag('curto', fD(r.t, 0) + ' min');
+    const noite = (x, y) => x != null && y != null && x >= 21 / 24 && y <= 3 / 24;
+    if (r.ini != null && r.fim != null && r.fim < r.ini && !noite(r.ini, r.fim)) flag('fimAnt', 'início ' + hhmm(r.ini) + ' · término ' + hhmm(r.fim));
+    if (r.sol != null && r.ini != null && r.ini < r.sol && !noite(r.sol, r.ini)) flag('iniAnt', 'solicitação ' + hhmm(r.sol) + ' · início ' + hhmm(r.ini));
+    if (!r.ct) flag('semCt');
+    if (!r.loc) flag('semLoc');
+    if (r.ct && r.loc && (LOC_CT[r.loc] || 'SPOT') !== r.ct) flag('ctLoc', r.ct + ' em ' + r.loc);
+    if (r.eqRaw && r.eqRaw !== r.eq1) flag('eqMin', '“' + r.eqRaw + '”');
+    if (r.meta != null && Math.abs(r.meta - META) > 0.5) flag('meta', fD(r.meta, 0) + ' min');
+    if (embRaw && (embRaw !== embRaw.trim() || /\s{2}/.test(embRaw))) flag('nome', '“' + embRaw + '”');
+    r.na = r.t != null && Math.round(r.t) <= META;                 // dentro da meta
+    r.cr = r.t != null && r.t > CRIT;                              // ponto crítico
+    if (r.cr && !r.obs) flag('critObs', fD(r.t, 0) + ' min');
+    r.h = r.sol != null ? Math.floor(r.sol * 24) : (r.ini != null ? Math.floor(r.ini * 24) : null);
+    r.turno = r.h == null ? null : (r.h >= 7 && r.h < 19 ? 'Dia' : 'Noite');
+    if (r.turno && ((r.turno === 'Dia' && (r.eq1 === 'B' || r.eq1 === 'D')) || (r.turno === 'Noite' && (r.eq1 === 'A' || r.eq1 === 'C')))) flag('eqTurno', 'equipe ' + r.eq1 + ' no turno da ' + (r.turno === 'Dia' ? 'dia' : 'noite') + ' (' + hhmm(r.sol != null ? r.sol : r.ini) + ')');
+    rows.push(r);
+  });
+  // duplicados
+  const seen = new Map();
+  rows.forEach(r => { if (r.ini == null) return; const k = [r.iso, r.emb, r.op, Math.round(r.ini * 1440)].join('|'); if (seen.has(k)) { r.fl.push('dup'); r.dt.dup = 'igual à linha ' + seen.get(k); } else seen.set(k, r.id); });
+  concorrencia(rows);
+  sobrepostos(rows, r => r.emb, 'embSimul'); sobrepostos(rows, r => r.loc, 'locSimul');
+  rows.forEach(r => { r.bad = r.fl.some(c => CHK[c].sev !== 'Baixa'); });   // gravidade baixa lista, mas não pesa no índice
+  return rows;
+}
+
+function sobrepostos(rows, keyf, code) {
+  groupBy(rows.filter(r => r.wE && keyf(r)), keyf).forEach(a => {
+    a.sort((x, y) => x.wE[0] - y.wE[0]); let fim = -1, quem = null;
+    a.forEach(r => { if (quem && r.wE[0] < fim) { r.fl.push(code); r.dt[code] = 'sobrepõe a linha ' + quem.id + ' (' + hhmm(quem.ini) + '–' + hhmm(quem.fim) + ')'; } if (r.wE[1] > fim) { fim = r.wE[1]; quem = r; } });
+  });
+}
+/* ---------- simultaneidade ---------- */
+function janelas(r) {
+  const base = r.ds * 1440;
+  r.wA = r.wE = null;
+  if (r.fim == null || (r.sol == null && r.ini == null)) return;
+  const s0 = r.sol != null ? r.sol : r.ini;
+  let a = base + s0 * 1440, i = r.ini != null ? base + r.ini * 1440 : a;
+  if (r.sol != null && r.ini != null && r.ini + 0.5 < r.sol) i += 1440;   // início depois da meia-noite
+  if (i < a) i = a;
+  let e = base + r.fim * 1440; while (e < i) e += 1440;
+  if (e - a > T_MAX || e - i > T_MAX) return;
+  r.wA = [a, Math.max(e, a + 1)]; r.wE = [i, Math.max(e, i + 1)];
+}
+function varre(rs, w, out, grp) {
+  const g = grp ? groupBy(rs, grp) : new Map([['*', rs]]);
+  const picos = [];
+  g.forEach(list => {
+    const ev = [];
+    list.forEach(r => { if (r[w]) { ev.push([r[w][0], 1, r], [r[w][1], 0, r]); if (!(out in r)) r[out] = 1; } });
+    ev.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+    const act = new Set();
+    ev.forEach(([t, typ, r]) => {
+      if (typ === 0) { act.delete(r); return; }
+      act.add(r); const n = act.size;
+      act.forEach(q => { if (q[out] < n) q[out] = n; });
+      if (!grp && n >= 3) picos.push({ t, n, ids: [...act] });
+    });
+  });
+  return picos;
+}
+function concorrencia(rows) {
+  rows.forEach(janelas);
+  rows.forEach(r => { r.cA = r.cE = r.qA = r.qE = 0; if (r.wA) { r.cA = r.cE = r.qA = r.qE = 1; } });
+  const out = {};
+  out.A = varre(rows, 'wA', 'cA'); out.E = varre(rows, 'wE', 'cE');
+  varre(rows, 'wA', 'qA', r => r.eq1); varre(rows, 'wE', 'qE', r => r.eq1);
+  // episódios de pico: agrupa instantes com ≤ 60 min de distância e guarda o maior
+  const ep = lista => { lista.sort((a, b) => a.t - b.t); const res = []; lista.forEach(p => { const u = res[res.length - 1]; if (u && p.t - u.fim <= 60) { u.fim = p.t; if (p.n > u.n) { u.n = p.n; u.ids = p.ids; u.t = p.t; } } else res.push({ ...p, fim: p.t }); }); return res; };
+  CONC.picos = { A: ep(out.A), E: ep(out.E) };
+}
+const CONC = { picos: { A: [], E: [] } };
+
+/* ---------- métricas ---------- */
+function agg(rs, W) {
+  W = W || 'E';
+  const n = rs.length, ok = rs.filter(r => r.na).length;
+  const tv = rs.filter(r => r.t != null && r.t <= T_MAX).map(r => r.t);
+  const cr = rs.filter(r => r.cr), cr60 = rs.filter(r => r.t != null && r.t > 60);
+  const sim = rs.filter(r => r['c' + W] >= 2), simEq = rs.filter(r => r['q' + W] >= 2);
+  const iso = rs.filter(r => r['c' + W] < 2);
+  return {
+    espM: avg(rs.filter(r => r.esp != null && r.esp >= 0 && r.esp <= T_MAX).map(r => r.esp)), exeM: avg(rs.filter(r => r.exe != null).map(r => r.exe)),
+    n, ok, pct: n ? ok / n : null, avg: avg(tv), med: median(tv), crit: cr.length, critP: n ? cr.length / n : null, cr60: cr60.length,
+    sim: sim.length, simP: n ? sim.length / n : null, simEq: simEq.length, simEqP: n ? simEq.length / n : null,
+    pctIso: iso.length ? iso.filter(r => r.na).length / iso.length : null, pctSim: sim.length ? sim.filter(r => r.na).length / sim.length : null,
+    pctSimEq: simEq.length ? simEq.filter(r => r.na).length / simEq.length : null,
+    col: rs.filter(r => r.op === 'COLOCAÇÃO').length, ret: rs.filter(r => r.op === 'RETIRADA').length, bad: rs.filter(r => r.bad).length
+  };
+}
+
+/* ---------- estado, filtros e janelas de período ---------- */
+const S = { rows: [], max: null, Y: null, cut: null, f: { per: 'ytd', ct: '', op: '', eq: '' }, tab: 'resumo', meta: {} };
+function setRows(rows) {
+  S.rows = rows; S.max = rows.reduce((m, r) => r.iso > m ? r.iso : m, '0000');
+  S.Y = +S.max.slice(0, 4); S.cut = S.max.slice(5);
+}
+const inWin = (r, y) => r.y === y && r.iso.slice(5) <= S.cut;
+const filt = (rs, f) => { f = f || S.f; return rs.filter(r => (!f.ct || r.ct === f.ct) && (!f.op || r.op === f.op) && (!f.eq || r.eq1 === f.eq)); };
+function periodo(f) {
+  f = f || S.f; const base = filt(S.rows, f);
+  if (f.per === 'all') return { cur: base, prv: null, lc: 'todo o histórico', lp: '' };
+  return { cur: base.filter(r => inWin(r, S.Y)), prv: base.filter(r => inWin(r, S.Y - 1)), lc: lblPer(S.Y), lp: lblPer(S.Y - 1) };
+}
+function lblPer(y) { const m = +S.cut.slice(0, 2); return (m === 12 && S.cut === '12-31') ? 'ano ' + y : MES[0] + '–' + MES[m - 1] + '/' + String(y).slice(2); }
+const meses = rs => [...new Set(rs.map(r => r.ym))].sort();
+
+/* ===================== COMPONENTES VISUAIS ===================== */
+/* variação: dir = 'up' (subir é bom) ou 'down' (descer é bom); un = 'pp' | '%' | 'abs' */
+function delta(c, p, o) {
+  o = o || {}; if (c == null || p == null || isNaN(c) || isNaN(p)) return '<span class="d neu">–</span>';
+  let v, t;
+  if (o.un === 'pp') { v = (c - p) * 100; t = fD(Math.abs(v), 1) + ' p.p.'; }
+  else if (o.un === 'abs') { v = c - p; t = fD(Math.abs(v), o.d == null ? 1 : o.d) + (o.suf || ''); }
+  else { if (!p) return '<span class="d neu">–</span>'; v = (c / p - 1) * 100; t = fD(Math.abs(v), 1) + '%'; }
+  if (Math.abs(v) < (o.un === 'pp' ? 0.05 : 0.05)) return '<span class="d neu">= estável</span>';
+  const up = v > 0, good = (o.dir || 'up') === 'up' ? up : !up;
+  return `<span class="d ${good ? 'good' : 'att'}">${up ? '▲' : '▼'} ${up ? '+' : '−'}${t}</span>`;
+}
+function kpi(lb, v, nt, o) {
+  o = o || {};
+  return `<div class="kpi ${o.dark ? 'dark' : ''}" ${o.go ? `data-go="${o.go}"` : ''}><div class="lb">${lb}</div><div class="v">${v}</div><div class="nt">${nt || ''}</div></div>`;
+}
+function card(title, sub, body, o) {
+  o = o || {};
+  return `<section class="card ${o.cls || ''}" ${o.id ? `id="${o.id}"` : ''}>${o.tog ? '<div class="seg"><button class="on" data-hm="tab">Tabela</button><button data-hm="calor">Calor</button></div>' : ''}${o.info ? `<button class="info" data-info="${o.info}" aria-label="Como calculamos">i</button>` : ''}<h3>${title}</h3>${sub ? `<p class="sub">${sub}</p>` : ''}${body}</section>`;
+}
+/* ranking visual: rows [{nome, sub, v, vp, cols:[html], key}] ; cols = [{h, cls}] */
+function ranking(rows, o) {
+  const max = Math.max(...rows.map(r => Math.max(r.v || 0, r.vp || 0)), 1e-9);
+  const nc = o.cols.length;
+  const head = `<div class="rk-h"><div></div><div>${o.hn || ''}</div><div>${o.hv || ''}</div>${o.cols.map(c => `<div class="rk-c">${c}</div>`).join('')}</div>`;
+  const body = rows.map((r, i) => {
+    const w = r.v == null ? 0 : r.v / max * 84, wp = r.vp == null ? 0 : r.vp / max * 84;
+    const lab = o.fmt(r.v);
+    return `<div class="rk-r ${i === 0 ? 'f' : ''}" ${r.key != null ? `data-key="${esc(r.key)}"` : ''}><div class="rk-n">${i + 1}</div>
+      <div class="rk-nm">${esc(r.nome)}${r.sub ? `<small>${r.sub}</small>` : ''}</div>
+      <div class="rk-b">${r.vp != null ? `<i class="o" style="width:${wp}%"></i>` : ''}<i style="width:${Math.max(w, .6)}%"></i><span style="left:calc(${Math.max(w, wp)}% + 8px)">${lab}</span></div>
+      ${r.cols.map((c, j) => `<div class="rk-c ${j === 0 ? 'b' : ''}">${c}</div>`).join('')}</div>`;
+  }).join('');
+  const tot = o.total ? `<div class="rk-r rk-t"><div class="rk-n"></div><div class="rk-nm">${o.total.nome}</div><div class="rk-b"><span style="left:0">${o.fmt(o.total.v)}</span></div>${o.total.cols.map((c, j) => `<div class="rk-c ${j === 0 ? 'b' : ''}">${c}</div>`).join('')}</div>` : '';
+  return `<div class="rkw"><div class="rk" style="--nc:${nc}">${head}${body}${tot}</div></div>`;
+}
+
+/* ---------- gráficos SVG ---------- */
+function poly(pts) { return pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(''); }
+function monotone(pts) {   // spline cúbica monotônica (Fritsch–Carlson): suave, sem picos falsos
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), n = xs.length;
+  if (n < 3) return poly(pts);
+  const d = [], m = [];
+  for (let i = 0; i < n - 1; i++) d[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]);
+  m[0] = d[0]; m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) { if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; } const a = m[i] / d[i], b = m[i + 1] / d[i], s = a * a + b * b; if (s > 9) { const k = 3 / Math.sqrt(s); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; } }
+  let p = 'M' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1);
+  for (let i = 0; i < n - 1; i++) { const h = xs[i + 1] - xs[i]; p += `C${(xs[i] + h / 3).toFixed(1)} ${(ys[i] + m[i] * h / 3).toFixed(1)} ${(xs[i + 1] - h / 3).toFixed(1)} ${(ys[i + 1] - m[i + 1] * h / 3).toFixed(1)} ${xs[i + 1].toFixed(1)} ${ys[i + 1].toFixed(1)}`; }
+  return p;
+}
+/* linhas por mês. o: {labels, series:[{nome,cor,vals,dash,w,fmt,rot}], bars:[...] , ymin,ymax, H, fmt, marcos:[{i,txt}], refs:[{v,txt}] } */
+function lineChart(host, o) {
+  const W = Math.max(host.clientWidth || 600, 280), H = o.H || 270, L = 12, Rr = 18, T = 26, B = 28;
+  const n = o.labels.length, bw = (W - L - Rr) / n;
+  const x = i => L + bw * (i + .5);
+  const vals = o.series.flatMap(s => s.vals).filter(v => v != null);
+  let lo = o.ymin != null ? o.ymin : Math.min(...vals), hi = o.ymax != null ? o.ymax : Math.max(...vals);
+  if (hi === lo) hi = lo + 1;
+  const padv = (hi - lo) * .12; if (o.ymin == null) lo -= padv; if (o.ymax == null) hi += padv;
+  const baseBars = o.bars ? H * .22 : 0;
+  const y = v => T + (H - T - B - baseBars) * (1 - (v - lo) / (hi - lo));
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
+  if (o.bars) {
+    const mb = Math.max(...o.bars, 1);
+    o.bars.forEach((b, i) => { const h = b / mb * (baseBars - 6); s += `<rect x="${x(i) - bw * .32}" y="${H - B - h}" width="${bw * .64}" height="${h}" rx="2" fill="#DCE6E8"/>`; });
+  }
+  s += `<line x1="${L}" x2="${W - Rr}" y1="${H - B}" y2="${H - B}" stroke="#E0E9E9"/>`;
+  (o.refs || []).forEach(r => { s += `<line x1="${L}" x2="${W - Rr}" y1="${y(r.v)}" y2="${y(r.v)}" stroke="#8B9A9F" stroke-dasharray="4 4" stroke-width="1"/><text class="cx" x="${W - Rr}" y="${y(r.v) - 5}" text-anchor="end">${r.txt}</text>`; });
+  (o.marcos || []).forEach(m => { s += `<line x1="${x(m.i)}" x2="${x(m.i)}" y1="${T - 12}" y2="${H - B}" stroke="#06BEAE" stroke-width="1.5" stroke-dasharray="3 3"/><text class="cx" x="${x(m.i) + 5}" y="${T - 2}" style="fill:#048C80;font-weight:700">${m.txt}</text>`; });
+  o.series.forEach(se => {
+    const pts = se.vals.map((v, i) => v == null ? null : [x(i), y(v), i, v]).filter(Boolean);
+    if (!pts.length) return;
+    const solid = se.partial && pts.length > 1 ? pts.slice(0, -1) : pts;
+    s += `<path d="${monotone(solid)}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-linejoin="round" ${se.dash ? 'stroke-dasharray="6 5"' : ''}/>`;
+    if (se.partial && pts.length > 1) s += `<path d="${poly(pts.slice(-2))}" fill="none" stroke="${se.cor}" stroke-width="${se.w || 2.6}" stroke-linecap="round" stroke-dasharray="2 6"/>`;
+    if (se.lab === false) return;
+    if (se.lab === 'last') { const p = pts[pts.length - 1]; s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${se.cor}" stroke-width="2.2"/><text class="cxb" x="${p[0] + 2}" y="${p[1] + (se.below ? 20 : -10)}" text-anchor="end" style="fill:${se.cor === '#A9B8BD' ? '#52656C' : se.cor}">${(se.fmt || o.fmt)(p[3])}</text>`; return; }
+    const mx = pts.reduce((a, b) => b[3] > a[3] ? b : a), mn = pts.reduce((a, b) => b[3] < a[3] ? b : a);
+    const key = new Set([pts[0], pts[pts.length - 1], mx, mn]);
+    key.forEach(p => {
+      const f = (se.fmt || o.fmt)(p[3]);
+      const ix = pts.indexOf(p), nb = [pts[ix - 1], pts[ix + 1]].filter(Boolean), above = p === mx ? true : p === mn ? false : nb.every(q => p[3] >= q[3]);
+      const anchor = p === pts[0] ? 'start' : p === pts[pts.length - 1] ? 'end' : 'middle';
+      s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${se.cor}" stroke-width="2.2"/><text class="cxb" x="${p[0] + (anchor === 'start' ? -2 : anchor === 'end' ? 2 : 0)}" y="${p[1] + (above ? -10 : 19)}" text-anchor="${anchor}" style="fill:${se.cor === '#C9D3D6' || se.cor === '#A9B8BD' ? '#52656C' : se.cor}">${f}</text>`;
+    });
+  });
+  const every = Math.ceil(n / Math.max(Math.floor((W - L - Rr) / 32), 1));
+  o.labels.forEach((l, i) => { if (i % every === 0 || i === n - 1) s += `<text class="cx" x="${x(i)}" y="${H - 8}" text-anchor="middle">${l}</text>`; });
+  host.innerHTML = s + '</svg>';
+}
+/* colunas. o: {labels, vals, cores[], fmt, H, hl:[idx], sub:[...]} */
+function colChart(host, o) {
+  const W = Math.max(host.clientWidth || 500, 260), H = o.H || 200, L = 6, Rr = 6, T = 24, B = 34, n = o.labels.length, bw = (W - L - Rr) / n;
+  const mx = Math.max(...o.vals.filter(v => v != null), 1e-9);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
+  o.vals.forEach((v, i) => {
+    if (v == null) return;
+    const h = v / mx * (H - T - B), cx = L + bw * (i + .5), w = Math.min(bw * .7, 60);
+    s += `<rect x="${cx - w / 2}" y="${H - B - h}" width="${w}" height="${Math.max(h, 1)}" rx="3" fill="${(o.cores && o.cores[i]) || '#042738'}"/>`;
+    if (o.lbl !== false) s += `<text class="cxb" x="${cx}" y="${H - B - h - 6}" text-anchor="middle" style="font-size:${bw < 26 ? 10.5 : 13}px">${o.fmt(v)}</text>`;
+    s += `<text class="cx" x="${cx}" y="${H - 18}" text-anchor="middle" style="font-size:${bw < 26 ? 10.5 : 12}px">${o.labels[i]}</text>`;
+    if (o.sub) s += `<text class="cx" x="${cx}" y="${H - 5}" text-anchor="middle" style="font-size:11px;fill:#8B9A9F">${o.sub[i] || ''}</text>`;
+  });
+  host.innerHTML = s + '</svg>';
+}
+/* barras horizontais empilhadas 100%: seg [{nome,cor,v}] */
+function stack100(segs, o) {
+  const tot = sum(segs.map(s => s.v)) || 1;
+  return `<div style="display:flex;height:30px;border-radius:6px;overflow:hidden">${segs.map(s => { const p = s.v / tot * 100; return `<div style="width:${p}%;background:${s.cor};color:${s.tx || '#fff'};font:700 12px var(--font-display);display:grid;place-items:center;overflow:hidden" title="${esc(s.nome)}: ${fN(s.v)}">${p >= 7 ? fD(p, 0) + '%' : ''}</div>`; }).join('')}</div>
+  <div class="leg" style="margin-top:8px">${segs.map(s => `<span><i class="b" style="background:${s.cor}"></i>${esc(s.nome)} · ${fN(s.v)} (${fD(s.v / tot * 100, 0)}%)</span>`).join('')}</div>`;
+}
+const heatBg = v => `rgba(6,190,174,${(.10 + .78 * Math.min(Math.max(v, 0), 1)).toFixed(2)})`;
+/* tabela de calor mensal: rowsL nomes, ms meses ('AAAA-MM'), f(i,j) → {v 0..1 | null, txt}; escala única verde-água */
+function heatTable(rowsL, ms, f, cls) {
+  const yrs = []; ms.forEach(m => { const y = m.slice(0, 4), u = yrs[yrs.length - 1]; if (u && u[0] === y) u[1]++; else yrs.push([y, 1]); });
+  let h = `<div class="rkw"><div class="ht ${cls || ''}" style="--n:${ms.length}"><div class="ht-y"><i></i>${yrs.map(y => `<b style="grid-column:span ${y[1]}">${y[0]}</b>`).join('')}</div><div class="ht-m"><i></i>${ms.map(m => `<span>${MES[+m.slice(5) - 1]}</span>`).join('')}</div>`;
+  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${ms.map((m, j) => { const c = f(i, j), v = c.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:${heatBg(v)};color:#042738">${c.txt}</div>`; }).join('')}</div>`; });
+  return h + '</div></div>';
+}
+/* colunas empilhadas por mês (ms 'AAAA-MM'); o: {ms, H, groups:[{nome,cor,vals}]} */
+function stackCols(host, o) {
+  const W = Math.max(host.clientWidth || 600, 280), H = o.H || 300, L = 6, Rr = 6, T = 26, B = 50, n = o.ms.length, bw = (W - L - Rr) / n, cw = Math.min(bw * .68, 46);
+  const tot = o.ms.map((_, i) => sum(o.groups.map(g => g.vals[i] || 0))), mx = Math.max(...tot, o.ref || 0, 1), mxI = tot.indexOf(Math.max(...tot)), narrow = bw < 36;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
+  o.ms.forEach((m, i) => {
+    const cx = L + bw * (i + .5); let y0 = H - B;
+    const pa = o.partial && o.partial(m);
+    o.groups.forEach(g => { const v = g.vals[i] || 0; if (!v) return; const h = v / mx * (H - T - B); y0 -= h; s += `<rect x="${cx - cw / 2}" y="${y0}" width="${cw}" height="${Math.max(h - 1, .6)}" fill="${g.cor}" ${pa ? 'fill-opacity=".45"' : ''}/>`; });
+    if (!narrow || i === mxI || i === n - 1) s += `<text class="cxb" x="${cx}" y="${y0 - 6}" text-anchor="middle" style="font-size:${narrow ? 11 : 12.5}px">${fN(tot[i])}${pa ? '*' : ''}</text>`;
+    const nm = MES[+m.slice(5) - 1]; s += `<text class="cx" x="${cx}" y="${H - B + 16}" text-anchor="middle" style="font-size:${narrow ? 10.5 : 12}px">${narrow ? nm[0].toUpperCase() : nm}</text>`;
+  });
+  let i0 = 0; while (i0 < n) {
+    let i1 = i0; while (i1 + 1 < n && o.ms[i1 + 1].slice(0, 4) === o.ms[i0].slice(0, 4)) i1++;
+    const xa = L + bw * i0 + 4, xb = L + bw * (i1 + 1) - 4;
+    s += `<line x1="${xa}" x2="${xb}" y1="${H - B + 28}" y2="${H - B + 28}" stroke="#CCD9D9" stroke-width="1"/><text class="cxb" x="${(xa + xb) / 2}" y="${H - B + 44}" text-anchor="middle">${o.ms[i0].slice(0, 4)}</text>`;
+    i0 = i1 + 1;
+  }
+  if (o.ref) { const yr = H - B - o.ref / mx * (H - T - B); s += `<line x1="${L}" x2="${W - Rr}" y1="${yr}" y2="${yr}" stroke="#06BEAE" stroke-width="1.6" stroke-dasharray="5 4"/><text class="cxb" x="${W - Rr}" y="${yr - 5}" text-anchor="end" style="fill:#048C80;font-size:11.5px;paint-order:stroke;stroke:#fff;stroke-width:4px">Disponível: ${o.ref}</text>`; }
+  host.innerHTML = s + '</svg>';
+}
+
+/* ---------- painel lateral (detalhe ao clicar) ---------- */
+function openDrawer(titulo, html) {
+  $('#drwT').textContent = titulo; $('#drwB').innerHTML = html; $('#drw').classList.add('on'); $('#drwBg').classList.add('on'); $('#drwB').scrollTop = 0;
+}
+function closeDrawer() { $('#drw').classList.remove('on'); $('#drwBg').classList.remove('on'); }
+function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('on'), 3200); }
+const INFO = {};
+function showInfo(k) { const i = INFO[k]; if (i) openDrawer(i.t, `<h4>O que mostra</h4><p>${i.o}</p><h4>Como calculamos</h4><p>${i.c}</p>`); }
+/* tabela de atendimentos para o painel lateral */
+function tabelaAtend(rs, o) {
+  o = o || {}; const lim = o.lim || 300, lista = rs.slice(0, lim);
+  return `<p style="color:var(--tx2)">${fN(rs.length)} atendimento(s)${rs.length > lim ? ` · mostrando os ${lim} primeiros` : ''}.</p>
+  <table class="tb"><tr><th>Linha</th><th>Data</th><th>Embarcação</th><th>Contrato · local</th><th>Eq.</th><th class="r">Tempo</th>${o.det ? '<th>Detalhe</th>' : ''}</tr>
+  ${lista.map(r => `<tr><td>${r.id}</td><td>${fDt(r.iso)}<br><small style="color:var(--tx3)">${hhmm(r.sol)}–${hhmm(r.fim)}</small></td><td>${esc(r.emb)}<br><small style="color:var(--tx3)">${esc(r.op)}</small></td><td>${esc(r.ct)}<br><small style="color:var(--tx3)">${esc(r.loc)}</small></td><td>${esc(r.eq1)}</td><td class="r"><b>${r.t == null ? '–' : fD(r.t, 0) + ' min'}</b></td>${o.det ? `<td>${esc(o.det(r))}</td>` : ''}</tr>`).join('')}</table>`;
+}
+function csv(nome, cab, linhas) {
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const txt = '﻿' + [cab.map(q).join(';'), ...linhas.map(l => l.map(q).join(';'))].join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+/* grade de calor com colunas agrupadas: cols [{g, n}], f(i,j) → {v 0..1|null, txt, sub} */
+function heatGrid(rowsL, cols, f, cls) {
+  const gs = []; cols.forEach(c => { const u = gs[gs.length - 1]; if (u && u[0] === c.g) u[1]++; else gs.push([c.g, 1]); });
+  let h = `<div class="rkw"><div class="ht hg ${cls || ''}" style="--n:${cols.length}"><div class="ht-y"><i></i>${gs.map(g => `<b style="grid-column:span ${g[1]}">${g[0]}</b>`).join('')}</div><div class="ht-m"><i></i>${cols.map(c => `<span>${c.n}</span>`).join('')}</div>`;
+  rowsL.forEach((r, i) => { h += `<div class="ht-r"><div class="ht-n">${esc(r)}</div>${cols.map((c, j) => { const x = f(i, j), v = x.v; return v == null ? '<div class="ht-c e">·</div>' : `<div class="ht-c" style="background:${heatBg(v)};color:#042738">${x.txt}<small>${x.sub || ''}</small></div>`; }).join('')}</div>`; });
+  return h + '</div></div>';
+}
+
+/* colunas pareadas por mês (ano anterior × atual) com variação embaixo. o: {labels, a, b, fmt, dfmt, dir:'up'|'down'|'neu', H} */
+function pairChart(host, o) {
+  const W = Math.max(host.clientWidth || 600, 300), H = o.H || 300, L = 6, Rr = 6, T = 30, B = 58, n = o.labels.length, bw = (W - L - Rr) / n;
+  const vals = o.a.concat(o.b).filter(v => v != null), mx = Math.max(...vals, 1e-9) * 1.04, cw = Math.min(bw * .38, 30), narrow = bw < 38;
+  const hy = v => (H - T - B) * v / mx;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;
+  s += `<line x1="${L}" x2="${W - Rr}" y1="${H - B}" y2="${H - B}" stroke="#E0E9E9"/>`;
+  for (let i = 0; i < n; i++) {
+    const cx = L + bw * (i + .5), va = o.a[i], vb = o.b[i];
+    if (va != null) { const h = hy(va); s += `<rect x="${cx - cw - 1}" y="${H - B - h}" width="${cw}" height="${Math.max(h, 1)}" rx="2.5" fill="#C9D3D6"/>`; if (!narrow) s += `<text class="cx" x="${cx - cw / 2 - 1}" y="${H - B - h - 5}" text-anchor="middle" style="font-size:10.5px;fill:#6C7D83">${o.fmt(va)}</text>`; }
+    if (vb != null) { const h = hy(vb); s += `<rect x="${cx + 1}" y="${H - B - h}" width="${cw}" height="${Math.max(h, 1)}" rx="2.5" fill="#042738"/>`; s += `<text class="cxb" x="${cx + cw / 2 + 1}" y="${H - B - h - 5}" text-anchor="middle" style="font-size:${narrow ? 9.5 : 11.5}px">${o.fmt(vb)}</text>`; }
+    s += `<text class="cx" x="${cx}" y="${H - B + 17}" text-anchor="middle" style="font-size:${narrow ? 10.5 : 12}px">${narrow ? o.labels[i][0].toUpperCase() : o.labels[i]}</text>`;
+    if (va != null && vb != null && !narrow) {
+      const d = vb - va, good = o.dir === 'neu' ? null : (o.dir === 'down' ? d < 0 : d > 0), tx = (d > 0 ? '▲ +' : d < 0 ? '▼ −' : '= ') + o.dfmt(Math.abs(d));
+      s += `<text class="cxb" x="${cx}" y="${H - B + 37}" text-anchor="middle" style="font-size:11px;fill:${good == null ? '#6C7D83' : good ? '#048C80' : '#042738'}">${tx}</text>`;
+    }
+  }
+  host.innerHTML = s + '</svg>';
+}
+
+/* ===================== ABAS ===================== */
+const COR = { a25: '#A9B8BD', a26: '#042738', teal: '#06BEAE', deep: '#048C80', mid: '#5F8793' };
+const EQ_COR = { A: '#042738', B: '#5F8793', C: '#06BEAE', D: '#C0392B' };
+EQ_COR.D = '#103C52';
+const dp = (c, p) => delta(c, p, { un: 'pp', dir: 'up' });
+const dm = (c, p) => delta(c, p, { un: 'abs', dir: 'down', d: 1, suf: ' min' });
+const dn = (c, p) => delta(c, p, { dir: 'up' });
+const dcr = (c, p) => delta(c, p, { un: 'abs', dir: 'down', d: 0 });
+const stats3 = (A, B) => [
+  `${fP(A.pct)}<small>${B ? dp(A.pct, B.pct) : ''}</small>`,
+  `${fD(A.avg, 1)} min<small>${B ? dm(A.avg, B.avg) : ''}</small>`,
+  `${fN(A.crit)}<small>${B ? dcr(A.crit, B.crit) : ''}</small>`];
+const H3 = ['% na meta', 'Tempo médio', 'Críticos >60'];
+function pctMes(rs, ms) { const g = groupBy(rs, r => r.ym); return ms.map(m => { const a = g.get(m); return a && a.length >= 10 ? a.filter(r => r.na).length / a.length : null; }); }
+function sobreMes(rs, ms, W) { const g = groupBy(rs, r => r.ym); return ms.map(m => { const a = g.get(m); return a && a.length >= 10 ? a.filter(r => r['c' + W] >= 2).length / a.length : null; }); }
+const nMes = (rs, ms) => { const g = groupBy(rs, r => r.ym); return ms.map(m => (g.get(m) || []).length); };
+function overlay(rs, fn) {   // série por mês do ano atual × anterior (jan..mês atual)
+  const out = {}; [S.Y - 1, S.Y].forEach(y => { const ms = []; for (let m = 1; m <= 12; m++) ms.push(y + '-' + String(m).padStart(2, '0')); out[y] = fn(rs.filter(r => r.y === y), ms); });
+  return out;
+}
+const mesesAno = () => { const a = []; for (let m = 1; m <= 12; m++) a.push(MES[m - 1]); return a; };
+const lastFull = () => { const m = +S.cut.slice(0, 2), d = +S.cut.slice(3); const dim = new Date(S.Y, m, 0).getDate(); return d >= dim - 1 ? S.Y + '-' + String(m).padStart(2, '0') : (m > 1 ? S.Y + '-' + String(m - 1).padStart(2, '0') : null); };
+function rankBy(rs, keyf, o) {
+  o = o || {}; const g = groupBy(rs, keyf); return [...g.entries()].filter(([k]) => k !== '' && k != null);
+}
+
+/* ---------- apoio: clientes, calor mensal, comparativos ---------- */
+const CLI_COR = ['#042738', '#06BEAE', '#5F8793', '#A9B8BD'];
+const clientes = rs => [...groupBy(rs, r => r.ct).entries()].filter(([k]) => k).sort((a, b) => b[1].length - a[1].length).map(([k]) => k);
+const cliCor = (list, k) => CLI_COR[Math.min(list.indexOf(k), CLI_COR.length - 1)];
+const dv = (c, p) => dn(c, p).replace(/class="d (good|att)"/, 'class="d neu"');   // volume: variação sem juízo de valor
+function heatMes(linhas, ms) {   // linhas [[nome, rs]] → % na meta por mês
+  let P = linhas.map(l => pctMes(l[1], ms));
+  const keep = ms.map((_, j) => P.some(p => p[j] != null)); ms = ms.filter((_, j) => keep[j]); P = P.map(p => p.filter((_, j) => keep[j]));
+  return heatTable(linhas.map(l => l[0]), ms, (i, j) => ({ v: P[i][j], txt: P[i][j] == null ? '' : Math.round(P[i][j] * 100) }));
+}
+function acum(rs, y) {
+  const c = Array(12).fill(0); let last = 0;
+  rs.forEach(r => { if (r.y === y) { c[r.mo - 1]++; if (r.mo > last) last = r.mo; } });
+  let a = 0; return c.map((v, m) => { a += v; return m < last ? a : null; });
+}
+function cmpAnual(base) {
+  const Y = S.Y, full = base.filter(r => r.y === Y - 1), p = base.filter(r => inWin(r, Y - 1)), c = base.filter(r => inWin(r, Y));
+  if (!full.length) return '';
+  const F = agg(full), P = agg(p), C = agg(c);
+  const mm = +S.cut.slice(0, 2), dd = +S.cut.slice(3), doy = y => Math.round((Date.UTC(y, mm - 1, dd) - Date.UTC(y, 0, 0)) / 864e5);
+  const dF = Math.round((Date.UTC(Y, 0, 1) - Date.UTC(Y - 1, 0, 1)) / 864e5), dP = doy(Y - 1), dC = doy(Y);
+  const dmn = (a, b) => delta(a, b, { un: 'abs', dir: 'down', d: 1, suf: ' min' });
+  const rows = [
+    ['Atendimentos', a => a.n, fN, dv(C.n, P.n), null],
+    ['Atendimentos por dia', (a, d) => a.n / d, v => fD(v, 1), dv(C.n / dC, P.n / dP), null],
+    ['Dentro da meta de 15 min', a => a.pct, fP, dp(C.pct, P.pct), 1],
+    ['Tempo médio de atendimento', a => a.avg, v => fD(v, 1) + ' min', dm(C.avg, P.avg), 0],
+    ['Espera média até o início', a => a.espM, v => fD(v, 1) + ' min', dmn(C.espM, P.espM), 0],
+    ['Execução média', a => a.exeM, v => fD(v, 1) + ' min', dmn(C.exeM, P.exeM), 0],
+    ['Pontos críticos (> 60 min)', a => a.critP, fP, delta(C.critP, P.critP, { un: 'pp', dir: 'down' }), 0],
+    ['Atendimentos em sobreposição', a => a.simP, fP, delta(C.simP, P.simP, { un: 'pp', dir: 'down' }), 0]
+  ];
+  return `<div class="yr"><div class="yr-k"><span><i style="background:${COR.a25}"></i>${lblPer(Y - 1)}</span><span><i style="background:${COR.a26}"></i>${lblPer(Y)}</span></div>` + rows.map(r => {
+    const vp = r[1](P, dP), vc = r[1](C, dC), vf = r[1](F, dF), mx = Math.max(vp, vc, 1e-9);
+    const w = v => Math.max(v / mx * 78, 1.2);
+    return `<div class="yr-r"><div class="yr-l">${r[0]}</div><div class="yr-b"><div class="yb o" style="width:${w(vp)}%"><span>${r[2](vp)}</span></div><div class="yb" style="width:${w(vc)}%"><span>${r[2](vc)}</span></div></div><div class="yr-d">${r[3]}</div></div>`;
+  }).join('') + '</div>';
+}
+/* contribuição de cada grupo para a variação do % na meta: soma exata = variação total */
+function contrib(cur, prv, keyf, keys) {
+  const N = cur.length || 1, M = prv.length || 1;
+  return keys.map(k => { const a = cur.filter(r => keyf(r) === k), b = prv.filter(r => keyf(r) === k); return { k, c: (a.filter(r => r.na).length / N - b.filter(r => r.na).length / M) * 100, a: a.length ? a.filter(r => r.na).length / a.length : null, b: b.length ? b.filter(r => r.na).length / b.length : null }; }).filter(x => x.a != null || x.b != null);
+}
+function barDiv(rows, un) {   // [{nome, v, sub}] barras divergentes: perda marinho, ganho verde-água
+  const mx = Math.max(...rows.map(r => Math.abs(r.v)), 1e-9);
+  return `<div class="dc">${rows.map(r => `<div class="dc-r"><div class="rk-nm">${esc(r.nome)}${r.sub ? `<small>${r.sub}</small>` : ''}</div><div class="dc-b"><i style="width:${Math.max(Math.abs(r.v) / mx * 72, 1.5)}%;background:${(r.bad != null ? r.bad : r.v < 0) ? '#042738' : '#06BEAE'}"></i><span style="left:calc(${Math.max(Math.abs(r.v) / mx * 72, 1.5)}% + 8px)">${r.v > 0 ? '+' : r.v < 0 ? '−' : ''}${fD(Math.abs(r.v), 1)} ${un}</span></div></div>`).join('')}</div>`;
+}
+function decompor(cur, prv, A, B) {
+  if (!prv.length || !cur.length) return null;
+  const dT = A.avg - B.avg, dE = A.espM - B.espM, dX = A.exeM - B.exeM, tot = (A.pct - B.pct) * 100;
+  const eqs = ['A', 'B', 'C', 'D'].filter(e => cur.some(r => r.eq1 === e) || prv.some(r => r.eq1 === e));
+  const cE = contrib(cur, prv, r => r.eq1, eqs).sort((x, y) => x.c - y.c), cC = contrib(cur, prv, r => r.ct, clientes(cur.concat(prv)).filter(k => cur.filter(r => r.ct === k).length + prv.filter(r => r.ct === k).length >= 100)).sort((x, y) => x.c - y.c);
+  const col = (t, s, b) => `<div class="dx-c"><h4>${t}</h4><p class="sub">${s}</p>${b}</div>`;
+  const html = `<div class="grid g3">
+    ${col('Por causa', `Tempo médio ${dT >= 0 ? '+' : '−'}${fD(Math.abs(dT), 1)} min`, barDiv([{ nome: 'Espera até o início', v: dE, sub: `${fD(B.espM, 1)} → ${fD(A.espM, 1)} min` }, { nome: 'Execução', v: dX, sub: `${fD(B.exeM, 1)} → ${fD(A.exeM, 1)} min` }].map(x => ({ ...x, bad: x.v > 0 })), 'min'))}
+    ${col('Por equipe', `Meta ${tot >= 0 ? '+' : '−'}${fD(Math.abs(tot), 1)} p.p. no total`, barDiv(cE.map(x => ({ nome: 'Equipe ' + x.k, v: x.c, sub: `${x.b == null ? '–' : fP0(x.b)} → ${x.a == null ? '–' : fP0(x.a)} na meta` })), 'p.p.'))}
+    ${col('Por contrato', 'contratos com 100 ou mais atendimentos', barDiv(cC.map(x => ({ nome: x.k, v: x.c, sub: `${x.b == null ? '–' : fP0(x.b)} → ${x.a == null ? '–' : fP0(x.a)} na meta` })), 'p.p.'))}
+  </div>`;
+  return { sub: 'Quanto cada equipe e contrato contribuiu para a variação do % na meta, e quanto do aumento de tempo vem da espera ou da execução', html };
+}
+function diagnostico(cur, prv, A, B, pm, ms, lf) {
+  if (!prv.length || !cur.length) return null;
+  const out = [], tot = (A.pct - B.pct) * 100, dT = A.avg - B.avg, dE = A.espM - B.espM, dX = A.exeM - B.exeM;
+  out.push([`${tot >= 0 ? '+' : '−'}${fD(Math.abs(tot), 1)} <em>p.p.</em>`, `Meta de 15 min: ${fP0(B.pct)} → ${fP0(A.pct)}`, `Com ${fP0(Math.abs(A.n / B.n - 1))} ${A.n < B.n ? 'menos' : 'mais'} atendimentos que no mesmo período do ano anterior; tempo médio de ${fD(B.avg, 1)} para ${fD(A.avg, 1)} min.`, 'resumo']);
+  if (Math.abs(dT) >= .3 && dE + dX !== 0) { const sh = dE / (dE + dX); out.push([`${fD(Math.max(0, Math.min(1, sh)) * 100, 0)}<em>%</em>`, `Do ${dT > 0 ? 'aumento' : 'recuo'} do tempo médio vem da espera`, `A espera até o início ${dE >= 0 ? 'subiu' : 'caiu'} ${fD(Math.abs(dE), 1)} min e a execução variou ${fD(Math.abs(dX), 1)} min. ${Math.abs(dX) < .5 ? 'O problema está antes de a operação começar (mobilização e fila), não na execução.' : ''}`, 'operacao']); }
+  const eqs = ['A', 'B', 'C', 'D'].filter(e => cur.some(r => r.eq1 === e)), cE = contrib(cur, prv, r => r.eq1, eqs).sort((x, y) => x.c - y.c);
+  if (cE.length && cE[0].c < -1) out.push([`Equipe ${cE[0].k}`, `Maior contribuição para a queda: ${fD(cE[0].c, 1).replace('-', '−')} p.p.`, `De ${cE[0].b == null ? '–' : fP0(cE[0].b)} para ${cE[0].a == null ? '–' : fP0(cE[0].a)} na meta. Veja o quadro abaixo e a aba Equipes.`, 'equipes']);
+  const lfI = ms.indexOf(lf), pI = pm.reduce((b, v, i) => v != null && (b < 0 || v < pm[b]) ? i : b, -1);
+  if (lfI >= 0 && pI >= 0 && pm[lfI] != null && pI !== lfI) out.push([`${fP0(pm[lfI])}`, `Último mês fechado (${mLbl(ms[lfI])})`, `${pm[lfI] > pm[pI] ? 'Recuperação' : 'Sem recuperação'} sobre o pior mês, ${mLbl(ms[pI])}, com ${fP0(pm[pI])}.`, 'resumo']);
+  return out;
+}
+/* ---------- 1 · RESUMO ---------- */
+function vResumo() {
+  const base = S.rows, cur = base.filter(r => inWin(r, S.Y)), prv = base.filter(r => inWin(r, S.Y - 1));
+  const A = agg(cur, 'E'), B = agg(prv, 'E'), lc = lblPer(S.Y), lp = lblPer(S.Y - 1);
+  const eqs = ['A', 'B', 'C', 'D'].map(e => ({ e, a: agg(cur.filter(r => r.eq1 === e)), b: agg(prv.filter(r => r.eq1 === e)) })).filter(x => x.a.n);
+  const bestEq = [...eqs].sort((x, y) => y.a.pct - x.a.pct)[0], worstEq = [...eqs].sort((x, y) => x.a.pct - y.a.pct)[0];
+  const ms = meses(cur), pm = pctMes(cur, ms);
+  const piorI = pm.reduce((b, v, i) => v != null && (b < 0 || v < pm[b]) ? i : b, -1);
+  const lf = lastFull(), lfI = ms.indexOf(lf);
+  const cts = [...groupBy(cur, r => r.ct).entries()].filter(([k, a]) => k && a.length >= 100).map(([k, a]) => ({ k, a: agg(a) })).sort((x, y) => y.a.pct - x.a.pct);
+  const ops = ['COLOCAÇÃO', 'RETIRADA'].map(o => ({ o, a: agg(cur.filter(r => r.op === o)) }));
+  const bad = agg(base).bad, badP = bad / base.length;
+  const ptsPos = [], ptsNeg = [];
+  if (bestEq) ptsPos.push([`EQUIPE ${bestEq.e} <em>${fP0(bestEq.a.pct)}</em>`, 'Melhor cumprimento da meta', `${fN(bestEq.a.n)} atendimentos; tempo médio de ${fD(bestEq.a.avg, 1)} min. Referência de método para as demais equipes.`, 'equipes']);
+  if (piorI >= 0 && lfI >= 0 && pm[lfI] != null && pm[lfI] > pm[piorI] + 0.05) ptsPos.push([`${fP0(pm[piorI])} → <em>${fP0(pm[lfI])}</em>`, 'Recuperação desde o pior mês', `${mLbl(ms[piorI])} foi o menor índice; ${mLbl(ms[lfI])} já mostra reação.`, 'resumo']);
+  if (cts.length) ptsPos.push([`${esc(cts[0].k)} <em>${fP0(cts[0].a.pct)}</em>`, 'Contrato com melhor resultado', `${fN(cts[0].a.n)} atendimentos no período; tempo médio de ${fD(cts[0].a.avg, 1)} min.`, 'contratos']);
+  const bo = [...ops].sort((x, y) => y.a.pct - x.a.pct)[0];
+  ptsPos.push([`${bo.o === 'RETIRADA' ? 'RETIRADA' : 'COLOCAÇÃO'} <em>${fP0(bo.a.pct)}</em>`, 'Operação mais aderente à meta', `Tempo médio de ${fD(bo.a.avg, 1)} min contra ${fD(ops.find(x => x !== bo).a.avg, 1)} min da outra operação.`, 'operacao']);
+  ptsNeg.push([`${fP0(B.pct)} → ${fP0(A.pct)}`, 'Queda no cumprimento da meta de 15 min', `${lp} × ${lc}: ${fD((A.pct - B.pct) * 100, 1)} p.p. Tempo médio foi de ${fD(B.avg, 1)} para ${fD(A.avg, 1)} min.`, 'contratos']);
+  if (worstEq) ptsNeg.push([`EQUIPE ${worstEq.e} ${fP0(worstEq.a.pct)}`, 'Menor cumprimento da meta', `Responde por ${fP0((worstEq.a.n - worstEq.a.ok) / (A.n - A.ok))} dos atendimentos fora da meta com ${fP0(worstEq.a.n / A.n)} do volume.`, 'equipes']);
+  ptsNeg.push([`${fP0(A.simP)}`, 'Atendimentos em sobreposição', `${fN(A.sim)} atendimentos coincidiram com outro; ${fN(A.simEq)} deles com a mesma equipe em paralelo. Pico de ${cur.reduce((m, r) => Math.max(m, r.cE), 0)} ao mesmo tempo.`, 'simultaneidade']);
+  ptsNeg.push([`${fN(A.crit)}`, 'Pontos críticos acima de 60 min', `${fP(A.critP)} do período; ${fN(cur.filter(r => r.cr && !r.obs).length)} sem observação registrada.`, 'operacao']);
+  ptsNeg.push([`${fN(bad)}`, 'Lançamentos com inconsistência', `${fP(badP)} das linhas da planilha pedem correção (${fN(base.filter(r => r.bad && r.fl.some(c => CHK[c].sev === 'Alta')).length)} de gravidade alta).`, 'qualidade']);
+  const li = p => `<div class="li" data-go="${p[3]}"><div class="n">${p[0]}</div><div class="lt"><b>${p[1]}</b><span>${p[2]}</span></div></div>`;
+  const ov = overlay(base, pctMes), nv = overlay(base, nMes);
+  const cmp = cmpAnual(base);
+  const dg = diagnostico(cur, prv, A, B, pm, ms, lf), dec = decompor(cur, prv, A, B);
+  const html = `
+  <div class="hero"><div class="l">
+    <div class="eyebrow">Meta de 15 minutos · ${lc} · dados até ${fDt(S.max)}</div>
+    <div class="big">${fD(A.pct * 100, 0)}<em>%</em></div>
+    <p>dos atendimentos foram concluídos em até 15 min da solicitação. Em ${lp} eram <b>${fP0(B.pct)}</b> ${dp(A.pct, B.pct)}.</p>
+    <div class="rowk dk">
+      <div class="hk"><b>${fN(A.n)}</b><span>atendimentos ${dn(A.n, B.n).replace('class="d good"', 'class="d neu"').replace('class="d att"', 'class="d neu"')}</span></div>
+      <div class="hk"><b>${fD(A.avg, 1)} <em>min</em></b><span>tempo médio ${dm(A.avg, B.avg)}</span></div>
+      <div class="hk"><b>${fD(A.med, 0)} <em>min</em></b><span>mediana (meta 15)</span></div>
+    </div></div>
+    <div class="r side dk">
+      <div><div class="lb">Colocação × retirada na meta</div><div class="v">${fP0(ops[0].a.pct)} <em>×</em> ${fP0(ops[1].a.pct)}</div><div class="nt">${fN(ops[0].a.n)} colocações · ${fN(ops[1].a.n)} retiradas</div></div>
+      <div><div class="lb">Atendimentos em sobreposição</div><div class="v">${fP0(A.simP)} ${delta(A.simP, B.simP, { un: 'pp', dir: 'down' })}</div><div class="nt">mais de um atendimento ao mesmo tempo</div></div>
+      <div><div class="lb">Pontos críticos (> 60 min)</div><div class="v">${fN(A.crit)} <em>·</em> ${fP(A.critP)}</div><div class="nt">${dcr(A.crit, B.crit)} vs ${lp}</div></div>
+    </div></div>
+  ${dg ? `<div class="grid" style="margin-top:16px">${card('Diagnóstico', `O que os números dizem sobre ${lc} contra ${lp}`, `<div class="lst">${dg.map(li).join('')}</div>`, { cls: 'dx' })}</div>` : ''}
+  <div class="grid" style="margin-top:16px">${card('Linha do tempo', 'Marcos identificados automaticamente na base · role para o lado', timelineHtml(), { info: 'tl' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Evolução mensal', `${S.Y} contra ${S.Y - 1}, mês a mês · variação sobre o mesmo mês do ano anterior`, `<div class="chips">${EVM.map(m => `<button class="chip ${S.ev === m[0] ? 'on' : ''}" data-ev="${m[0]}">${m[1]}</button>`).join('')}</div><div class="leg"><span><i class="b" style="background:#C9D3D6"></i>${S.Y - 1}</span><span><i class="b" style="background:#042738"></i>${S.Y}</span></div><div id="ch1"></div>`, { info: 'evol' })}</div>
+  ${cmp ? `<div class="grid" style="margin-top:16px">${card('Comparativo entre anos', `${lblPer(S.Y - 1)} contra ${lblPer(S.Y)} · verde-água melhora, marinho piora, cinza volume`, cmp, { info: 'anual' })}</div>` : ''}
+  ${dec ? `<div class="grid" style="margin-top:16px">${card('De onde vem a queda', dec.sub, dec.html, { info: 'queda' })}</div>` : ''}
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Destaques positivos', '', `<div class="lst">${ptsPos.slice(0, 4).map(li).join('')}</div>`, { cls: 'pos' })}
+    ${card('Pontos de atenção', '', `<div class="lst">${ptsNeg.slice(0, 5).map(li).join('')}</div>`, { cls: 'neg' })}
+  </div>`;
+  return {
+    html, after() {
+      const em = EVM.find(m => m[0] === S.ev) || EVM[0], lfm = lastFull(), cap = (arr, y) => arr.map((v, i) => y === S.Y && lfm && (S.Y + '-' + String(i + 1).padStart(2, '0')) > lfm ? null : v);
+      const o = overlay(base, em[2]);
+      pairChart($('#ch1'), { labels: mesesAno(), a: cap(o[S.Y - 1], S.Y - 1), b: cap(o[S.Y], S.Y), fmt: em[3], dfmt: em[4], dir: em[5], H: 320 });
+    }
+  };
+}
+
+/* ---------- 2 · VOLUME (acumulado mensal por cliente) ---------- */
+S.yv = null;
+function vVolume() {
+  const f2 = { ...S.f, ct: '', per: 'all' }, base = filt(S.rows, f2), P = periodo({ ...S.f, ct: '' }), A = agg(P.cur), B = P.prv && agg(P.prv);
+  const cl = clientes(base), ms = meses(base);
+  const yv = S.yv && base.some(r => r.y === S.yv) ? S.yv : S.Y;
+  const mc = (rs, m) => rs.filter(r => r.ym === m).length;
+  const full = ms.filter(m => +m.slice(0, 4) < S.Y || m <= (lastFull() || '')); const mesMax = ms.filter(m => full.includes(m)).reduce((b, m) => !b || mc(base, m) > mc(base, b) ? m : b, null);
+  const dias = (() => { const mm = +S.cut.slice(0, 2), dd = +S.cut.slice(3); return Math.round((Date.UTC(S.Y, mm - 1, dd) - Date.UTC(S.Y, 0, 0)) / 864e5); })();
+  const lider = cl[0] ? agg(P.cur.filter(r => r.ct === cl[0])) : null, ltot = cl[0] ? P.cur.filter(r => r.ct === cl[0]).length / (P.cur.length || 1) : 0;
+  const html = `
+  <div class="grid g4">
+    ${kpi('Atendimentos acumulados', fN(A.n), (B ? dv(A.n, B.n) + ' vs ' + P.lp : P.lc), { dark: true })}
+    ${kpi('Média por dia', fD(A.n / dias, 1), B ? dv(A.n / dias, B.n / dias) + ' vs ' + P.lp : P.lc)}
+    ${kpi('Mês de maior volume', mesMax ? fN(mc(base, mesMax)) : '–', mesMax ? 'em ' + mLbl(mesMax) + ' · meses fechados' : '')}
+    ${kpi('Cliente líder', cl[0] ? esc(cl[0]) : '–', cl[0] ? fP0(ltot) + ' dos atendimentos em ' + P.lc : '')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Atendimentos por mês e por cliente', 'Volume mensal desde o início da série · mês em andamento em tom claro (*)', '<div class="leg" id="lgv"></div><div id="chv"></div>', { info: 'volume' })}</div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Acumulado no ano', `Atendimentos somados mês a mês · ${S.Y} × ${S.Y - 1}`, `<div class="leg"><span><i style="background:${COR.a26}"></i>${S.Y}</span><span><i style="background:${COR.a25}"></i>${S.Y - 1}</span></div><div id="cha"></div>`, { info: 'acumulado' })}
+    ${card('Acumulado por cliente', `${P.lc}${B ? ' × ' + P.lp : ''} · barra clara = período anterior`, '<div id="rkv"></div>')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Mês a mês por cliente', 'Quantidade de atendimentos, total do mês e acumulado no ano', `<div class="chips">${[...new Set(base.map(r => r.y))].sort().map(y => `<button class="chip ${y === yv ? 'on' : ''}" data-yv="${y}">${y}</button>`).join('')}</div><div id="tbv"></div>`, { tog: true })}</div>`;
+  return {
+    html, after() {
+      $('#lgv').innerHTML = cl.map(k => `<span><i class="b" style="background:${cliCor(cl, k)}"></i>${esc(k)}</span>`).join('');
+      stackCols($('#chv'), { ms, H: 300, partial: m => +m.slice(0, 4) === S.Y && m > (lastFull() || ''), groups: cl.map(k => ({ nome: k, cor: cliCor(cl, k), vals: ms.map(m => base.filter(r => r.ym === m && r.ct === k).length) })) });
+      const a1 = acum(base, S.Y - 1), a2 = acum(base, S.Y);
+      lineChart($('#cha'), { labels: mesesAno(), H: 250, ymin: 0, fmt: v => fN(v), series: [{ cor: COR.a25, vals: a1, lab: 'last', w: 2.4 }, { cor: COR.a26, vals: a2, lab: 'last', w: 3, below: true, partial: (() => { const li = a2.reduce((b, v, i) => v != null ? i : b, -1), lf = lastFull(); return li >= 0 && (!lf || S.Y + '-' + String(li + 1).padStart(2, '0') > lf); })() }] });
+      $('#rkv').innerHTML = ranking(cl.map(k => { const a = P.cur.filter(r => r.ct === k), b = P.prv ? P.prv.filter(r => r.ct === k) : []; return { nome: k, key: 'ct|' + k, v: a.length, vp: P.prv ? b.length : null, cols: [(p => p > 0 && p < .01 ? '<1%' : fP0(p))(a.length / (P.cur.length || 1)), b.length ? dv(a.length, b.length) : '–'] }; }), { fmt: v => fN(v), hn: 'Cliente', hv: 'Atendimentos', cols: ['Part.', 'Var.'], total: { nome: 'Total', v: P.cur.length, cols: ['100%', B ? dv(P.cur.length, P.prv.length) : '–'] } });
+      const rs = base.filter(r => r.y === yv), pr = base.filter(r => r.y === yv - 1), last = rs.reduce((m, r) => Math.max(m, r.mo), 0), lf = lastFull();
+      const cell = (a, m, k) => a.filter(r => r.mo === m && (k == null || r.ct === k)).length;
+      const lin = []; let ac = 0;
+      for (let m = 1; m <= last; m++) { const v = cl.map(k => cell(rs, m, k)), t = cell(rs, m); ac += t; lin.push({ m, v, t, ac, p: pr.length ? cell(pr, m) : null, parcial: yv === S.Y && lf != null && S.Y + '-' + String(m).padStart(2, '0') > lf }); }
+      const mx = cl.map((_, j) => Math.max(...lin.map(l => l.v[j]))), mxt = Math.max(...lin.map(l => l.t));
+      const tot = cl.map((_, j) => sum(lin.map(l => l.v[j]))), tt = sum(lin.map(l => l.t)), tp = pr.length ? sum(lin.filter(l => !l.parcial).map(l => l.p)) : null, ttf = sum(lin.filter(l => !l.parcial).map(l => l.t));
+      $('#tbv').innerHTML = `<div class="rkw"><table class="cmp mt"><tr><th>Mês</th>${cl.map(k => `<th>${esc(k)}</th>`).join('')}<th class="cur">Total</th><th>Acumulado</th><th>vs ${yv - 1}</th></tr>
+      ${lin.map(l => `<tr><td>${MES[l.m - 1]}/${String(yv).slice(2)}${l.parcial ? ' <small>parcial</small>' : ''}</td>${l.v.map((v, j) => `<td style="--h:${(mx[j] ? v / mx[j] : 0).toFixed(2)}">${fN(v)}</td>`).join('')}<td class="cur" style="--h:${(l.t / mxt).toFixed(2)}">${fN(l.t)}</td><td style="--h:${(l.ac / ac).toFixed(2)}">${fN(l.ac)}</td><td>${l.p != null && !l.parcial ? dv(l.t, l.p) : '–'}</td></tr>`).join('')}
+      <tr class="tot"><td>Total</td>${tot.map(v => `<td>${fN(v)}</td>`).join('')}<td class="cur">${fN(tt)}</td><td>${fN(ac)}</td><td>${tp != null ? dv(ttf, tp) : '–'}</td></tr></table></div>`;
+    }
+  };
+}
+
+/* ---------- 3 · CONTRATOS ---------- */
+function vContratos() {
+  const P = periodo(), A = agg(P.cur), B = P.prv && agg(P.prv);
+  const cts = [...groupBy(P.cur, r => r.ct).entries()].filter(([k]) => k).map(([k, a]) => ({ k, a, A: agg(a), b: P.prv ? P.prv.filter(r => r.ct === k) : [] })).sort((x, y) => y.a.length - x.a.length);
+  const html = `
+  <div class="grid g4">
+    ${kpi('Atendimentos', fN(A.n), B ? `${dv(A.n, B.n)} vs ${P.lp}` : P.lc)}
+    ${kpi('Dentro da meta', fP(A.pct), B ? dp(A.pct, B.pct) + ' vs ' + P.lp : 'até 15 min', { dark: true })}
+    ${kpi('Tempo médio', fD(A.avg, 1) + '<small>min</small>', B ? dm(A.avg, B.avg) : 'meta 15 min')}
+    ${kpi('Pontos críticos', fN(A.crit), `${fP(A.critP)} · acima de 60 min`)}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Desempenho por contrato', `${P.lc}${P.prv ? ' × ' + P.lp : ''} · barra clara = período anterior`, '<div id="rkc"></div>', { info: 'contrato' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Cumprimento da meta por contrato, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmc"></div>', { info: 'calor' })}</div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Berços e locais', 'Volume e cumprimento da meta por local', '<div id="rkl"></div>')}
+    ${card('Embarcações que mais usam o serviço', '12 maiores em volume · clique para ver os atendimentos', '<div id="rke"></div>')}
+  </div>`;
+  return {
+    html, after() {
+      $('#rkc').innerHTML = ranking(cts.map(c => ({ nome: c.k, key: 'ct|' + c.k, v: c.a.length, vp: P.prv ? c.b.length : null, sub: fP0(c.a.length / P.cur.length) + ' do volume', cols: [...stats3(c.A, c.b.length ? agg(c.b) : null)] })), { fmt: v => fN(v), hn: 'Contrato', hv: 'Atendimentos', cols: H3 });
+      const all = filt(S.rows, { ...S.f }), ms = meses(all);
+      $('#hmc').innerHTML = heatMes([['Total', all], ...clientes(all).filter(k => all.filter(r => r.ct === k).length >= 100).map(k => [k, all.filter(r => r.ct === k)])], ms);
+      const loc = [...groupBy(P.cur, r => r.loc).entries()].filter(([k]) => k).map(([k, a]) => ({ k, A: agg(a), b: P.prv ? P.prv.filter(r => r.loc === k) : [] })).sort((x, y) => y.A.n - x.A.n).slice(0, 10);
+      $('#rkl').innerHTML = ranking(loc.map(c => ({ nome: c.k, key: 'loc|' + c.k, v: c.A.n, vp: P.prv ? c.b.length : null, cols: stats3(c.A, c.b.length ? agg(c.b) : null).slice(0, 2) })), { fmt: v => fN(v), hn: 'Local', hv: 'Atendimentos', cols: H3.slice(0, 2) });
+      const em = [...groupBy(P.cur, r => r.emb).entries()].filter(([k]) => k).map(([k, a]) => ({ k, A: agg(a), b: P.prv ? P.prv.filter(r => r.emb === k) : [] })).sort((x, y) => y.A.n - x.A.n).slice(0, 12);
+      $('#rke').innerHTML = ranking(em.map(c => ({ nome: c.k, key: 'emb|' + c.k, v: c.A.n, vp: P.prv ? c.b.length : null, cols: stats3(c.A, c.b.length ? agg(c.b) : null).slice(0, 2) })), { fmt: v => fN(v), hn: 'Embarcação', hv: 'Atendimentos', cols: H3.slice(0, 2) });
+    }
+  };
+}
+
+/* ---------- 4 · OPERAÇÃO ---------- */
+function vOperacao() {
+  const P = periodo(), cur = P.cur, prv = P.prv;
+  const op = o => ({ a: agg(cur.filter(r => r.op === o)), b: prv ? agg(prv.filter(r => r.op === o)) : null });
+  const C = op('COLOCAÇÃO'), R = op('RETIRADA');
+  const faixas = [['≤10', 0, 10], ['11–15', 10, 15], ['16–20', 15, 20], ['21–25', 20, 25], ['26–30', 25, 30], ['31–60', 30, 60], ['>60', 60, 1e9]];
+  const vv = cur.filter(r => r.t != null);
+  const cnt = faixas.map(f => vv.filter(r => Math.round(r.t) > f[1] && Math.round(r.t) <= f[2]).length);
+  const tot = sum(cnt) || 1;
+  const fora = cnt.slice(2), mxF = fora.indexOf(Math.max(...fora)) + 2;
+  const A0 = agg(cur);
+  const tDist = `${fP0(cnt[mxF] / tot)} dos atendimentos terminam entre ${faixas[mxF][0].replace('–', ' e ')} min`;
+  const html = `
+  <div class="grid g4">
+    ${kpi('Colocação · na meta', fP(C.a.pct), (C.b ? dp(C.a.pct, C.b.pct) + ' · ' : '') + fN(C.a.n) + ' operações', { dark: true })}
+    ${kpi('Retirada · na meta', fP(R.a.pct), (R.b ? dp(R.a.pct, R.b.pct) + ' · ' : '') + fN(R.a.n) + ' operações', { dark: true })}
+    ${kpi('Colocação · tempo médio', fD(C.a.avg, 1) + '<small>min</small>', C.b ? dm(C.a.avg, C.b.avg) : 'meta 15 min')}
+    ${kpi('Retirada · tempo médio', fD(R.a.avg, 1) + '<small>min</small>', R.b ? dm(R.a.avg, R.b.avg) : 'meta 15 min')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Colocação × retirada, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmo"></div>', { info: 'calor' })}</div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card(tDist, `${P.lc} · atendimentos por faixa de tempo`, '<div class="leg"><span><i class="b" style="background:#06BEAE"></i>Dentro da meta</span><span><i class="b" style="background:#A9B8BD"></i>Até 60 min</span><span><i class="b" style="background:#042738"></i>Crítico (> 60 min)</span></div><div id="chd"></div>', { info: 'faixas' })}
+    ${card(`Espera de ${fD(A0.espM, 0)} min + execução de ${fD(A0.exeM, 0)} min`, `${P.lc} · total de ${fD(A0.avg, 0)} min contra a meta de 15 (marca no topo da barra) · minutos médios`, '<div id="chb"></div>', { info: 'espera' })}
+  </div>
+  <div class="grid" style="margin-top:16px">
+    ${card('Pontos críticos por contrato', 'Atendimentos acima de 60 min · clique para ver a lista', '<div id="rkp"></div>')}
+  </div>`;
+  return {
+    html, after() {
+      colChart($('#chd'), { labels: faixas.map(f => f[0]), vals: cnt, cores: ['#06BEAE', '#06BEAE', '#A9B8BD', '#A9B8BD', '#A9B8BD', '#A9B8BD', '#042738'], fmt: v => fN(v), H: 250, sub: cnt.map(c => fP0(c / tot)) });
+      const all = filt(S.rows, { ...S.f }), ms = meses(all);
+      $('#hmo').innerHTML = heatMes([['Total', all], ['Colocação', all.filter(r => r.op === 'COLOCAÇÃO')], ['Retirada', all.filter(r => r.op === 'RETIRADA')]], ms);
+      const blocos = [['Contrato', [...new Set(cur.map(r => r.ct))].filter(Boolean).map(c => [c, r => r.ct === c])], ['Turno', [['Dia', r => r.turno === 'Dia'], ['Noite', r => r.turno === 'Noite']]], ['Operação', [['Colocação', r => r.op === 'COLOCAÇÃO'], ['Retirada', r => r.op === 'RETIRADA']]]]
+        .map(([t, g]) => [t, g.map(([nm, f]) => { const a = agg(cur.filter(f)); return { nm, n: a.n, e: a.espM, x: a.exeM }; }).filter(g => g.n >= 30 && g.e != null && g.x != null).sort((a, b) => (b.e + b.x) - (a.e + a.x))]).filter(b => b[1].length);
+      const mxm = Math.max(30, ...blocos.flatMap(b => b[1].map(g => g.e + g.x))) * 1.1;
+      $('#chb').innerHTML = `<div class="leg"><span><i class="b" style="background:#A9B8BD"></i>Espera até começar</span><span><i class="b" style="background:#042738"></i>Execução</span><span><i class="mk"></i>Meta de 15 min</span></div><div class="eb">` + blocos.map(([t, lin]) => `<div class="eb-g">${t}</div>` + lin.map(g => `<div class="eb-r"><div class="rk-nm">${esc(g.nm)}</div><div class="eb-t"><div class="eb-w" style="left:0;width:${g.e / mxm * 100}%">${g.e / mxm > .07 ? fD(g.e, 1) : ''}</div><div class="eb-x" style="left:${g.e / mxm * 100}%;width:${g.x / mxm * 100}%">${g.x / mxm > .07 ? fD(g.x, 1) : ''}</div><div class="eb-m" style="left:${15 / mxm * 100}%"></div></div><div class="rk-c b">${fD(g.e + g.x, 1)} min</div></div>`).join('')).join('') + '</div>';
+      const pc = [...groupBy(cur.filter(r => r.cr), r => r.ct).entries()].filter(([k]) => k).map(([k, a]) => ({ k, a, n: (groupBy(cur, r => r.ct).get(k) || []).length })).sort((x, y) => y.a.length - x.a.length);
+      $('#rkp').innerHTML = ranking(pc.map(c => ({ nome: c.k, key: 'crit|' + c.k, v: c.a.length, cols: [fP(c.a.length / c.n), `${fN(c.a.filter(r => !r.obs).length)}`] })), { fmt: v => fN(v), hn: 'Contrato', hv: 'Críticos', cols: ['% do contrato', 'Sem observação'] });
+    }
+  };
+}
+
+/* ---------- 5 · EQUIPES (painel analítico) ---------- */
+Object.assign(EQ_COR, { A: '#042738', B: '#06BEAE', C: '#5F8793', D: '#A9B8BD' });
+function vEquipes() {
+  const f2 = { ...S.f, eq: '' }, P = periodo(f2), cur = P.cur, prv = P.prv, A = agg(cur), B = prv && prv.length ? agg(prv) : null;
+  const eqs = ['A', 'B', 'C', 'D'].map(e => { const rs = cur.filter(r => r.eq1 === e), pr = prv ? prv.filter(r => r.eq1 === e) : []; return { e, rs, a: agg(rs), b: pr.length ? agg(pr) : null }; }).filter(x => x.a.n);
+  const ord = [...eqs].sort((x, y) => y.a.pct - x.a.pct);
+  const worst = ord[ord.length - 1], best = ord[0], rest = agg(cur.filter(r => r.eq1 !== worst.e));
+  const missW = (worst.a.n - worst.a.ok) / Math.max(A.n - A.ok, 1);
+  const ms3 = meses(S.rows).slice(-3), l3 = ['A', 'B', 'C', 'D'].map(e => { const a = filt(S.rows, f2).filter(r => ms3.includes(r.ym) && r.eq1 === e); return a.length ? `${e} ${fP0(a.filter(r => r.na).length / a.length)}` : null; }).filter(Boolean).join(' · ');
+  const dmn = (a, b) => delta(a, b, { un: 'abs', dir: 'down', d: 1, suf: ' min' }), ddp = (a, b) => delta(a, b, { un: 'pp', dir: 'down' });
+  const semObs = rs => { const c = rs.filter(r => r.cr); return c.length ? c.filter(r => !r.obs).length / c.length : null; };
+  const rows = [
+    ['Volume'],
+    { l: 'Atendimentos', v: x => x.a.n, f: fN, d: (a, b) => dv(a.n, b.n) },
+    { l: 'Participação no volume', v: x => x.a.n / A.n, f: fP0 },
+    { l: 'Colocações · retiradas', v: x => null, t: x => `${fN(x.a.col)} · ${fN(x.a.ret)}` },
+    ['Desempenho'],
+    { l: 'Dentro da meta de 15 min', v: x => x.a.pct, f: fP, best: 'max', d: (a, b) => dp(a.pct, b.pct) },
+    { l: 'Tempo médio de atendimento', v: x => x.a.avg, f: v => fD(v, 1) + ' min', best: 'min', d: (a, b) => dm(a.avg, b.avg) },
+    { l: 'Mediana do tempo', v: x => x.a.med, f: v => fD(v, 0) + ' min', best: 'min' },
+    { l: 'Tempo de resposta (espera até o início)', v: x => x.a.espM, f: v => fD(v, 1) + ' min', best: 'min', d: (a, b) => dmn(a.espM, b.espM) },
+    { l: 'Execução média', v: x => x.a.exeM, f: v => fD(v, 1) + ' min', best: 'min', d: (a, b) => dmn(a.exeM, b.exeM) },
+    ['Pontos críticos'],
+    { l: 'Acima de 60 min', v: x => x.a.critP, f: fP, best: 'min', sub: x => fN(x.a.crit) + ' atend.' },
+    { l: 'Críticos sem observação', v: x => semObs(x.rs), f: fP0, best: 'min' },
+    ['Simultaneidade e dados'],
+    { l: 'Em sobreposição', v: x => x.a.simP, f: fP0, best: 'min', d: (a, b) => ddp(a.simP, b.simP) },
+    { l: 'Com a própria equipe ocupada', v: x => x.a.simEqP, f: fP0, best: 'min' },
+    { l: 'Linhas com inconsistência', v: x => x.a.n ? x.a.bad / x.a.n : null, f: fP, best: 'min' }
+  ];
+  const cols = [...ord.map(x => ({ x, nm: 'Equipe ' + x.e })), { x: { a: A, b: B, rs: cur }, nm: 'Todas', all: true }];
+  const sc = `<div class="rkw"><table class="sc"><tr><th></th>${cols.map(c => `<th class="tt ${c.all ? 'all' : ''}">${c.nm}</th>`).join('')}</tr>${rows.map(r => {
+    if (Array.isArray(r)) return `<tr class="grp"><td colspan="${cols.length + 1}">${r[0]}</td></tr>`;
+    const vals = ord.map(x => r.v(x)).filter(v => v != null), mx = Math.max(...vals), mn = Math.min(...vals), vary = vals.length > 1 && mx !== mn;
+    const nMx = vals.filter(v => v === mx).length, nMn = vals.filter(v => v === mn).length;   // destaque só quando o melhor/pior é único
+    return `<tr><td>${r.l}</td>${cols.map(c => {
+      const v = r.v(c.x), txt = r.t ? r.t(c.x) : (v == null ? '–' : r.f(v));
+      const bV = r.best === 'max' ? mx : mn, wV = r.best === 'max' ? mn : mx, bN = r.best === 'max' ? nMx : nMn, wN = r.best === 'max' ? nMn : nMx;
+      const cl = c.all ? 'all' : (r.best && vary && v != null ? (v === bV && bN === 1 ? 'bst' : (v === wV && wN === 1 ? 'wst' : '')) : '');
+      const sm = r.sub ? r.sub(c.x) : (r.d && c.x.b ? r.d(c.x.a, c.x.b) : '');
+      let hs = ''; if (!c.all && v != null && vary) { let q = (v - mn) / (mx - mn); if (r.best === 'min') q = 1 - q; hs = ` style="--h:${q.toFixed(2)}"`; }
+      return `<td class="${cl}"${hs}>${txt}${sm ? `<small>${sm}</small>` : ''}</td>`;
+    }).join('')}</tr>`;
+  }).join('')}</table></div>`;
+  const html = `
+  <div class="banner"><div class="n">${fP0(worst.a.pct)}</div><div><b>Equipe ${worst.e}: menor cumprimento da meta de 15 min em ${P.lc}</b><span>A melhor, a equipe ${best.e}, chega a ${fP0(best.a.pct)}; as demais juntas, a ${fP0(rest.pct)}. A equipe ${worst.e} faz ${fP0(worst.a.n / A.n)} dos atendimentos e responde por ${fP0(missW)} dos que ficaram fora da meta; tempo médio de ${fD(worst.a.avg, 1)} min contra ${fD(rest.avg, 1)} min. <b style="display:inline;font:700 14px var(--font-body)">Últimos 3 meses (${ms3.map(mLbl).join(', ')}): ${l3}.</b></span></div></div>
+  <div class="grid">${card('Placar das equipes', `${P.lc}${prv ? ' · variação sobre ' + P.lp : ''}`, `<div class="key"><span><i style="background:#E0F6F3"></i>Melhor equipe no indicador</span><span><i style="background:#E7EDF0"></i>Pior equipe</span></div>${sc}`, { info: 'equipe', tog: true })}</div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Perfil do tempo de atendimento', 'Como se distribuem os atendimentos de cada equipe', '<div class="key"><span><i style="background:#06BEAE"></i>Até 15 min (meta)</span><span><i style="background:#A9B8BD"></i>16 a 60 min</span><span><i style="background:#042738"></i>Acima de 60 min</span></div><div class="pf" id="pfq"></div>', { info: 'perfil' })}
+    ${card('Volume por equipe', 'Atendimentos por mês nos últimos 12 meses fechados · quanto mais escuro, maior o volume', '<div id="chq"></div>')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Cumprimento da meta por equipe, mês a mês', '% de atendimentos em até 15 min · quanto mais escuro, maior o cumprimento', '<div id="hmq"></div>', { info: 'calor' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Onde cada equipe cumpre a meta', `${P.lc} · % na meta e quantidade de atendimentos, por contrato, operação e turno`, '<div id="mtq"></div>', { info: 'matriz' })}</div>`;
+  return {
+    html, after() {
+      $('#pfq').innerHTML = ord.map(x => {
+        const a = x.rs.filter(r => r.t != null), n = a.length || 1, k1 = a.filter(r => r.na).length, k3 = a.filter(r => r.cr).length, k2 = a.length - k1 - k3;
+        const seg = (k, cor, tx) => `<div style="width:${k / n * 100}%;background:${cor};color:${tx}">${k / n >= .06 ? fD(k / n * 100, 0) + '%' : ''}</div>`;
+        return `<div class="pf-r"><div class="rk-nm">Equipe ${x.e}<small>${fN(x.a.n)} atend.</small></div><div class="pf-b">${seg(k1, '#06BEAE', '#042738')}${seg(k2, '#A9B8BD', '#042738')}${seg(k3, '#042738', '#fff')}</div></div>`;
+      }).join('');
+      const all = filt(S.rows, f2), ms = meses(all), teams = ['A', 'B', 'C', 'D'].filter(e => all.some(r => r.eq1 === e));
+      const msf = ms.filter(m => +m.slice(0, 4) < S.Y || m <= (lastFull() || '')).slice(-12), VQ = teams.map(e => msf.map(m => all.filter(r => r.ym === m && r.eq1 === e).length)), mxq = Math.max(...VQ.flat(), 1);
+      const TQ = msf.map((_, j) => sum(VQ.map(r => r[j]))), mxt = Math.max(...TQ, 1);
+      $('#chq').innerHTML = heatTable([...teams.map(e => 'Equipe ' + e), 'Total'], msf, (i, j) => i < teams.length ? { v: VQ[i][j] / mxq, txt: fN(VQ[i][j]) } : { v: TQ[j] / mxt, txt: fN(TQ[j]) }, 'sm');
+      $('#hmq').innerHTML = heatMes([['Total', all], ...ord.map(x => ['Equipe ' + x.e, all.filter(r => r.eq1 === x.e)])], ms);
+      const mc = [...clientes(cur).filter(k => cur.filter(r => r.ct === k).length >= 30).map(k => ({ g: 'Contrato', n: k, fn: r => r.ct === k })), { g: 'Operação', n: 'Colocação', fn: r => r.op === 'COLOCAÇÃO' }, { g: 'Operação', n: 'Retirada', fn: r => r.op === 'RETIRADA' }, { g: 'Turno', n: 'Dia', fn: r => r.turno === 'Dia' }, { g: 'Turno', n: 'Noite', fn: r => r.turno === 'Noite' }];
+      $('#mtq').innerHTML = heatGrid([...ord.map(x => 'Equipe ' + x.e), 'Todas'], mc, (i, j) => { const rs = (i < ord.length ? ord[i].rs : cur).filter(mc[j].fn), n = rs.length; if (n < 10) return { v: null }; const p = rs.filter(r => r.na).length / n; return { v: p, txt: fP0(p), sub: fN(n) + ' atend.' }; });
+    }
+  };
+}
+
+/* ---------- 6 · SIMULTANEIDADE ---------- */
+S.win = 'E';
+function vSimult() {
+  const W = S.win, P = periodo(), cur = P.cur, prv = P.prv, A = agg(cur, W), B = prv && agg(prv, W);
+  const cc = 'c' + W, qq = 'q' + W;
+  const pico = cur.reduce((m, r) => Math.max(m, r[cc]), 0);
+  const picos = CONC.picos[W].filter(p => p.ids.some(r => cur.includes(r))).sort((a, b) => b.n - a.n || b.t - a.t).slice(0, 10);
+  const dif = A.pctIso != null && A.pctSim != null ? (A.pctIso - A.pctSim) * 100 : null;
+  const html = `
+  <div class="chips"><span style="font:700 11px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);align-self:center;margin-right:4px">Janela</span>
+    <button class="chip ${W === "E" ? "on" : ""}" data-win="E">Execução · início → término</button><button class="chip ${W === "A" ? "on" : ""}" data-win="A">Atendimento completo · solicitação → término</button></div>
+  <div class="grid g4">
+    ${kpi('Em sobreposição', fP(A.simP), `${fN(A.sim)} atendimentos · ${B ? delta(A.simP, B.simP, { un: 'pp', dir: 'down' }) + ' vs ' + P.lp : P.lc}`, { dark: true })}
+    ${kpi('Pico ao mesmo tempo', fN(pico) + '<small>atendimentos</small>', picos[0] ? `${fDt(picos[0].ids[0].iso)} · ${hhmm(picos[0].t % 1440 / 1440)}` : '')}
+    ${kpi('Mesma equipe em paralelo', fP(A.simEqP), `${fN(A.simEq)} atendimentos com a equipe já ocupada`)}
+    ${kpi('Efeito na meta', dif == null ? '–' : (dif > 0 ? '−' : '+') + fD(Math.abs(dif), 0) + '<small>p.p.</small>', `isolado ${fP0(A.pctIso)} × simultâneo ${fP0(A.pctSim)}`)}
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Quantos atendimentos ao mesmo tempo', `${P.lc} · atendimentos por nível; abaixo, % na meta`, '<div class="leg"><span><i class="b" style="background:#A9B8BD"></i>Isolado</span><span><i class="b" style="background:#042738"></i>Em sobreposição</span></div><div id="chs"></div>', { info: 'simult' })}
+    ${card('Sobreposição mês a mês', '% dos atendimentos do mês que coincidiram com outro · últimos 12 meses fechados · quanto mais escuro, maior', '<div id="chm"></div>')}
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Por contrato', 'Quem mais convive com sobreposição', '<div id="rkc"></div>')}
+    ${card('Por equipe', 'Sobreposição e equipe ocupada', '<div id="rke"></div>')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Maiores picos de simultaneidade', `${P.lc} · clique para ver os atendimentos do pico`, '<div class="lst" id="pks"></div>')}</div>`;
+  return {
+    html, after() {
+      const lv = [1, 2, 3, 4].map(n => cur.filter(r => n < 4 ? r[cc] === n : r[cc] >= 4));
+      colChart($('#chs'), { labels: ['1 (isolado)', '2', '3', '4 ou mais'], vals: lv.map(a => a.length), cores: ['#A9B8BD', '#042738', '#042738', '#042738'], fmt: v => fN(v), H: 250, sub: lv.map(a => a.length ? fP0(a.filter(r => r.na).length / a.length) + ' na meta' : '') });
+      const sb = S.rows.filter(r => (!S.f.ct || r.ct === S.f.ct) && (!S.f.op || r.op === S.f.op) && (!S.f.eq || r.eq1 === S.f.eq)), sms = meses(sb).filter(m => +m.slice(0, 4) < S.Y || m <= (lastFull() || '')).slice(-12);
+      const sl = [['Total', sb], ...['A', 'B', 'C', 'D'].filter(e => sb.some(r => r.eq1 === e)).map(e => ['Equipe ' + e, sb.filter(r => r.eq1 === e)])], SV = sl.map(l => sobreMes(l[1], sms, W)), smx = Math.max(...SV.flat().filter(v => v != null), .01);
+      $('#chm').innerHTML = heatTable(sl.map(l => l[0]), sms, (i, j) => ({ v: SV[i][j] == null ? null : SV[i][j] / smx, txt: SV[i][j] == null ? '' : Math.round(SV[i][j] * 100) }), 'sm');
+      const mk = (keyf, lblf) => [...groupBy(cur, keyf).entries()].filter(([k, a]) => k && a.length >= 30).map(([k, a]) => ({ k, A: agg(a, W), b: prv ? agg(prv.filter(r => keyf(r) === k), W) : null })).sort((x, y) => y.A.simP - x.A.simP);
+      $('#rkc').innerHTML = ranking(mk(r => r.ct).map(c => ({ nome: c.k, key: 'sc|' + c.k, v: c.A.simP, vp: c.b ? c.b.simP : null, cols: [fN(c.A.sim), fP0(c.A.pctSim)] })), { fmt: v => fP0(v), hn: 'Contrato', hv: '% em sobreposição', cols: ['Atend.', '% na meta'] });
+      $('#rke').innerHTML = ranking(mk(r => r.eq1).map(c => ({ nome: 'Equipe ' + c.k, key: 'se|' + c.k, v: c.A.simP, vp: c.b ? c.b.simP : null, cols: [fN(c.A.simEq), fP0(c.A.pctSimEq)] })), { fmt: v => fP0(v), hn: 'Equipe', hv: '% em sobreposição', cols: ['Equipe ocupada', '% na meta'] });
+      $('#pks').innerHTML = picos.length ? picos.map((p, i) => {
+        const rs = p.ids; const cts = [...new Set(rs.map(r => r.ct))].join(', '), eqs = [...new Set(rs.map(r => r.eq1))].sort().join('/');
+        const mi = rs.reduce((a, r) => a + (r.na ? 1 : 0), 0);
+        return `<div class="li" data-pk="${i}"><div class="n">${p.n} <em>ao mesmo tempo</em></div><div class="lt"><b>${fDt(rs[0].iso)} · ${hhmm(p.t % 1440 / 1440)}</b><span>${cts} · equipes ${eqs} · ${mi} de ${rs.length} na meta</span></div></div>`;
+      }).join('') : '<p class="sub">Sem picos acima de 2 no período.</p>';
+      vSimult.picos = picos;
+    }
+  };
+}
+
+
+/* ---------- 7 · QUALIDADE ---------- */
+function vQualidade() {
+  const base = filt(S.rows, { ...S.f, per: 'all' }), n = base.length, bad = base.filter(r => r.bad).length;
+  const lista = Object.keys(CHK).map(c => ({ c, rs: base.filter(r => r.fl.includes(c)) })).filter(x => x.rs.length).sort((a, b) => SEV_ORD[CHK[a.c].sev] - SEV_ORD[CHK[b.c].sev] || b.rs.length - a.rs.length);
+  const alta = base.filter(r => r.fl.some(c => CHK[c].sev === 'Alta')).length;
+  const mx = Math.max(...lista.map(x => x.rs.length), 1);
+  const html = `
+  <div class="grid g21">
+    ${card('Índice de qualidade da planilha', 'Lançamentos sem inconsistência de gravidade alta ou média (as de gravidade baixa são só padronização)', `<div class="score"><div class="n">${fD((1 - bad / n) * 100, 1)}<em>%</em></div><div><b style="font:700 16px var(--font-display);color:var(--navy)">${fN(n - bad)} de ${fN(n)} linhas corretas</b><div style="font-size:14px;color:var(--tx2)">${fN(bad)} linhas pedem revisão (gravidade alta ou média), sendo ${fN(alta)} de gravidade alta. As regras abaixo rodam sozinhas a cada leitura da planilha.</div></div></div><div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bcsv">Baixar lista para correção (CSV)</button></div>`, { info: 'qualidade' })}
+    ${card('Gravidade', 'Linhas afetadas por nível', `<div id="stg"></div>`)}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Inconsistências encontradas', 'Clique para ver as linhas da planilha (o número é a linha do Excel)', `<div id="cks">${lista.map(x => `<div class="ck" data-ck="${x.c}"><div class="sev ${CHK[x.c].sev}">${CHK[x.c].sev}</div><div><b>${CHK[x.c].nome}</b><span class="t">${CHK[x.c].desc}</span></div><div class="bar"><i style="width:${x.rs.length / mx * 100}%"></i></div><div class="q">${fN(x.rs.length)}</div></div>`).join('')}</div>`)}</div>
+  <div class="grid g2" style="margin-top:16px">
+    ${card('Inconsistências por mês', '% das linhas do mês com alguma inconsistência · barras = quantidade', '<div id="chk"></div>')}
+    ${card('Onde nascem os erros', 'Percentual de linhas com inconsistência, por equipe', '<div id="rkk"></div>')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Colocações × retiradas por embarcação', 'Embarcações com diferença de 2 ou mais entre colocações e retiradas lançadas · indica lançamento faltante ou repetido', '<div id="rkb"></div>', { info: 'saldo' })}</div>`;
+  return {
+    html, after() {
+      $('#stg').innerHTML = stack100(['Alta', 'Média', 'Baixa'].map((s, i) => ({ nome: s, cor: ['#042738', '#5F8793', '#8ED8CE'][i], tx: i === 2 ? '#042738' : '#fff', v: base.filter(r => r.fl.some(c => CHK[c].sev === s)).length })), {});
+      const ms = meses(base), g = groupBy(base, r => r.ym);
+      lineChart($('#chk'), { labels: ms.map(mLbl), H: 250, ymin: 0, fmt: v => fP0(v), bars: ms.map(m => (g.get(m) || []).filter(r => r.bad).length), series: [{ cor: '#042738', vals: ms.map(m => { const a = g.get(m) || []; return a.length ? a.filter(r => r.bad).length / a.length : null; }) }] });
+      const eg = [...groupBy(base, r => r.eq1 || '?').entries()].filter(([k]) => k !== '?').map(([k, a]) => ({ k, n: a.length, b: a.filter(r => r.bad).length })).sort((x, y) => y.b / y.n - x.b / x.n);
+      $('#rkk').innerHTML = ranking(eg.map(e => ({ nome: 'Equipe ' + e.k, v: e.b / e.n, cols: [fN(e.b), fN(e.n)] })), { fmt: v => fP(v), hn: 'Equipe', hv: '% com inconsistência', cols: ['Linhas com erro', 'Lançamentos'] });
+      const bal = [...groupBy(base, r => r.emb).entries()].filter(([k]) => k).map(([k, a]) => { const c = a.filter(r => r.op === 'COLOCAÇÃO').length, t = a.filter(r => r.op === 'RETIRADA').length; return { k, c, t, d: Math.abs(c - t) }; }).filter(x => x.d >= 2).sort((a, b) => b.d - a.d).slice(0, 10);
+      $('#rkb').innerHTML = bal.length ? ranking(bal.map(x => ({ nome: x.k, v: x.d, cols: [fN(x.c), fN(x.t)] })), { fmt: v => fN(v), hn: 'Embarcação', hv: 'Diferença', cols: ['Colocações', 'Retiradas'] }) : '<p class="sub">Todas as embarcações com colocações e retiradas equilibradas.</p>';
+      $('#bcsv').onclick = () => {
+        const L = []; base.filter(r => r.bad).forEach(r => r.fl.forEach(c => L.push([r.id, fDt(r.iso), r.emb, r.ct, r.loc, r.eq1, r.op, CHK[c].sev, CHK[c].nome, r.dt[c] || ''])));
+        L.sort((a, b) => a[0] - b[0]); csv('inconsistencias-barreira.csv', ['Linha do Excel', 'Data', 'Embarcação', 'Contrato', 'Local', 'Equipe', 'Operação', 'Gravidade', 'Inconsistência', 'Detalhe'], L); toast('Lista baixada: ' + fN(L.length) + ' apontamentos.');
+      };
+    }
+  };
+}
+
+/* ---------- 8 · DADOS ---------- */
+function fonteHtml() {
+  const m = S.meta, n = S.rows.length;
+  return `<h4>Fonte dos dados</h4><table class="tb"><tr><td>Planilha</td><td><b>${esc(m.planilha || '–')}</b></td></tr><tr><td>Origem</td><td>SharePoint · PrimeSea › PRIME › 02. Lançamento de Barreiras</td></tr><tr><td>Salva em</td><td>${m.modificada ? fDtHora(m.modificada) : '–'}</td></tr><tr><td>Publicada pelo robô em</td><td>${m.publicado ? fDtHora(m.publicado) : '–'}</td></tr><tr><td>Lançamentos lidos</td><td>${fN(n)}</td></tr><tr><td>Período</td><td>${fDt(S.rows.reduce((a, r) => r.iso < a ? r.iso : a, '9999'))} a ${fDt(S.max)}</td></tr></table>
+  <p>Um robô lê a aba Dados a cada poucos minutos e publica os números; o painel relê a cada minuto. Da gravação da planilha até a tela, leva de 5 a 8 minutos.</p>
+  <h4>Como calculamos</h4><table class="tb">
+      <tr><td><b>Tempo de atendimento</b></td><td>Término − solicitação (igual à planilha). Considera virada de dia.</td></tr>
+      <tr><td><b>Dentro da meta</b></td><td>Tempo de até 15 min, inclusive 15.</td></tr>
+      <tr><td><b>Ponto crítico</b></td><td>Tempo acima de 60 min. Não é descartado: conta nos resultados e é listado.</td></tr>
+      <tr><td><b>Médias</b></td><td>Ignoram só tempos acima de 12 h (provável erro de data), que ficam em Qualidade dos dados.</td></tr>
+      <tr><td><b>Comparação</b></td><td>Mesmo período dos dois anos (até ${S.cut.slice(3)}/${S.cut.slice(0, 2)}), para não comparar um ano inteiro com um parcial.</td></tr>
+      <tr><td><b>Simultaneidade</b></td><td>Atendimentos cujos intervalos se sobrepõem. Janela de atendimento: solicitação → término. Janela de execução: início → término.</td></tr>
+      <tr><td><b>Turnos</b></td><td>Dia 07h–19h e noite 19h–07h pela hora da solicitação.</td></tr></table>`;
+}
+const fDtHora = s => { const d = new Date(s); return isNaN(d) ? s : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }); };
+
+/* ---------- textos do botão "i" ---------- */
+Object.assign(INFO, {
+  meta: { t: 'Cumprimento da meta', o: 'Percentual de atendimentos concluídos em até 15 minutos da solicitação, mês a mês, comparando os dois anos.', c: 'Para cada mês: atendimentos com (término − solicitação) ≤ 15 min ÷ atendimentos do mês. Meses com menos de 10 atendimentos ficam sem ponto. As barras cinza mostram o volume do ano atual.' },
+  contrato: { t: 'Desempenho por contrato', o: 'Volume, cumprimento da meta, tempo médio e pontos críticos de cada contrato, com a variação contra o mesmo período do ano anterior.', c: 'Contrato é o lançado na coluna Contrato. As setas indicam melhora (verde-água) ou piora (marinho). A barra clara ao fundo é o volume do período anterior.' },
+  faixas: { t: 'Faixas de tempo', o: 'Quantos atendimentos caem em cada faixa de tempo. As duas primeiras (verde-água) estão dentro da meta; as cinza, até 60 min; as marinho são pontos críticos.', c: 'Tempo arredondado ao minuto. Os lançamentos são feitos de 5 em 5 minutos, por isso o 15 min exato concentra grande parte dos atendimentos e conta como dentro da meta.' },
+  espera: { t: 'De onde vem o tempo', o: 'Divide o tempo de atendimento em duas partes: a espera até o início da operação e a execução em si. A marca verde-água no topo de cada barra indica a meta de 15 minutos.', c: 'Espera = início − solicitação (valores negativos, quando o início foi lançado antes da solicitação, ficam fora da média). Execução = término − início. A soma das duas médias fica próxima do tempo médio de atendimento. Mostra se o atraso nasce antes de começar (mobilização, fila) ou durante a operação.' },
+  hora: { t: 'Demanda por hora', o: 'Em que horas os pedidos chegam e em quais horas a meta é cumprida. Cor da coluna: verde-água quando 50% ou mais dos atendimentos da hora ficaram na meta, marinho nas demais.', c: 'Hora da solicitação (ou do início, se a solicitação estiver vazia).' },
+  volume: { t: 'Atendimentos por mês e por cliente', o: 'Quantidade de atendimentos de cada mês desde o início da série, empilhada por cliente (contrato). A altura da coluna é o total do mês.', c: 'Cliente = coluna Contrato da planilha. O mês em andamento aparece parcial. Respeita os filtros de operação e equipe; o filtro de contrato não se aplica aqui, porque a divisão por cliente já está no gráfico.' },
+  acumulado: { t: 'Acumulado no ano', o: 'Soma de atendimentos desde 1º de janeiro, mês a mês, para o ano atual e o anterior. Mostra se o ano corre acima ou abaixo do anterior no mesmo ponto.', c: 'Para cada mês: total de atendimentos de janeiro até o fim daquele mês. O ano atual termina no último mês com dados.' },
+  anual: { t: 'Comparativo entre anos', o: 'Indicadores do ano anterior completo, do mesmo período dos dois anos (para comparar igual com igual) e a variação.', c: 'Atendimentos por dia = atendimentos ÷ dias corridos da janela. Setas em verde-água indicam melhora e em marinho piora; para volume a seta é neutra.' },
+  calor: { t: 'Cumprimento da meta mês a mês', o: 'Cada célula é o % de atendimentos do mês concluídos em até 15 minutos. Quanto mais escuro o verde-água, maior o cumprimento. Permite ver de uma vez a evolução e a virada de patamar.', c: 'Meses com menos de 10 atendimentos ficam em branco. A linha Total considera os filtros aplicados.' },
+  equipe: { t: 'Placar das equipes', o: 'Todos os indicadores de cada equipe lado a lado. Verde-água marca a melhor equipe no indicador e cinza a pior; as setas comparam com o mesmo período do ano anterior.', c: 'Tempo de resposta = espera entre a solicitação e o início da operação. Execução = início → término. Sobreposição na janela de execução; “equipe ocupada” = a própria equipe já estava em outro atendimento. Linhas com inconsistência = regras da aba Qualidade dos dados.' },
+  perfil: { t: 'Perfil do tempo de atendimento', o: 'Para cada equipe, que parte dos atendimentos ficou dentro da meta, entre 16 e 60 min ou acima de 60 min (pontos críticos).', c: 'Tempo = término − solicitação, arredondado ao minuto; 15 min exatos contam como dentro da meta.' },
+  matriz: { t: 'Onde cada equipe cumpre a meta', o: 'Cruza cada equipe com contrato, tipo de operação e turno. A cor mostra o % na meta e o número abaixo, a quantidade de atendimentos.', c: 'Células com menos de 10 atendimentos ficam em branco. Turno pela hora da solicitação: dia 07h–19h, noite 19h–07h.' },
+  turno: { t: 'Equipe × turno', o: 'Quantos atendimentos cada equipe fez de dia e de noite e o percentual na meta em cada turno.', c: 'Dia = hora da solicitação entre 07h e 19h; noite = de 19h às 07h. Em geral A e C atuam de dia, B e D à noite; células com poucos registros são lançamentos fora da escala habitual.' },
+  simult: { t: 'Simultaneidade', o: 'Quantos atendimentos estavam em andamento ao mesmo tempo. Nível 1 = atendimento isolado; 2 ou mais = sobreposição.', c: 'Dois atendimentos se sobrepõem quando o intervalo de um começa antes de o outro terminar (encostar não conta). O nível de um atendimento é o maior número de atendimentos ativos ao mesmo tempo durante a sua janela. Janela de atendimento: solicitação → término (a que a meta de 15 min mede). Janela de execução: início → término.' },
+  qualidade: { t: 'Qualidade dos dados', o: 'Regras automáticas que apontam lançamentos com erro, dúvida ou campo faltando. Cada apontamento mostra a linha da planilha.', c: 'Gravidade alta = impede ou distorce o cálculo; média = distorce uma análise; baixa = padronização. Pontos críticos (> 60 min) não são tratados como erro, apenas quando falta observação.' },
+  queda: { t: 'De onde vem a queda', o: 'Separa a variação em partes: quanto do aumento do tempo vem da espera ou da execução e quanto cada equipe e contrato contribuiu para a variação do % na meta.', c: 'Causa: diferença das médias de espera (solicitação → início) e de execução (início → término) entre os dois períodos. Equipe e contrato: (atendimentos na meta do grupo ÷ total do período atual) − (o mesmo no período anterior); a soma de todos os grupos é igual à variação total do % na meta. Barras marinho pioram o resultado; verde-água melhoram.' },
+  saldo: { t: 'Colocações × retiradas', o: 'Cada embarcação deveria ter o mesmo número de colocações e retiradas de barreira.', c: 'Diferença absoluta entre colocações e retiradas de cada embarcação em todo o histórico. Diferença de 2 ou mais costuma indicar lançamento faltante ou repetido.' }
+});
+
+/* ---------- evolução mensal (métricas do seletor) ---------- */
+S.ev = 'meta';
+function avgMes(rs, ms) { const g = groupBy(rs, r => r.ym); return ms.map(m => { const a = (g.get(m) || []).filter(r => r.t != null && r.t <= T_MAX); return a.length >= 10 ? avg(a.map(r => r.t)) : null; }); }
+const EVM = [
+  ['meta', '% na meta', pctMes, v => fP0(v), v => fD(v * 100, 0) + ' p.p.', 'up'],
+  ['vol', 'Atendimentos', nMes, v => fN(v), v => fN(v), 'neu'],
+  ['tempo', 'Tempo médio', avgMes, v => fD(v, 1), v => fD(v, 1) + ' min', 'down']
+];
+
+/* ---------- linha do tempo: marcos calculados da base ---------- */
+function marcos() {
+  const rows = S.rows, ms = meses(rows), ev = [], mm = m => mLbl(m), med = a => { const v = a.filter(x => x != null); return v.length >= 2 ? sum(v) / v.length : null; };
+  ev.push({ ym: ms[0], k: 'neu', t: 'Início da base', d: `${fN(rows.length)} atendimentos lançados até ${fDt(S.max)}` });
+  ['A', 'B', 'C', 'D'].forEach(e => {
+    const p = pctMes(rows.filter(r => r.eq1 === e), ms); let i = 3;
+    while (i <= ms.length - 3) {
+      const pre = med(p.slice(i - 3, i)), pos = med(p.slice(i, i + 3));
+      if (pre != null && pos != null && Math.abs(pos - pre) >= .3) { ev.push({ ym: ms[i], k: pos < pre ? 'neg' : 'pos', t: `Equipe ${e}: ${pos < pre ? 'queda' : 'salto'} de patamar`, d: `${fP0(pre)} → ${fP0(pos)} na meta (média de 3 meses)` }); i += 6; } else i++;
+    }
+  });
+  const pm = pctMes(rows, ms), ok = pm.map((v, i) => v == null ? null : i).filter(i => i != null);
+  if (ok.length) {
+    const pi = ok.reduce((b, i) => pm[i] < pm[b] ? i : b), bi = ok.reduce((b, i) => pm[i] > pm[b] ? i : b);
+    ev.push({ ym: ms[pi], k: 'neg', t: 'Pior mês na meta', d: `${fP0(pm[pi])} dos atendimentos em até 15 min` });
+    ev.push({ ym: ms[bi], k: 'pos', t: 'Melhor mês na meta', d: `${fP0(pm[bi])} dos atendimentos em até 15 min` });
+  }
+  const lf = lastFull(), vm = ms.filter(m => m <= (lf || '9')).map(m => [m, rows.filter(r => r.ym === m).length]);
+  if (vm.length) { const mx = vm.reduce((b, x) => x[1] > b[1] ? x : b); ev.push({ ym: mx[0], k: 'neu', t: 'Maior volume mensal', d: `${fN(mx[1])} atendimentos` }); }
+  const cm = ms.map(m => [m, rows.filter(r => r.ym === m && r.cr).length]), cmx = cm.reduce((b, x) => x[1] > b[1] ? x : b, ['', 0]);
+  if (cmx[1] >= 3) ev.push({ ym: cmx[0], k: 'neg', t: 'Mais pontos críticos', d: `${fN(cmx[1])} atendimentos acima de 60 min no mês` });
+  const pk = (CONC.picos.E || []).slice().sort((a, b) => b.n - a.n || b.t - a.t)[0];
+  if (pk && pk.n >= 3 && pk.ids[0]) ev.push({ ym: pk.ids[0].ym, k: 'neg', t: `Pico de ${pk.n} ao mesmo tempo`, d: `${fDt(pk.ids[0].iso)} · ${hhmm(pk.t % 1440 / 1440)}` });
+  const li = lf ? ms.indexOf(lf) : -1; if (li >= 0 && pm[li] != null) ev.push({ ym: lf, k: 'neu', t: 'Último mês fechado', d: `${fP0(pm[li])} na meta` });
+  return ev.sort((a, b) => a.ym < b.ym ? -1 : a.ym > b.ym ? 1 : 0);
+}
+function timelineHtml() {
+  return `<div class="tl">${marcos().map(e => `<div class="tl-i ${e.k}"><div class="tl-m">${mLbl(e.ym)}</div><b>${e.t}</b><span>${e.d}</span></div>`).join('')}</div>`;
+}
+
+/* ---------- jornada: horário, refeição e plantão ---------- */
+function refeicaoDados(rows) {
+  const R = rows.filter(r => r.t != null && r.t <= T_MAX && r.h != null && r.eq1 && r.sol != null), sh = new Map();
+  R.forEach(r => { const d = r.turno === 'Dia' ? r.ds : (r.h >= 19 ? r.ds : r.ds - 1), k = r.eq1 + '|' + r.turno + '|' + d; if (!sh.has(k)) sh.set(k, { tn: r.turno, d, iv: [] }); const st = r.ds * 1440 + r.sol * 1440; sh.get(k).iv.push([st, st + r.t]); });
+  const L = [...sh.values()].filter(s => s.iv.length >= 3), out = { n: L.length, hit: { Dia: {}, Noite: {} }, calls: 0, occ: 0, gaps: [], semFolga: 0 };
+  L.forEach(s => {
+    const h0 = s.tn === 'Dia' ? 7 : 19, w0 = s.d * 1440 + h0 * 60, w1 = w0 + 720;
+    for (let k = 0; k < 12; k++) { const a = w0 + k * 60, b = a + 60, h = (h0 + k) % 24, o = out.hit[s.tn][h] || (out.hit[s.tn][h] = { n: 0, c: 0 }); o.n++; if (s.iv.some(([x, y]) => x < b && y > a)) o.c++; }
+    const iv = s.iv.map(([a, b]) => [Math.max(a, w0), Math.min(b, w1)]).filter(z => z[1] > z[0]).sort((a, b) => a[0] - b[0]); let cur = w0, mg = 0, oc = 0;
+    iv.forEach(([a, b]) => { if (a > cur) mg = Math.max(mg, a - cur); if (b > cur) { oc += b - Math.max(a, cur); cur = b; } }); mg = Math.max(mg, w1 - cur);
+    out.gaps.push(mg); out.calls += s.iv.length; out.occ += oc / 720; if (mg < 60) out.semFolga++;
+  });
+  out.gaps.sort((a, b) => a - b);
+  return out;
+}
+function vJornada() {
+  const P = periodo(), RP = periodo({ ...S.f, ct: '', op: '', eq: '' }), cur = P.cur, D = refeicaoDados(RP.cur), nn = Math.max(D.n, 1);
+  const hh = v => { const m = Math.round(v); return Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0'); };
+  const ser = tn => (tn === 'Dia' ? [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18] : [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]).map(h => { const o = D.hit[tn][h]; return { h, p: o && o.n ? o.c / o.n : null }; });
+  const sd = ser('Dia'), sn = ser('Noite'), best = a => a.filter(x => x.p != null).reduce((b, x) => x.p < b.p ? x : b), worst = a => a.filter(x => x.p != null).reduce((b, x) => x.p > b.p ? x : b);
+  const hr2 = h => String(h).padStart(2, '0') + 'h';
+  const html = `
+  <div class="grid g4">
+    ${kpi('Chamados por turno de 12 h', fD(D.calls / nn, 1), `${fN(D.n)} turnos analisados · ${RP.lc}`, { dark: true })}
+    ${kpi('Equipe ocupada no turno', fD(D.occ / nn * 100, 0) + '<small>%</small>', 'da solicitação ao término do atendimento')}
+    ${kpi('Maior intervalo livre', D.gaps.length ? hh(D.gaps[Math.floor(D.gaps.length / 2)]) : '–', 'mediana por turno, sem chamado em andamento')}
+    ${kpi('Turnos sem 1 h livre seguida', fD(D.semFolga / nn * 100, 0) + '<small>%</small>', 'sem janela contínua de 1 hora')}
+  </div>
+  <div class="grid" style="margin-top:16px">${card('Demanda e cumprimento por hora do dia', `${P.lc} · colunas = atendimentos por hora da solicitação; abaixo, % na meta`, '<div class="leg"><span><i class="b" style="background:#042738"></i>Menos de 50% na meta</span><span><i class="b" style="background:#06BEAE"></i>50% ou mais</span></div><div id="chh"></div>', { info: 'hora' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Quando chegam os chamados', `${P.lc} · atendimentos por hora da solicitação e dia da semana · quanto mais escuro, mais chamados`, '<div id="hhw"></div>', { info: 'hhw' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Janelas de refeição: onde a pausa de 1 h é menos interrompida', D.n ? `Chance de haver chamado em andamento durante 1 hora, por hora de início · melhor e pior no dia: ${hr2(best(sd.slice(1, 11)).h)} (${fP0(best(sd.slice(1, 11)).p)}) e ${hr2(worst(sd.slice(1, 11)).h)} (${fP0(worst(sd.slice(1, 11)).p)}) · à noite: ${hr2(best(sn.slice(1, 11)).h)} (${fP0(best(sn.slice(1, 11)).p)}) e ${hr2(worst(sn.slice(1, 11)).h)} (${fP0(worst(sn.slice(1, 11)).p)}) · sem a 1ª e a última hora do turno` : 'Sem dados suficientes', '<div class="leg"><span><i class="b" style="background:#06BEAE"></i>Menor chance</span><span><i class="b" style="background:#042738"></i>Maior chance</span></div><div class="grid g2"><div><h4 class="sh">Turno dia · 07h às 19h</h4><div id="rfd"></div></div><div><h4 class="sh">Turno noite · 19h às 07h</h4><div id="rfn"></div></div></div>', { info: 'refeicao' })}</div>`;
+  return {
+    html, after() {
+      const hr = Array.from({ length: 24 }, (_, h) => cur.filter(r => r.h === h));
+      colChart($('#chh'), { labels: hr.map((_, h) => String(h).padStart(2, '0')), vals: hr.map(a => a.length), cores: hr.map(a => { const p = a.length ? a.filter(r => r.na).length / a.length : 0; return p >= .5 ? '#06BEAE' : '#042738'; }), fmt: v => fN(v), H: 250, sub: hr.map(a => a.length ? fP0(a.filter(r => r.na).length / a.length) : '') });
+      const hs = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6], dw = [1, 2, 3, 4, 5, 6, 0], cnt = dw.map(d => hs.map(h => cur.filter(r => r.dow === d && r.h === h).length)), mxc = Math.max(...cnt.flat(), 1);
+      $('#hhw').innerHTML = heatGrid(['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'], hs.map(h => ({ g: h >= 7 && h < 19 ? 'Turno dia' : 'Turno noite', n: String(h).padStart(2, '0') })), (i, j) => ({ v: cnt[i][j] / mxc, txt: fN(cnt[i][j]) }), 'hs');
+      const draw = (id, s) => { const ok = s.slice(1, 11).filter(x => x.p != null), mn = Math.min(...ok.map(x => x.p)), mx = Math.max(...ok.map(x => x.p)); colChart($(id), { labels: s.map(x => String(x.h).padStart(2, '0')), vals: s.map(x => x.p), cores: s.map((x, i) => i < 1 || i > 10 ? '#DCE6E8' : x.p === mn ? '#06BEAE' : x.p === mx ? '#042738' : '#A9B8BD'), fmt: v => fD(v * 100, 0) + '%', H: 220 }); };
+      if (D.n) { draw('#rfd', sd); draw('#rfn', sn); }
+    }
+  };
+}
+
+/* ---------- abas compostas ---------- */
+const semKpi = h => h.replace(/^\s*<div class="grid g4">[\s\S]*?\n  <\/div>/, '');
+const secao = (id, t) => `<h2 class="sec" id="sec-${id}">${t}</h2>`;
+const salto = l => `<div class="chips jump">${l.map(x => `<button class="chip" data-jump="sec-${x[0]}">${x[1]}</button>`).join('')}</div>`;
+function compor(secs) {
+  return { html: salto(secs.map(s => [s[0], s[1]])) + secs.map(s => secao(s[0], s[1]) + s[2].html).join(''), after() { secs.forEach(s => s[2].after()); } };
+}
+function vDemanda() {
+  const a = vVolume(), b = vContratos(), c = vOperacao(), bar = vBarreiras(); b.html = semKpi(b.html); c.html = semKpi(c.html);
+  return compor([['vol', 'Volume e clientes', a], ['con', 'Contratos', b], ['bar', 'Barreiras em uso', bar], ['ope', 'Operação', c]]);
+}
+function vEquipesJornada() {
+  return compor([['eq', 'Equipes', vEquipes()], ['jor', 'Horários e refeição', vJornada()], ['sim', 'Simultaneidade', vSimult()]]);
+}
+Object.assign(INFO, {
+  evol: { t: 'Evolução mensal', o: 'Compara cada mês do ano atual com o mesmo mês do ano anterior, em colunas pareadas, e mostra a variação embaixo. Use os botões para trocar entre % na meta, atendimentos e tempo médio.', c: 'Meses com menos de 10 atendimentos ficam sem coluna. O mês em andamento não aparece. A variação do % na meta é em pontos percentuais; verde-água indica melhora, marinho piora, cinza é só volume.' },
+  tl: { t: 'Linha do tempo', o: 'Marcos que o painel encontra sozinho na base: início da série, viradas de patamar de cada equipe, melhor e pior mês, maior volume, mais pontos críticos e maior pico de simultaneidade.', c: 'Virada de patamar = a média dos 3 meses seguintes difere em 30 p.p. ou mais da média dos 3 meses anteriores no % na meta da equipe. Os marcos se atualizam a cada leitura da planilha.' },
+  hhw: { t: 'Quando chegam os chamados', o: 'Quantidade de atendimentos por hora da solicitação e dia da semana. Mostra os horários de maior demanda de cada turno.', c: 'Hora da solicitação (ou do início, se a solicitação estiver vazia). Colunas na ordem do turno: 07h às 18h (dia) e 19h às 06h (noite). Respeita os filtros de contrato, operação e equipe.' },
+  refeicao: { t: 'Janelas de refeição', o: 'Para cada hora de início, a chance de a equipe de plantão ter um atendimento em andamento durante 1 hora seguida. Serve como base para organizar a pausa de refeição quando não há equipe de rendição.', c: 'Cada turno de 12 h (dia 07h–19h, noite 19h–07h) de uma equipe com 3 ou mais atendimentos é analisado. A equipe de plantão é inferida pelos lançamentos, não pela escala real. Atendimento em andamento = da solicitação ao término. A 1ª e a última hora de cada turno (troca de equipe) ficam em cinza claro e fora da comparação. Os indicadores acima mostram que o tempo livre existe, mas não é previsível. A avaliação trabalhista sobre intervalo e disponibilidade é do RH e do jurídico; o painel só entrega o dado.' }
+});
+
+/* ---------- barreiras em uso por contrato (colocação → retirada) ---------- */
+let _bar = null;
+const BAR_MAX_H = 48;   // permanência acima disso é par suspeito (colocação e retirada de ciclos diferentes)
+S.yb = null;            // ano do filtro da seção (null = ano atual, 'all' = todo o histórico)
+function barreirasDados() {
+  const key = S.rows.length + '|' + S.max; if (_bar && _bar.key === key) return _bar;
+  const rows = S.rows.filter(r => r.emb && r.ct && (r.op === 'COLOCAÇÃO' || r.op === 'RETIRADA') && r.ini != null && r.fim != null);
+  const ev = rows.map(r => ({ ts: r.ds * 1440 + r.ini * 1440, id: r.id, tt: r.t, emb: r.emb, ct: r.ct, loc: r.loc, op: r.op, iso: r.iso, t: r.ds * 1440 + (r.op === 'COLOCAÇÃO' ? (r.fim + (r.fim < r.ini ? 1 : 0)) : r.ini) * 1440 })).sort((a, b) => a.ts - b.ts);
+  const byE = new Map(); ev.forEach(e => { if (!byE.has(e.emb)) byE.set(e.emb, []); byE.get(e.emb).push(e); });
+  const pares = [], orfas = [], d = { total: 0, longos: 0, orf: 0, porBerco: 0 }, fimT = Math.max(...ev.map(e => e.t)), oc = [], orr = [];
+  const mk = (open, e, via) => ({ ct: open.ct, emb: open.emb, embRet: e.emb, loc: open.loc, a: open.t, b: Math.max(e.t, open.t), h: Math.max(0, (e.t - open.t) / 60), iso: open.iso, t0: open.tt, ida: open.id, idb: e.id, via });
+  const longo = (open, e, h) => orfas.push({ tipo: 'longo', id: open.id, emb: open.emb, ct: open.ct, loc: open.loc, iso: open.iso, motivo: `Retirada só em ${fDt(e.iso)} (linha ${e.id}), ${fD(h / 24, 1)} dias depois` });
+  /* 1ª etapa: pareia por embarcação */
+  byE.forEach(a => {
+    let open = null;
+    a.forEach(e => {
+      if (e.op === 'COLOCAÇÃO') { if (open) oc.push(open); open = e; }
+      else if (open) { const h = Math.max(0, (e.t - open.t) / 60); d.total++; if (h <= BAR_MAX_H) pares.push(mk(open, e, 'emb')); else { d.longos++; longo(open, e, h); } open = null; }
+      else orr.push(e);
+    });
+    if (open) { if ((fimT - open.t) / 1440 > 2) oc.push(open); }
+  });
+  /* 2ª etapa: o que sobrou é pareado pelo mesmo contrato e berço, até 48 h depois (nome da embarcação diferente ou lançamento fora de ordem) */
+  const usada = new Set(), ocOrd = oc.slice().sort((a, b) => a.ts - b.ts);
+  ocOrd.forEach(c => {
+    const cand = orr.filter(o => !usada.has(o.id) && o.ct === c.ct && o.loc === c.loc && o.ts >= c.ts && (o.ts - c.ts) <= BAR_MAX_H * 60).sort((a, b) => a.ts - b.ts)[0];
+    if (cand) { usada.add(cand.id); usada.add(c.id); pares.push(mk(c, cand, 'berço')); d.porBerco++; d.total++; if (cand.emb !== c.emb) orfas.push({ tipo: 'nome', id: c.id, emb: c.emb, ct: c.ct, loc: c.loc, iso: c.iso, motivo: `Retirada lançada como “${cand.emb}” (linha ${cand.id}) no mesmo berço` }); }
+  });
+  oc.filter(c => !usada.has(c.id)).forEach(c => { d.orf++; orfas.push({ tipo: 'col', id: c.id, emb: c.emb, ct: c.ct, loc: c.loc, iso: c.iso, motivo: (fimT - c.t) / 1440 > 2 ? 'Colocação sem retirada lançada' : 'Colocação sem retirada' }); });
+  orr.filter(o => !usada.has(o.id)).forEach(o => { d.orf++; orfas.push({ tipo: 'ret', id: o.id, emb: o.emb, ct: o.ct, loc: o.loc, iso: o.iso, motivo: 'Retirada sem colocação anterior neste berço' }); });
+  const per = {}, ms = meses(S.rows);
+  clientes(S.rows).forEach(c => {
+    const a = pares.filter(p => p.ct === c); if (a.length < 5) return;
+    const evs = []; a.forEach(p => { evs.push([p.a, 1]); evs.push([p.b, -1]); }); evs.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+    const segs = []; let cur = 0, last = null; evs.forEach(([t, dl]) => { if (last != null && t > last) segs.push([last, t, cur, serialISO(Math.floor(last / 1440))]); cur += dl; last = t; });
+    const monthly = {}; segs.forEach(s => { const m = s[3].slice(0, 7), o = monthly[m] || (monthly[m] = { pk: 0 }); o.pk = Math.max(o.pk, s[2]); });
+    per[c] = { a, segs, monthly };
+  });
+  return (_bar = { key, per, pares, orfas, d, ms });
+}
+/* indicadores de um contrato no ano y (null = todo o histórico) */
+function barStats(p, y) {
+  const inY = iso => y == null || iso.slice(0, 4) === String(y), segs = p.segs.filter(s => inY(s[3])), a = p.a.filter(x => inY(x.iso));
+  if (!segs.length || !a.length) return null;
+  const T = sum(segs.map(s => s[1] - s[0])) || 1, dist = {}; segs.forEach(s => { dist[s[2]] = (dist[s[2]] || 0) + (s[1] - s[0]); });
+  const cover = q => { let acc = 0; for (const k of Object.keys(dist).map(Number).sort((u, v) => u - v)) { acc += dist[k]; if (acc / T >= q) return k; } return 0; };
+  const hs = a.map(x => x.h).sort((u, v) => u - v), pk = segs.reduce((b, s) => s[2] > b[2] ? s : b, segs[0]), eps = [], used = new Set();
+  const lbl = x => esc(x.emb) + (x.loc ? ' <i>' + esc(x.loc.replace(/^BERÇO\s*/i, 'B')) + '</i>' : '');
+  [...segs].sort((u, v) => v[2] - u[2] || (v[1] - v[0]) - (u[1] - u[0])).forEach(s => {
+    if (eps.length >= 3 || s[2] < 2 || used.has(s[3])) return; used.add(s[3]);
+    const k = Math.max(2, Math.ceil(.8 * s[2])), ix = segs.indexOf(s); let i0 = ix, i1 = ix;
+    while (i0 > 0 && segs[i0 - 1][2] >= k && segs[i0 - 1][1] === segs[i0][0]) i0--;
+    while (i1 < segs.length - 1 && segs[i1 + 1][2] >= k && segs[i1 + 1][0] === segs[i1][1]) i1++;
+    eps.push({ n: s[2], iso: s[3], hora: hhmm((s[0] % 1440) / 1440), k, dur: (segs[i1][1] - segs[i0][0]) / 60, emb: [...new Set(a.filter(x => x.a <= s[0] && x.b > s[0]).map(lbl))] });
+  });
+  const dmx = {}; segs.forEach(s => { dmx[s[3]] = Math.max(dmx[s[3]] || 0, s[2]); });
+  const p95v = Math.max(1, cover(.95)), diasTot = Object.keys(dmx).length, diasAcima = Object.values(dmx).filter(v => v > p95v).length;
+  const nm = new Set(segs.map(s => s[3].slice(0, 7))).size;
+  return { n: a.length, med: hs[Math.floor(hs.length / 2)], peak: pk[2], peakIso: pk[3], p95: Math.max(1, cover(.95)), p99: Math.max(1, cover(.99)), avg: sum(segs.map(s => s[2] * (s[1] - s[0]))) / T, segs, T, eps, nm, diasTot, diasAcima };
+}
+function barDisp() { try { return JSON.parse(localStorage.getItem('barreira.disp') || '{}'); } catch (e) { return {}; } }
+function barDispSet(c, v) { const o = barDisp(); if (v == null || v === '' || isNaN(v)) delete o[c]; else o[c] = Math.max(0, Math.min(99, Math.round(+v))); try { localStorage.setItem('barreira.disp', JSON.stringify(o)); } catch (e) { } }
+function barDeficit(st, K) {
+  let acima = 0, eps = 0, prev = false;
+  st.segs.forEach(s => { const on = s[2] > K; if (on) { acima += s[1] - s[0]; if (!prev) eps++; } prev = on; });
+  return { pct: acima / st.T, hmes: acima / 60 / Math.max(st.nm, 1), eps, falta: Math.max(0, st.peak - K) };
+}
+function vBarreiras() {
+  const D = barreirasDados(), disp = barDisp(), lf = lastFull(), ms = D.ms, anos = [...new Set(ms.map(m => +m.slice(0, 4)))].sort();
+  const yb = S.yb === 'all' ? null : (S.yb && anos.includes(+S.yb) ? +S.yb : S.Y), yl = yb == null ? 'todo o histórico' : String(yb);
+  const st = {}; Object.keys(D.per).forEach(c => { const s = barStats(D.per[c], yb); if (s) st[c] = s; });
+  const cts = Object.keys(st), msY = ms.filter(m => yb == null || +m.slice(0, 4) === yb);
+  const hh = h => h < 1 ? fD(h * 60, 0) + ' min' : fD(h, 1).replace(',0', '') + ' h';
+  const chips = `<div class="chips">${anos.map(y => `<button class="chip ${y === yb ? 'on' : ''}" data-yb="${y}">${y}</button>`).join('')}<button class="chip ${yb == null ? 'on' : ''}" data-yb="all">Todos</button></div>`;
+  const linhas = cts.map(c => {
+    const p = st[c], k = disp[c], df = k != null ? barDeficit(p, k) : null;
+    return `<tr><td>${esc(c)}</td><td class="cur">${p.peak}</td><td>${p.p99}</td><td>${p.p95}</td><td>${fD(p.avg, 1)}</td><td>${hh(p.med)}</td><td><input class="bin" type="number" min="0" max="99" inputmode="numeric" placeholder="informar" value="${k != null ? k : ''}" data-bar="${esc(c)}" aria-label="Barreiras disponíveis ${esc(c)}"></td><td>${df ? `${fP(df.pct)}<small> · ${fD(df.hmes, 0)} h/mês</small>` : '–'}</td><td>${df ? (df.falta ? `<b>+${df.falta}</b>` : 'Sem falta') : '–'}</td></tr>`;
+  }).join('');
+  const leit = cts.map(c => { const p = st[c]; return `<p><b>${esc(c)}</b> chegou a <b>${p.peak}</b> barreiras lançadas ao mesmo tempo (${fDt(p.peakIso)}); em 95% do tempo bastam ${p.p95} e em 99% bastam ${p.p99}. Cada barreira fica em uso por uma mediana de ${hh(p.med)}. O pico é um instante isolado; para dimensionar, use a quantidade que cobre 95% ou 99% do tempo.</p>`; }).join('');
+  const html = `
+  ${chips}
+  <div class="grid" style="margin-top:12px">${card('Quantas barreiras ao mesmo tempo cada contrato exige', `Barreiras lançadas e ainda não retiradas · ${yl} · informe a quantidade disponível para ver o tempo acima do estoque`, `<div class="rkw"><table class="cmp bt"><tr><th>Contrato</th><th class="cur">Pico</th><th>Cobre 99%</th><th>Cobre 95%</th><th>Média em uso</th><th>Permanência</th><th>Disponível</th><th>Tempo acima</th><th>Falta no pico</th></tr>${linhas}</table></div><div class="leit">${leit}</div><p class="nt">A quantidade disponível fica salva apenas neste navegador.</p>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Linha do tempo: pico mensal de barreiras em uso', `Maior número de barreiras lançadas ao mesmo tempo em cada mês, por contrato · ${yl}` + (Object.keys(disp).length ? ' · linha verde-água = disponível' : ''), `<div class="grid g2">${cts.map((c, i) => `<div><h4 class="sh">${esc(c)}</h4><div id="bm${i}"></div></div>`).join('')}</div>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Colocações e retiradas por contrato, mês a mês', `Quantidade lançada por mês · ${yl} · quanto mais escuro, mais operações no contrato`, '<div id="bhm"></div>', { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Momentos de maior uso', `Os dias em que cada contrato teve mais barreiras lançadas ao mesmo tempo · ${yl} · berço em itálico`, `<div class="grid g2">${cts.map(c => st[c].eps.length ? `<div class="mm"><div class="mm-h"><b>${esc(c)}</b><span>passou de ${st[c].p95} barreiras em ${st[c].diasAcima} de ${st[c].diasTot} dias com operação (${fP0(st[c].diasAcima / Math.max(st[c].diasTot, 1))})</span></div><div class="rkw"><table class="mmt"><tr><th>Data e hora</th><th>Barreiras</th><th>Duração</th><th>Embarcações</th></tr>${st[c].eps.map(e => `<tr><td><b>${fDt(e.iso)}</b><small>${e.hora}</small></td><td><span class="bd">${e.n}</span></td><td>${e.dur < 1 ? 'menos de 1 h' : hh(e.dur)}<small>com ${e.k} ou mais</small></td><td class="em">${e.emb.slice(0, 4).join(', ')}${e.emb.length > 4 ? ' <small>e mais ' + (e.emb.length - 4) + '</small>' : ''}</td></tr>`).join('')}</table></div></div>` : '').join('')}</div>`, { info: 'barr' })}</div>
+  ${barSimHtml(D, cts, yb, yl, disp)}${barOrfasHtml(D, yb, yl)}
+  <p class="nt" style="margin-top:10px">${fN(D.pares.length)} ciclos de colocação e retirada pareados (todo o histórico), ${fN(D.d.porBerco)} deles pelo contrato e berço quando o nome da embarcação não bateu; ${fN(D.d.longos)} com mais de ${BAR_MAX_H} h e ${fN(D.d.orf)} lançamentos sem par ficaram de fora (veja Lançamentos sem par).</p>`;
+  return {
+    html, after() {
+      const part = m => +m.slice(0, 4) === S.Y && m > (lf || '');
+      cts.forEach((c, i) => { const el = $('#bm' + i); if (!el) return; stackCols(el, { ms: msY, H: 210, partial: part, ref: disp[c], groups: [{ nome: c, cor: '#042738', vals: msY.map(m => (D.per[c].monthly[m] || { pk: 0 }).pk) }] }); });
+      const lin = [], tit = [];
+      cts.forEach(c => { ['COLOCAÇÃO', 'RETIRADA'].forEach(op => { tit.push(c + ' · ' + (op === 'COLOCAÇÃO' ? 'colocações' : 'retiradas')); lin.push(msY.map(m => S.rows.filter(r => r.ym === m && r.ct === c && r.op === op).length)); }); });
+      const mxc = cts.map((c, k) => Math.max(...lin[2 * k], ...lin[2 * k + 1], 1));
+      $('#bhm').innerHTML = heatTable(tit, msY, (i, j) => ({ v: lin[i][j] / mxc[Math.floor(i / 2)], txt: String(lin[i][j]) }), 'sm');
+    }
+  };
+}
+Object.assign(INFO, {
+  barr: { t: 'Barreiras em uso por contrato', o: 'Mostra quantas barreiras estão lançadas ao mesmo tempo em cada contrato, do momento da colocação até a retirada. É a base para dimensionar quantas barreiras cada contrato precisa ter.', c: 'Cada colocação é pareada com a retirada seguinte da mesma embarcação (o que sobra é pareado pelo mesmo contrato e berço, até 48 h depois); a barreira conta como em uso do término da colocação até o início da retirada. Ciclos com mais de 48 h e lançamentos sem par são descartados. Pico = maior número simultâneo; “cobre 95%/99%” = quantidade que atende a esse percentual do tempo; “tempo acima” = parte do período em que o uso superou a quantidade informada; “falta no pico” = diferença entre o pico e o disponível. Supõe uma barreira por embarcação em operação. A quantidade disponível é informada por você e fica salva só neste navegador.' }
+});
+
+/* ---------- simulador de estoque e lançamentos sem par ---------- */
+S.bo = 'all';
+function barSimular(a, K) {   // fila simples: cada colocação usa a primeira barreira que ficar livre; se não houver, espera
+  const ord = a.slice().sort((x, y) => x.a - y.a), slots = Array(K).fill(-Infinity); let atr = 0, soma = 0, mx = 0, na0 = 0, na1 = 0, nt = 0;
+  ord.forEach(p => {
+    let ix = 0; for (let i = 1; i < K; i++) if (slots[i] < slots[ix]) ix = i;
+    const ini = Math.max(p.a, slots[ix]), dl = ini - p.a; slots[ix] = ini + (p.b - p.a);
+    if (dl > 1) { atr++; soma += dl; mx = Math.max(mx, dl); }
+    if (p.t0 != null) { nt++; if (Math.round(p.t0) <= META) na0++; if (Math.round(p.t0 + dl) <= META) na1++; }
+  });
+  const n = ord.length;
+  return { n, atr, pct: n ? atr / n : 0, med: atr ? soma / atr : 0, mx, na0: nt ? na0 / nt : null, na1: nt ? na1 / nt : null };
+}
+function barSimHtml(D, cts, yb, yl, disp) {
+  const inY = x => yb == null || x.iso.slice(0, 4) === String(yb), res = {}, kmax = {};
+  cts.forEach(c => {
+    const a = D.per[c].a.filter(inY); if (a.length < 5) return;
+    const list = [];
+    for (let k = 1; k <= 14; k++) { const r = barSimular(a, k); list.push(r); if (r.atr === 0) break; }
+    res[c] = list; kmax[c] = list.length;
+  });
+  const cs = Object.keys(res); if (!cs.length) return '';
+  const rec = (c, lim) => { const i = res[c].findIndex(r => r.pct <= lim); return i < 0 ? res[c].length : i + 1; };
+  const nk = Math.max(...cs.map(c => res[c].length), 4), cols = Array.from({ length: nk }, (_, i) => ({ g: 'Quantidade de barreiras no contrato', n: String(i + 1) }));
+  const at = (c, k) => k <= res[c].length ? res[c][k - 1] : { n: res[c][0].n, atr: 0, pct: 0, med: 0, mx: 0, na0: res[c][0].na0, na1: res[c][0].na0 };
+  const sel = c => disp[c] != null ? disp[c] : rec(c, .05);
+  const linhas = cs.map(c => {
+    const k = sel(c), r = at(c, k);
+    return `<tr><td>${esc(c)}</td><td><input class="bin" type="number" min="1" max="99" inputmode="numeric" value="${k}" data-bar="${esc(c)}" aria-label="Barreiras ${esc(c)}"></td><td class="cur">${fP(r.pct)}<small> · ${fN(r.atr)} de ${fN(r.n)}</small></td><td>${r.atr ? espera(r.med) : '–'}</td><td>${r.atr ? espera(r.mx) : '–'}</td><td>${r.na0 == null ? '–' : fP0(r.na0) + ' → ' + fP0(r.na1)}</td><td><b>${rec(c, .01)}</b><small> para menos de 1%</small></td></tr>`;
+  }).join('');
+  const leit = cs.map(c => {
+    const k = sel(c), r = at(c, k);
+    return `<p><b>${esc(c)}</b>: ${r.atr ? `com ${k} barreira${k > 1 ? 's' : ''}, ${fP(r.pct)} das colocações esperariam por falta de barreira (média de ${espera(r.med)})` : `com ${k} barreira${k > 1 ? 's' : ''} nenhuma colocação esperaria`}; para que menos de 1% espere seriam ${rec(c, .01)} barreiras.</p>`;
+  }).join('');
+  const grid = heatGrid(cs, cols, (i, j) => { const r = at(cs[i], j + 1); return { v: Math.min(1, r.pct * 2), txt: fP0(r.pct), sub: r.atr ? espera(r.med) : 'sem espera' }; }, 'hk');
+  return `<div class="grid" style="margin-top:16px">${card('Simulador: e se o contrato tivesse N barreiras?', `Repete o histórico de ${yl} com uma quantidade fixa de barreiras: quando todas estão em uso, a colocação espera a primeira que for liberada · altere a quantidade para simular`, `<div class="rkw"><table class="cmp bt"><tr><th>Contrato</th><th>Barreiras</th><th class="cur">Colocações que esperam</th><th>Espera média</th><th>Espera máxima</th><th>% na meta das colocações</th><th>Recomendado</th></tr>${linhas}</table></div><div class="leit">${leit}</div><p class="nt">Sem quantidade informada, a simulação usa a que deixa até 5% das colocações esperando; informe a sua no campo Barreiras.</p><h4 class="sh" style="margin-top:14px">Quanto cada quantidade de barreiras faz esperar</h4><p class="nt" style="margin:0 0 8px">% das colocações que esperariam por falta de barreira e espera média · quanto mais escuro, mais espera</p>${grid}`, { info: 'sim' })}</div>`;
+}
+function barOrfasHtml(D, yb, yl) {
+  const inY = x => yb == null || x.iso.slice(0, 4) === String(yb), all = D.orfas.filter(inY).sort((a, b) => a.iso < b.iso ? 1 : a.iso > b.iso ? -1 : 0);
+  const tp = { col: 'Colocação sem retirada', ret: 'Retirada sem colocação', longo: 'Ciclo acima de 48 h', nome: 'Nome diferente na retirada' }, n = k => all.filter(x => x.tipo === k).length;
+  const lista = all.filter(x => S.bo === 'all' || x.tipo === S.bo); vBarreiras.lista = lista;
+  const emb = {}; all.forEach(x => { emb[x.emb] = (emb[x.emb] || 0) + 1; });
+  const topE = Object.entries(emb).sort((a, b) => b[1] - a[1]).slice(0, 5), tot = all.length || 1;
+  const chips = `<div class="chips"><button class="chip ${S.bo === 'all' ? 'on' : ''}" data-bo="all">Todos · ${fN(all.length)}</button>${Object.keys(tp).map(k => `<button class="chip ${S.bo === k ? 'on' : ''}" data-bo="${k}">${tp[k]} · ${fN(n(k))}</button>`).join('')}<button class="chip" data-bocsv="1">Baixar lista (CSV)</button></div>`;
+  const resumo = all.length ? `<p class="nt" style="margin:0 0 10px">Das ${fN(all.length)} ocorrências de ${yl}, ${fN(all.length - n('nome'))} ficaram fora do cálculo de barreiras em uso e ${fN(n('nome'))} entraram pareadas pelo berço, mas com nome de embarcação diferente na retirada. As cinco embarcações com mais ocorrências (${topE.map(e => esc(e[0]) + ' ' + e[1]).join(' · ')}) somam ${fP0(topE.reduce((s, e) => s + e[1], 0) / tot)}.</p>` : '';
+  const linhas = lista.slice(0, 60).map(x => `<tr><td><span class="tg ${x.tipo}">${tp[x.tipo]}</span></td><td>${fDt(x.iso)}</td><td><b>${esc(x.emb)}</b></td><td>${esc(x.ct)} · ${esc(x.loc || '–')}</td><td>${x.id}</td><td class="em">${esc(x.motivo)}</td></tr>`).join('');
+  return `<div class="grid" style="margin-top:16px">${card('Lançamentos sem par: o que corrigir na planilha', `Colocações e retiradas que não fecham o ciclo da embarcação · ${yl} · o número é a linha do Excel`, `${chips}${resumo}${all.length ? `<div class="rkw"><table class="mmt orf"><tr><th>Tipo</th><th>Data</th><th>Embarcação</th><th>Contrato · berço</th><th>Linha</th><th>O que verificar</th></tr>${linhas}</table></div>${lista.length > 60 ? `<p class="nt">Mostrando 60 de ${fN(lista.length)}; use o botão de CSV para a lista completa.</p>` : ''}` : '<p class="sub">Nenhum lançamento sem par neste período.</p>'}`, { info: 'orfas' })}</div>`;
+}
+const hhm = m => m < 60 ? fD(m, 0) + ' min' : fD(m / 60, 1).replace(',0', '') + ' h';
+const espera = m => m >= 1440 ? 'mais de 1 dia' : hhm(m);
+Object.assign(INFO, {
+  sim: { t: 'Simulador de barreiras', o: 'Mostra o que teria acontecido com os atendimentos do período se o contrato tivesse uma quantidade fixa de barreiras. Serve para estimar quantas barreiras comprar.', c: 'Usa os ciclos pareados de colocação e retirada de cada embarcação. As colocações são atendidas em ordem de chegada: se todas as barreiras estão em uso, a colocação espera a primeira que for liberada e a retirada correspondente também se desloca. A espera aumenta o tempo da colocação e muda o % na meta. É uma simplificação: supõe uma barreira por embarcação e que o tempo de uso se mantém. Recomendado = menor quantidade que deixa menos de 1% das colocações esperando.' },
+  orfas: { t: 'Lançamentos sem par', o: 'Colocações que não têm retirada, retiradas que não têm colocação e ciclos de mais de 48 horas. Esses lançamentos não entram no cálculo de barreiras em uso nem no simulador.', c: 'Cada colocação deveria ter uma retirada depois da mesma embarcação. Colocação sem retirada: a embarcação teve outra colocação sem retirada no meio ou a retirada nunca foi lançada (colocações dos últimos 2 dias são consideradas em andamento). Retirada sem colocação: não existe colocação anterior da embarcação. Ciclo acima de 48 h: a retirada veio muito depois e pode ser de outro ciclo. Corrija na planilha pela linha indicada.' }
+});
+
+/* ===================== APLICAÇÃO ===================== */
+const TABS = [['resumo', 'Resumo', vResumo, false], ['demanda', 'Demanda e contratos', vDemanda, true], ['equipes', 'Equipes e jornada', vEquipesJornada, true], ['qualidade', 'Qualidade dos dados', vQualidade, true]];
+const ALIAS = { volume: 'demanda', contratos: 'demanda', operacao: 'demanda', simultaneidade: 'equipes' };
+const LIVE_URLS = (location.hostname === 'localhost' || location.protocol === 'file:' ? ['dados/barreira.json'] : []).concat(['https://raw.githubusercontent.com/romulooc86-spec/central-de-projetos/main/projetos/dados/barreira.json', 'dados/barreira.json']);
+const LIVE = { ok: false, lido: null, sig: '', err: null };
+
+function buildTabs() {
+  $('#tabs').innerHTML = TABS.map((t, i) => `<button class="tab" data-t="${t[0]}"><span>${i + 1}</span>${t[1]}</button>`).join('');
+}
+function setTab(t, noScroll) {
+  t = ALIAS[t] || t;
+  S.tab = t; $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  const def = TABS.find(x => x[0] === t); $('#fbar').style.display = def[3] ? '' : 'none'; if (!def[3]) $('#filters').classList.remove('open');
+  try { history.replaceState(null, '', '#' + t); } catch (e) { }
+  render(); if (!noScroll) window.scrollTo({ top: 0 });
+}
+function fillFilters() {
+  const rs = S.rows, opt = (arr, cur) => '<option value="">Todos</option>' + arr.map(v => `<option ${v === cur ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  const cts = [...new Set(rs.map(r => r.ct).filter(Boolean))].sort(), ops = [...new Set(rs.map(r => r.op).filter(Boolean))].sort(), eqs = ['A', 'B', 'C', 'D'];
+  $('#filters').innerHTML = `
+    <label>Período<select id="f-per"><option value="ytd" ${S.f.per === 'ytd' ? 'selected' : ''}>${lblPer(S.Y)} × ${lblPer(S.Y - 1)}</option><option value="all" ${S.f.per === 'all' ? 'selected' : ''}>Todo o histórico</option></select></label>
+    <label>Contrato<select id="f-ct">${opt(cts, S.f.ct)}</select></label>
+    <label>Operação<select id="f-op">${opt(ops, S.f.op)}</select></label>
+    <label>Equipe<select id="f-eq">${opt(eqs, S.f.eq)}</select></label>
+    <label>&nbsp;<button class="btn s2" id="f-clr">Limpar filtros</button></label>`;
+  $('#f-per').onchange = e => { S.f.per = e.target.value; render(); }; $('#f-ct').onchange = e => { S.f.ct = e.target.value; render(); };
+  $('#f-op').onchange = e => { S.f.op = e.target.value; render(); }; $('#f-eq').onchange = e => { S.f.eq = e.target.value; render(); };
+  $('#f-clr').onclick = () => { S.f = { per: 'ytd', ct: '', op: '', eq: '' }; fillFilters(); render(); };
+}
+function filterSummary() {
+  const f = S.tab === 'qualidade' ? { ...S.f, per: 'all' } : S.f, p = [f.per === 'all' ? 'Todo o histórico' : `${lblPer(S.Y)} × ${lblPer(S.Y - 1)}`]; if (f.ct) p.push(f.ct); if (f.op) p.push(f.op.charAt(0) + f.op.slice(1).toLowerCase()); if (f.eq) p.push('Equipe ' + f.eq);
+  return p.join(' · ');
+}
+let rendering = false;
+function render() {
+  if (!S.rows.length) return;
+  const def = TABS.find(x => x[0] === S.tab);
+  $('#fsum').textContent = filterSummary();
+  let v;
+  try { v = def[2](); } catch (e) { console.error(e); $('#view').innerHTML = `<div class="card"><h3>Não foi possível montar esta aba</h3><p class="sub">${esc(e.message)}</p></div>`; return; }
+  $('#view').innerHTML = v.html + '<div class="foot">Prime Ocean Navegação — “O futuro vem pelo mar” · © ' + new Date().getFullYear() + ' Prime Ocean Navegação. Todos os direitos reservados.</div>';
+  try { v.after(); } catch (e) { console.error(e); }
+  window._redraw = () => { try { v.after(); } catch (e) { } };
+}
+let rzT; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { if (window._redraw) window._redraw(); }, 180); });
+
+/* ---------- leitura ao vivo ---------- */
+async function loadLive(manual) {
+  try {
+    let r = null;
+    for (const u of LIVE_URLS) { try { r = await fetch(u + '?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) break; } catch (e) { r = null; } }
+    if (!r || !r.ok) throw new Error('sem conexão');
+    const j = await r.json();
+    LIVE.ok = true; LIVE.lido = new Date(); LIVE.err = null; LIVE.modif = j.modificada;
+    const sig = j.modificada + '|' + j.publicado + '|' + j.linhas.length;
+    if (sig !== LIVE.sig) {
+      LIVE.sig = sig; S.meta = { planilha: j.planilha, modificada: j.modificada, publicado: j.publicado };
+      setRows(parseBarreira(j.linhas)); fillFilters(); coverTexto(); render();
+    }
+    if (manual) toast('Dados atualizados: ' + fN(S.rows.length) + ' lançamentos, último em ' + fDt(S.max) + '.');
+  } catch (e) { LIVE.ok = false; LIVE.err = e.message; if (manual) toast('Não consegui ler os dados ao vivo agora.'); }
+  liveStatus();
+}
+function liveStatus() {
+  const hh = d => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const dd = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') + ', ' + hh(d); };
+  $('#live').innerHTML = LIVE.ok ? `<i class="on"></i><span>Ao vivo · planilha salva ${dd(LIVE.modif)} · lida ${hh(LIVE.lido)}</span>` : '<i></i><span>Sem conexão com os dados</span>';
+}
+function coverTexto() {
+  const A = agg(S.rows.filter(r => inWin(r, S.Y))), B = agg(S.rows.filter(r => inWin(r, S.Y - 1)));
+  $('#cvTxt').innerHTML = `<b>${fN(S.rows.length)}</b> atendimentos desde ${MES[+S.rows.reduce((a, r) => r.iso < a ? r.iso : a, '9999').slice(5, 7) - 1]}/${S.rows.reduce((a, r) => r.iso < a ? r.iso : a, '9999').slice(2, 4)} · meta de <b>15 minutos</b> por atendimento · ${fP0(A.pct)} dentro da meta em ${lblPer(S.Y)}`;
+}
+function fecharCapa() { $('#cover').classList.add('out'); document.body.classList.remove('cv'); }
+function abrirCapa() { $('#cover').classList.remove('out'); document.body.classList.add('cv'); }
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-t]'); if (t && t.classList.contains('tab')) return setTab(t.dataset.t);
+  const g = e.target.closest('[data-go]'); if (g) return setTab(g.dataset.go);
+  const inf = e.target.closest('[data-info]'); if (inf) return showInfo(inf.dataset.info);
+  const bo = e.target.closest('[data-bo]'); if (bo) { S.bo = bo.dataset.bo; return render(); }
+  const bc = e.target.closest('[data-bocsv]'); if (bc) { const L = (vBarreiras.lista || []).map(x => [{ col: 'Colocação sem retirada', ret: 'Retirada sem colocação', longo: 'Ciclo acima de 48 h', nome: 'Nome diferente na retirada' }[x.tipo], fDt(x.iso), x.emb, x.ct, x.loc, x.id, x.motivo]); csv('barreiras-sem-par.csv', ['Tipo', 'Data', 'Embarcação', 'Contrato', 'Berço', 'Linha do Excel', 'O que verificar'], L); toast('Lista baixada: ' + fN(L.length) + ' ocorrências.'); return; }
+  const yb = e.target.closest('[data-yb]'); if (yb) { S.yb = yb.dataset.yb; return render(); }
+  const ev = e.target.closest('[data-ev]'); if (ev) { S.ev = ev.dataset.ev; return render(); }
+  const jp = e.target.closest('[data-jump]'); if (jp) { const el = document.getElementById(jp.dataset.jump); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const fo = e.target.closest('[data-fonte], #live'); if (fo) { e.preventDefault(); return openDrawer('Fonte e regras de cálculo', fonteHtml()); }
+  const hm = e.target.closest('[data-hm]'); if (hm) { const c = hm.closest('.card'); c.classList.toggle('heat', hm.dataset.hm === 'calor'); c.querySelectorAll('[data-hm]').forEach(b => b.classList.toggle('on', b === hm)); return; }
+  const yv = e.target.closest('[data-yv]'); if (yv) { S.yv = +yv.dataset.yv; return render(); }
+  const w = e.target.closest('[data-win]'); if (w) { S.win = w.dataset.win; return render(); }
+  const ck = e.target.closest('[data-ck]'); if (ck) { const c = ck.dataset.ck, rs = filt(S.rows, { ...S.f, per: 'all' }).filter(r => r.fl.includes(c)); return openDrawer(CHK[c].nome, `<h4>O que significa</h4><p>${CHK[c].desc}</p><h4>Linhas</h4>${tabelaAtend(rs, { det: r => r.dt[c] || '' })}`); }
+  const pk = e.target.closest('[data-pk]'); if (pk) { const p = vSimult.picos[+pk.dataset.pk]; return openDrawer(`${p.n} atendimentos ao mesmo tempo`, `<p>${fDt(p.ids[0].iso)} · ${hhmm(p.t % 1440 / 1440)}. Atendimentos em andamento neste instante (janela ${S.win === 'A' ? 'solicitação → término' : 'início → término'}).</p>${tabelaAtend(p.ids)}`); }
+  const rk = e.target.closest('.rk-r[data-key]'); if (rk) {
+    const [k, v] = rk.dataset.key.split('|'), P = periodo(), W = S.win;
+    const fx = { ct: r => r.ct === v, loc: r => r.loc === v, emb: r => r.emb === v, eq: r => r.eq1 === v, crit: r => r.ct === v && r.cr, sc: r => r.ct === v && r['c' + W] >= 2, se: r => r.eq1 === v && r['c' + W] >= 2 }[k];
+    if (fx) { const rs = P.cur.filter(fx).sort((a, b) => (b.t || 0) - (a.t || 0)); const ttl = { ct: 'Contrato ', loc: 'Local ', emb: '', eq: 'Equipe ', crit: 'Pontos críticos · ', sc: 'Em sobreposição · ', se: 'Em sobreposição · equipe ' }[k] + v; return openDrawer(ttl, `<p>${P.lc}. Ordenado do maior para o menor tempo de atendimento.</p>${tabelaAtend(rs)}`); }
+  }
+  const kp = e.target.closest('.kpi'); if (kp && !kp.dataset.go) return;
+});
+$('#drwBg').onclick = closeDrawer; $('#drwX').onclick = closeDrawer;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); if (!$('#cover').classList.contains('out') && ['Enter', ' ', 'ArrowDown', 'ArrowRight'].includes(e.key)) { e.preventDefault(); fecharCapa(); } });
+$('#cvGo').onclick = fecharCapa;
+$('#cover').addEventListener('wheel', e => { if (e.deltaY > 20) fecharCapa(); }, { passive: true });
+let ty = 0; $('#cover').addEventListener('touchstart', e => ty = e.touches[0].clientY, { passive: true }); $('#cover').addEventListener('touchend', e => { if (ty - e.changedTouches[0].clientY > 40) fecharCapa(); });
+$('#bHome').onclick = () => { setTab('resumo'); };
+$('#logo').onclick = abrirCapa;
+$('#bRef').onclick = () => loadLive(true);
+$('#bFil').onclick = () => $('#filters').classList.toggle('open');
+$('#bPres').onclick = () => {
+  const on = !document.body.classList.contains('pres'); document.body.classList.toggle('pres', on);
+  if (on) { (document.documentElement.requestFullscreen || (() => { })).call(document.documentElement).catch(() => { }); }
+  else if (document.fullscreenElement) document.exitFullscreen();
+};
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) document.body.classList.remove('pres'); });
+
+buildTabs();
+const h0 = ALIAS[location.hash.slice(1)] || location.hash.slice(1); if (TABS.some(t => t[0] === h0)) { S.tab = h0; }
+if (location.hash === '#painel' || TABS.some(t => t[0] === h0)) fecharCapa(); else document.body.classList.add('cv');
+$$('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === S.tab));
+loadLive().then(() => { setTab(S.tab, true); });
+setInterval(() => { if (!document.hidden) loadLive(); }, 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && (!LIVE.lido || Date.now() - LIVE.lido > 60 * 1000)) loadLive(); });
+document.addEventListener('change', e => { const b = e.target.closest && e.target.closest('[data-bar]'); if (b) { barDispSet(b.dataset.bar, b.value); render(); } });
+
+</script>
+</body>
+</html>
