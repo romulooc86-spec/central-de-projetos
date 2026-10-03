@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gestão de Lançamento de Barreira · Prime Ocean (teste)</title>
+<title>Gestão de Lançamento de Barreira · Prime Ocean</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -214,6 +214,17 @@ h4.sh{margin:6px 0 4px;font:800 11px var(--font-display);letter-spacing:.1em;tex
 .bin{width:84px;padding:5px 8px;border:1px solid var(--bd2);border-radius:6px;font:700 13.5px var(--font-display);color:var(--navy);text-align:right;background:#fff}.bin::placeholder{font-weight:500;color:var(--tx3);font-size:12px}.bin:focus{outline:2px solid var(--teal);outline-offset:1px}
 .leit{margin-top:14px;border-top:1px solid var(--bd);padding-top:10px}.leit p{margin:6px 0;font-size:14.5px;color:var(--tx2);line-height:1.45}.leit b{color:var(--navy)}
 p.nt{font-size:12.5px;color:var(--tx3);margin:8px 0 0}
+/* v7: momentos de maior uso */
+.mm-h{display:flex;flex-direction:column;gap:2px;margin:2px 0 8px}.mm-h b{font:800 12px var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}.mm-h span{font-size:13px;color:var(--tx2)}
+.mmt{width:100%;border-collapse:collapse;font-size:13.5px}.mmt th{font:700 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--bd2);white-space:nowrap}
+.mmt td{padding:10px 10px 10px 0;border-bottom:1px solid var(--bd);vertical-align:top;color:var(--tx2)}.mmt tr:last-child td{border-bottom:0}.mmt td b{color:var(--navy);font:700 13.5px var(--font-display);display:block}.mmt small{display:block;color:var(--tx3);font-size:12px}
+.mmt td.em{line-height:1.45;min-width:170px}.mmt td.em i{font-style:italic;color:var(--tx3);font-size:12px;margin-left:2px}.mmt td.em small{display:inline}
+.bd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;background:var(--navy);color:#fff;font:800 14px var(--font-display);text-align:center}
+@media(max-width:640px){
+  .mmt,.mmt tbody,.mmt td{display:block}.mmt tr:first-child{display:none}
+  .mmt tr{display:grid;grid-template-columns:104px 52px 1fr;gap:2px 8px;padding:10px 0;border-bottom:1px solid var(--bd)}.mmt tr:last-child{border-bottom:0}
+  .mmt td{padding:0;border:0}.mmt td.em{grid-column:1/-1;min-width:0;padding-top:4px}
+}
 
 </style>
 </head>
@@ -1197,6 +1208,7 @@ Object.assign(INFO, {
 /* ---------- barreiras em uso por contrato (colocação → retirada) ---------- */
 let _bar = null;
 const BAR_MAX_H = 48;   // permanência acima disso é par suspeito (colocação e retirada de ciclos diferentes)
+S.yb = null;            // ano do filtro da seção (null = ano atual, 'all' = todo o histórico)
 function barreirasDados() {
   const key = S.rows.length + '|' + S.max; if (_bar && _bar.key === key) return _bar;
   const rows = S.rows.filter(r => r.emb && r.ct && (r.op === 'COLOCAÇÃO' || r.op === 'RETIRADA') && r.ini != null && r.fim != null);
@@ -1216,51 +1228,66 @@ function barreirasDados() {
   clientes(S.rows).forEach(c => {
     const a = pares.filter(p => p.ct === c); if (a.length < 5) return;
     const evs = []; a.forEach(p => { evs.push([p.a, 1]); evs.push([p.b, -1]); }); evs.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
-    const segs = []; let cur = 0, last = null; evs.forEach(([t, dl]) => { if (last != null && t > last) segs.push([last, t, cur]); cur += dl; last = t; });
-    const T = sum(segs.map(s => s[1] - s[0])) || 1, dist = {}; segs.forEach(s => { dist[s[2]] = (dist[s[2]] || 0) + (s[1] - s[0]); });
-    const cover = p => { let acc = 0; for (const k of Object.keys(dist).map(Number).sort((x, y) => x - y)) { acc += dist[k]; if (acc / T >= p) return k; } return 0; };
-    const monthly = {}; segs.forEach(s => { const m = serialISO(Math.floor(s[0] / 1440)).slice(0, 7), o = monthly[m] || (monthly[m] = { pk: 0, w: 0, t: 0 }); o.pk = Math.max(o.pk, s[2]); o.w += s[2] * (s[1] - s[0]); o.t += s[1] - s[0]; });
-    const hs = a.map(p => p.h).sort((x, y) => x - y), md = hs[Math.floor(hs.length / 2)];
-    const pk = segs.reduce((b, s) => s[2] > b[2] ? s : b, segs[0]);
-    const eps = []; const used = new Set();
-    [...segs].sort((x, y) => y[2] - x[2] || (y[1] - y[0]) - (x[1] - x[0])).forEach(s => {
-      if (eps.length >= 3 || s[2] < 2) return; const iso = serialISO(Math.floor(s[0] / 1440)); if (used.has(iso)) return; used.add(iso);
-      eps.push({ n: s[2], iso, hora: hhmm((s[0] % 1440) / 1440), emb: [...new Set(a.filter(p => p.a <= s[0] && p.b > s[0]).map(p => p.emb))] });
-    });
-    per[c] = { n: a.length, med: md, p90: hs[Math.floor(hs.length * .9)], peak: pk[2], peakIso: serialISO(Math.floor(pk[0] / 1440)), p95: Math.max(1, cover(.95)), p99: Math.max(1, cover(.99)), avg: sum(segs.map(s => s[2] * (s[1] - s[0]))) / T, monthly, segs, T, eps };
+    const segs = []; let cur = 0, last = null; evs.forEach(([t, dl]) => { if (last != null && t > last) segs.push([last, t, cur, serialISO(Math.floor(last / 1440))]); cur += dl; last = t; });
+    const monthly = {}; segs.forEach(s => { const m = s[3].slice(0, 7), o = monthly[m] || (monthly[m] = { pk: 0 }); o.pk = Math.max(o.pk, s[2]); });
+    per[c] = { a, segs, monthly };
   });
   return (_bar = { key, per, pares, d, ms });
 }
+/* indicadores de um contrato no ano y (null = todo o histórico) */
+function barStats(p, y) {
+  const inY = iso => y == null || iso.slice(0, 4) === String(y), segs = p.segs.filter(s => inY(s[3])), a = p.a.filter(x => inY(x.iso));
+  if (!segs.length || !a.length) return null;
+  const T = sum(segs.map(s => s[1] - s[0])) || 1, dist = {}; segs.forEach(s => { dist[s[2]] = (dist[s[2]] || 0) + (s[1] - s[0]); });
+  const cover = q => { let acc = 0; for (const k of Object.keys(dist).map(Number).sort((u, v) => u - v)) { acc += dist[k]; if (acc / T >= q) return k; } return 0; };
+  const hs = a.map(x => x.h).sort((u, v) => u - v), pk = segs.reduce((b, s) => s[2] > b[2] ? s : b, segs[0]), eps = [], used = new Set();
+  const lbl = x => esc(x.emb) + (x.loc ? ' <i>' + esc(x.loc.replace(/^BERÇO\s*/i, 'B')) + '</i>' : '');
+  [...segs].sort((u, v) => v[2] - u[2] || (v[1] - v[0]) - (u[1] - u[0])).forEach(s => {
+    if (eps.length >= 3 || s[2] < 2 || used.has(s[3])) return; used.add(s[3]);
+    const k = Math.max(2, Math.ceil(.8 * s[2])), ix = segs.indexOf(s); let i0 = ix, i1 = ix;
+    while (i0 > 0 && segs[i0 - 1][2] >= k && segs[i0 - 1][1] === segs[i0][0]) i0--;
+    while (i1 < segs.length - 1 && segs[i1 + 1][2] >= k && segs[i1 + 1][0] === segs[i1][1]) i1++;
+    eps.push({ n: s[2], iso: s[3], hora: hhmm((s[0] % 1440) / 1440), k, dur: (segs[i1][1] - segs[i0][0]) / 60, emb: [...new Set(a.filter(x => x.a <= s[0] && x.b > s[0]).map(lbl))] });
+  });
+  const dmx = {}; segs.forEach(s => { dmx[s[3]] = Math.max(dmx[s[3]] || 0, s[2]); });
+  const p95v = Math.max(1, cover(.95)), diasTot = Object.keys(dmx).length, diasAcima = Object.values(dmx).filter(v => v > p95v).length;
+  const nm = new Set(segs.map(s => s[3].slice(0, 7))).size;
+  return { n: a.length, med: hs[Math.floor(hs.length / 2)], peak: pk[2], peakIso: pk[3], p95: Math.max(1, cover(.95)), p99: Math.max(1, cover(.99)), avg: sum(segs.map(s => s[2] * (s[1] - s[0]))) / T, segs, T, eps, nm, diasTot, diasAcima };
+}
 function barDisp() { try { return JSON.parse(localStorage.getItem('barreira.disp') || '{}'); } catch (e) { return {}; } }
 function barDispSet(c, v) { const o = barDisp(); if (v == null || v === '' || isNaN(v)) delete o[c]; else o[c] = Math.max(0, Math.min(99, Math.round(+v))); try { localStorage.setItem('barreira.disp', JSON.stringify(o)); } catch (e) { } }
-function barDeficit(p, K) {
+function barDeficit(st, K) {
   let acima = 0, eps = 0, prev = false;
-  p.segs.forEach(s => { const on = s[2] > K; if (on) { acima += s[1] - s[0]; if (!prev) eps++; } prev = on; });
-  const nm = Math.max(Object.keys(p.monthly).length, 1);
-  return { pct: acima / p.T, hmes: acima / 60 / nm, eps, falta: Math.max(0, p.peak - K) };
+  st.segs.forEach(s => { const on = s[2] > K; if (on) { acima += s[1] - s[0]; if (!prev) eps++; } prev = on; });
+  return { pct: acima / st.T, hmes: acima / 60 / Math.max(st.nm, 1), eps, falta: Math.max(0, st.peak - K) };
 }
 function vBarreiras() {
-  const D = barreirasDados(), cts = Object.keys(D.per), disp = barDisp(), lf = lastFull(), ms = D.ms;
+  const D = barreirasDados(), disp = barDisp(), lf = lastFull(), ms = D.ms, anos = [...new Set(ms.map(m => +m.slice(0, 4)))].sort();
+  const yb = S.yb === 'all' ? null : (S.yb && anos.includes(+S.yb) ? +S.yb : S.Y), yl = yb == null ? 'todo o histórico' : String(yb);
+  const st = {}; Object.keys(D.per).forEach(c => { const s = barStats(D.per[c], yb); if (s) st[c] = s; });
+  const cts = Object.keys(st), msY = ms.filter(m => yb == null || +m.slice(0, 4) === yb);
   const hh = h => h < 1 ? fD(h * 60, 0) + ' min' : fD(h, 1).replace(',0', '') + ' h';
+  const chips = `<div class="chips">${anos.map(y => `<button class="chip ${y === yb ? 'on' : ''}" data-yb="${y}">${y}</button>`).join('')}<button class="chip ${yb == null ? 'on' : ''}" data-yb="all">Todos</button></div>`;
   const linhas = cts.map(c => {
-    const p = D.per[c], k = disp[c], df = k != null ? barDeficit(p, k) : null;
+    const p = st[c], k = disp[c], df = k != null ? barDeficit(p, k) : null;
     return `<tr><td>${esc(c)}</td><td class="cur">${p.peak}</td><td>${p.p99}</td><td>${p.p95}</td><td>${fD(p.avg, 1)}</td><td>${hh(p.med)}</td><td><input class="bin" type="number" min="0" max="99" inputmode="numeric" placeholder="informar" value="${k != null ? k : ''}" data-bar="${esc(c)}" aria-label="Barreiras disponíveis ${esc(c)}"></td><td>${df ? `${fP(df.pct)}<small> · ${fD(df.hmes, 0)} h/mês</small>` : '–'}</td><td>${df ? (df.falta ? `<b>+${df.falta}</b>` : 'Sem falta') : '–'}</td></tr>`;
   }).join('');
-  const leit = cts.map(c => { const p = D.per[c]; return `<p><b>${esc(c)}</b> chegou a <b>${p.peak}</b> barreiras lançadas ao mesmo tempo (${fDt(p.peakIso)}); em 95% do tempo bastam ${p.p95} e em 99% bastam ${p.p99}. Cada barreira fica em uso por uma mediana de ${hh(p.med)}. O pico é um instante isolado; para dimensionar, use a quantidade que cobre 95% ou 99% do tempo.</p>`; }).join('');
+  const leit = cts.map(c => { const p = st[c]; return `<p><b>${esc(c)}</b> chegou a <b>${p.peak}</b> barreiras lançadas ao mesmo tempo (${fDt(p.peakIso)}); em 95% do tempo bastam ${p.p95} e em 99% bastam ${p.p99}. Cada barreira fica em uso por uma mediana de ${hh(p.med)}. O pico é um instante isolado; para dimensionar, use a quantidade que cobre 95% ou 99% do tempo.</p>`; }).join('');
   const html = `
-  <div class="grid">${card('Quantas barreiras ao mesmo tempo cada contrato exige', `Barreiras lançadas e ainda não retiradas, de ${mLbl(ms[0])} até ${mLbl(ms[ms.length - 1])} · informe a quantidade disponível para ver o tempo acima do estoque`, `<div class="rkw"><table class="cmp bt"><tr><th>Contrato</th><th class="cur">Pico</th><th>Cobre 99%</th><th>Cobre 95%</th><th>Média em uso</th><th>Permanência</th><th>Disponível</th><th>Tempo acima</th><th>Falta no pico</th></tr>${linhas}</table></div><div class="leit">${leit}</div><p class="nt">A quantidade disponível fica salva apenas neste navegador.</p>`, { info: 'barr' })}</div>
-  <div class="grid" style="margin-top:16px">${card('Linha do tempo: pico mensal de barreiras em uso', 'Maior número de barreiras lançadas ao mesmo tempo em cada mês, por contrato' + (Object.keys(disp).length ? ' · linha verde-água = disponível' : ''), `<div class="grid g2">${cts.map((c, i) => `<div><h4 class="sh">${esc(c)}</h4><div id="bm${i}"></div></div>`).join('')}</div>`, { info: 'barr' })}</div>
-  <div class="grid" style="margin-top:16px">${card('Colocações e retiradas por contrato, mês a mês', 'Quantidade lançada por mês · quanto mais escuro, mais operações no contrato', '<div id="bhm"></div>', { info: 'barr' })}</div>
-  <div class="grid" style="margin-top:16px">${card('Momentos de maior uso', 'Os dias com mais barreiras lançadas ao mesmo tempo, por contrato', `<div class="grid g2">${cts.map(c => D.per[c].eps.length ? `<div><h4 class="sh">${esc(c)}</h4><div class="lst">${D.per[c].eps.slice(0, 2).map(e => `<div class="li"><div class="n">${e.n} <em>ao mesmo tempo</em></div><div class="lt"><b>${fDt(e.iso)} · ${e.hora}</b><span>${e.emb.slice(0, 5).map(esc).join(', ')}${e.emb.length > 5 ? ' e mais ' + (e.emb.length - 5) : ''}</span></div></div>`).join('')}</div></div>` : '').join('')}</div>`, { info: 'barr' })}</div>
-  <p class="nt" style="margin-top:10px">${fN(D.pares.length)} ciclos de colocação e retirada pareados por embarcação; ${fN(D.d.longos)} com mais de ${BAR_MAX_H} h e ${fN(D.d.orf)} lançamentos sem par foram descartados (veja Qualidade dos dados).</p>`;
+  ${chips}
+  <div class="grid" style="margin-top:12px">${card('Quantas barreiras ao mesmo tempo cada contrato exige', `Barreiras lançadas e ainda não retiradas · ${yl} · informe a quantidade disponível para ver o tempo acima do estoque`, `<div class="rkw"><table class="cmp bt"><tr><th>Contrato</th><th class="cur">Pico</th><th>Cobre 99%</th><th>Cobre 95%</th><th>Média em uso</th><th>Permanência</th><th>Disponível</th><th>Tempo acima</th><th>Falta no pico</th></tr>${linhas}</table></div><div class="leit">${leit}</div><p class="nt">A quantidade disponível fica salva apenas neste navegador.</p>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Linha do tempo: pico mensal de barreiras em uso', `Maior número de barreiras lançadas ao mesmo tempo em cada mês, por contrato · ${yl}` + (Object.keys(disp).length ? ' · linha verde-água = disponível' : ''), `<div class="grid g2">${cts.map((c, i) => `<div><h4 class="sh">${esc(c)}</h4><div id="bm${i}"></div></div>`).join('')}</div>`, { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Colocações e retiradas por contrato, mês a mês', `Quantidade lançada por mês · ${yl} · quanto mais escuro, mais operações no contrato`, '<div id="bhm"></div>', { info: 'barr' })}</div>
+  <div class="grid" style="margin-top:16px">${card('Momentos de maior uso', `Os dias em que cada contrato teve mais barreiras lançadas ao mesmo tempo · ${yl} · berço em itálico`, `<div class="grid g2">${cts.map(c => st[c].eps.length ? `<div class="mm"><div class="mm-h"><b>${esc(c)}</b><span>passou de ${st[c].p95} barreiras em ${st[c].diasAcima} de ${st[c].diasTot} dias com operação (${fP0(st[c].diasAcima / Math.max(st[c].diasTot, 1))})</span></div><div class="rkw"><table class="mmt"><tr><th>Data e hora</th><th>Barreiras</th><th>Duração</th><th>Embarcações</th></tr>${st[c].eps.map(e => `<tr><td><b>${fDt(e.iso)}</b><small>${e.hora}</small></td><td><span class="bd">${e.n}</span></td><td>${e.dur < 1 ? 'menos de 1 h' : hh(e.dur)}<small>com ${e.k} ou mais</small></td><td class="em">${e.emb.slice(0, 4).join(', ')}${e.emb.length > 4 ? ' <small>e mais ' + (e.emb.length - 4) + '</small>' : ''}</td></tr>`).join('')}</table></div></div>` : '').join('')}</div>`, { info: 'barr' })}</div>
+  <p class="nt" style="margin-top:10px">${fN(D.pares.length)} ciclos de colocação e retirada pareados por embarcação (todo o histórico); ${fN(D.d.longos)} com mais de ${BAR_MAX_H} h e ${fN(D.d.orf)} lançamentos sem par foram descartados (veja Qualidade dos dados).</p>`;
   return {
     html, after() {
       const part = m => +m.slice(0, 4) === S.Y && m > (lf || '');
-      cts.forEach((c, i) => { const el = $('#bm' + i); if (!el) return; stackCols(el, { ms, H: 210, partial: part, ref: disp[c], groups: [{ nome: c, cor: '#042738', vals: ms.map(m => (D.per[c].monthly[m] || { pk: 0 }).pk) }] }); });
+      cts.forEach((c, i) => { const el = $('#bm' + i); if (!el) return; stackCols(el, { ms: msY, H: 210, partial: part, ref: disp[c], groups: [{ nome: c, cor: '#042738', vals: msY.map(m => (D.per[c].monthly[m] || { pk: 0 }).pk) }] }); });
       const lin = [], tit = [];
-      cts.forEach(c => { ['COLOCAÇÃO', 'RETIRADA'].forEach(op => { tit.push(c + ' · ' + (op === 'COLOCAÇÃO' ? 'colocações' : 'retiradas')); lin.push(ms.map(m => S.rows.filter(r => r.ym === m && r.ct === c && r.op === op).length)); }); });
+      cts.forEach(c => { ['COLOCAÇÃO', 'RETIRADA'].forEach(op => { tit.push(c + ' · ' + (op === 'COLOCAÇÃO' ? 'colocações' : 'retiradas')); lin.push(msY.map(m => S.rows.filter(r => r.ym === m && r.ct === c && r.op === op).length)); }); });
       const mxc = cts.map((c, k) => Math.max(...lin[2 * k], ...lin[2 * k + 1], 1));
-      $('#bhm').innerHTML = heatTable(tit, ms, (i, j) => ({ v: lin[i][j] / mxc[Math.floor(i / 2)], txt: String(lin[i][j]) }), 'sm');
+      $('#bhm').innerHTML = heatTable(tit, msY, (i, j) => ({ v: lin[i][j] / mxc[Math.floor(i / 2)], txt: String(lin[i][j]) }), 'sm');
     }
   };
 }
@@ -1348,6 +1375,7 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-t]'); if (t && t.classList.contains('tab')) return setTab(t.dataset.t);
   const g = e.target.closest('[data-go]'); if (g) return setTab(g.dataset.go);
   const inf = e.target.closest('[data-info]'); if (inf) return showInfo(inf.dataset.info);
+  const yb = e.target.closest('[data-yb]'); if (yb) { S.yb = yb.dataset.yb; return render(); }
   const ev = e.target.closest('[data-ev]'); if (ev) { S.ev = ev.dataset.ev; return render(); }
   const jp = e.target.closest('[data-jump]'); if (jp) { const el = document.getElementById(jp.dataset.jump); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   const fo = e.target.closest('[data-fonte], #live'); if (fo) { e.preventDefault(); return openDrawer('Fonte e regras de cálculo', fonteHtml()); }
