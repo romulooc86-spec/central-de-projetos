@@ -207,6 +207,7 @@ h4.sh{margin:6px 0 4px;font:800 11px var(--font-display);letter-spacing:.1em;tex
 .tl-m{font:800 10.5px var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
 .tl-i b{display:block;font:700 14px/1.25 var(--font-display);color:var(--navy);margin-bottom:3px}.tl-i span{display:block;font-size:13px;line-height:1.35;color:var(--tx2)}
 .hg.hs{min-width:760px}.hg.hs .ht-y,.hg.hs .ht-m,.hg.hs .ht-r{grid-template-columns:78px repeat(var(--n),minmax(26px,1fr))}.hg.hs .ht-c{height:32px;font-size:11.5px}.hg.hs .ht-m span{font-size:11px}
+.live{cursor:pointer}
 
 </style>
 </head>
@@ -228,7 +229,7 @@ h4.sh{margin:6px 0 4px;font:800 11px var(--font-display);letter-spacing:.1em;tex
     <button class="ib" id="bHome" title="Início" aria-label="Início"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
     <button class="ib" id="bRef" title="Atualizar dados" aria-label="Atualizar"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v5h-5"/></svg></button>
     <button class="ib" id="bPres" title="Modo apresentação" aria-label="Apresentação"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></button>
-  </div><div class="live" id="live"><i></i><span>Conectando…</span></div></div>
+  </div><div class="live" id="live" title="Fonte, atualização e regras de cálculo"><i></i><span>Conectando…</span></div></div>
 </div><nav class="tabs" id="tabs"></nav></header>
 <main>
   <div class="fbar" id="fbar"><button class="fbtn" id="bFil"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>Filtros</button><span class="fsum" id="fsum"></span></div>
@@ -1226,7 +1227,7 @@ function render() {
   $('#fsum').textContent = filterSummary();
   let v;
   try { v = def[2](); } catch (e) { console.error(e); $('#view').innerHTML = `<div class="card"><h3>Não foi possível montar esta aba</h3><p class="sub">${esc(e.message)}</p></div>`; return; }
-  $('#view').innerHTML = v.html + '<div class="foot">Prime Ocean Navegação · Lançamento de barreira · <a href="#" data-fonte="1">fonte, atualização e regras de cálculo</a></div>';
+  $('#view').innerHTML = v.html + '<div class="foot">Prime Ocean Navegação — “O futuro vem pelo mar” · © ' + new Date().getFullYear() + ' Prime Ocean Navegação. Todos os direitos reservados.</div>';
   try { v.after(); } catch (e) { console.error(e); }
   window._redraw = () => { try { v.after(); } catch (e) { } };
 }
@@ -1268,7 +1269,7 @@ document.addEventListener('click', e => {
   const inf = e.target.closest('[data-info]'); if (inf) return showInfo(inf.dataset.info);
   const ev = e.target.closest('[data-ev]'); if (ev) { S.ev = ev.dataset.ev; return render(); }
   const jp = e.target.closest('[data-jump]'); if (jp) { const el = document.getElementById(jp.dataset.jump); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-  const fo = e.target.closest('[data-fonte]'); if (fo) { e.preventDefault(); return openDrawer('Fonte e regras de cálculo', fonteHtml()); }
+  const fo = e.target.closest('[data-fonte], #live'); if (fo) { e.preventDefault(); return openDrawer('Fonte e regras de cálculo', fonteHtml()); }
   const hm = e.target.closest('[data-hm]'); if (hm) { const c = hm.closest('.card'); c.classList.toggle('heat', hm.dataset.hm === 'calor'); c.querySelectorAll('[data-hm]').forEach(b => b.classList.toggle('on', b === hm)); return; }
   const yv = e.target.closest('[data-yv]'); if (yv) { S.yv = +yv.dataset.yv; return render(); }
   const w = e.target.closest('[data-win]'); if (w) { S.win = w.dataset.win; return render(); }
